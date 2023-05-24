@@ -1,0 +1,24 @@
+{
+  "name": "@jdn-project/jfin-all",
+  "engines": {
+    "pnpm": ">=8.5.1",
+    "node": ">=18.14.0"
+  },
+  "packageManager": "pnpm@8.5.1",
+  "scripts": {},
+  "devDependencies": {
+    "cross-env": "7.0.3",
+    "prettier": "2.8.8",
+    "turbo": "1.9.9"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "*"
+      ],
+      "allowAny": [
+        "*"
+      ]
+    }
+  }
+}

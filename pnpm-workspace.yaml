@@ -1,0 +1,9 @@
+packages:
+  - 'apps/*'
+  - 'core/*'
+  - 'dev/*'
+  - 'config/*'
+  - 'libs/*'
+  - 'utils/*'
+  - 'sdk/*'
+  - 'examples/*'

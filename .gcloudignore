@@ -1,0 +1,43 @@
+##############
+### Common ###
+##############
+
+# modules
+**/node_modules
+# turbo
+**/.turbo
+# next.js
+**/.next
+**/.swc
+# nest.js
+**/dist
+# docusaurus
+**/.docusaurus
+# jest
+**/coverage
+# editor
+.vscode
+# misc
+**/.DS_Store
+**/*.pem
+**/*.log*
+# mongo
+.mongo-volume
+# turbo prune
+out
+
+### gcloudignore specifics ###
+.config.yaml
+.git
+.github
+.gcloudignore
+**/.gitignore
+**/README.md
+**/test
+Makefile
+
+# core
+/core/**
+!/core/
+!/core/docker/
+!/core/docker/docker-files/**
