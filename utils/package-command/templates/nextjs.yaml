@@ -1,0 +1,19 @@
+dev*:
+  globalConfig: dev
+  command: next dev
+  env:
+    PORT: '{{port}}'
+    TARGET: '{{target}}'
+    NAME: '{{shortName}}'
+build*:
+  globalConfig: dev
+  command: next build
+  env:
+    TARGET: '{{target}}'
+    NAME: '{{shortName}}'
+start*:
+  command: next start
+  env:
+    PORT: '{{port}}'
+lint*:
+  command: 'next lint --dir .'

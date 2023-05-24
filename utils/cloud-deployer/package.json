@@ -1,0 +1,13 @@
+{
+  "name": "@utils/cloud-deployer",
+  "bin": {
+    "deploy": "./src/deploy.js"
+  },
+  "devDependencies": {
+    "@config/typescript": "workspace:*",
+    "@types/node": "20.2.3",
+    "@utils/global-config": "workspace:*",
+    "ts-node": "10.9.1",
+    "typescript": "5.0.4"
+  }
+}

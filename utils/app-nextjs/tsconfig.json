@@ -1,0 +1,5 @@
+{
+  "extends": "@config/typescript/nextjs-app.json",
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules"]
+}

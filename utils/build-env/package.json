@@ -1,0 +1,6 @@
+{
+  "name": "@utils/build-env",
+  "devDependencies": {
+    "@utils/global-config": "workspace:*"
+  }
+}

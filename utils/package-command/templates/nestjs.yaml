@@ -1,0 +1,20 @@
+dev*:
+  globalConfig: dev
+  command: nest start{{#unless lite}} --watch --debug{{/unless}}
+  env:
+    PORT: '{{port}}'
+    TARGET: '{{target}}'
+    NAME: '{{shortName}}'
+    PUBSUB_EMULATOR_HOST: 'localhost:8085'
+build*:
+  globalConfig: dev
+  command: nest build
+  env:
+    TARGET: '{{target}}'
+    NAME: '{{shortName}}'
+start*:
+  command: node dist/main
+  env:
+    PORT: '{{port}}'
+lint*:
+  command: 'eslint .'

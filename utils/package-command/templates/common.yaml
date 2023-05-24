@@ -1,0 +1,33 @@
+docker*:
+  globalConfig: docker
+  command: docker compose -f ../../core/docker/dev/docker-compose-app.yml
+  defaultArgs: up --build
+  env:
+    PORT: '{{port}}'
+    TARGET: '{{target}}'
+    APP_TYPE: '{{type}}'
+    DOCKER_FILE: '{{dockerFile}}'
+    APP_FULL_NAME: hypernft--{{fullName}}--{{target}}
+    APP_FOLDER: '{{folder}}'
+    PACKAGE_NAME: '{{packageName}}'
+    COMPOSE_PROJECT_NAME: hypernft--{{target}}
+deploy*:
+  globalConfig: deploy
+  command: deploy
+  env:
+    TARGET: '{{target}}'
+    APP_TYPE: '{{type}}'
+    DOCKER_FILE: '{{dockerFile}}'
+    PACKAGE_NAME: '{{packageName}}'
+    SHORT_NAME: '{{shortName}}'
+    APP_FOLDER: '{{folder}}'
+test*:
+  globalConfig: dev
+  command: runtest
+  env:
+    TARGET: '{{target}}'
+    APP_TYPE: '{{type}}'
+    PACKAGE_NAME: '{{packageName}}'
+    LOG_LEVEL: 'debug'
+lint*:
+  command: 'eslint .'

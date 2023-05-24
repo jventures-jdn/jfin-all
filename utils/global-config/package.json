@@ -1,0 +1,11 @@
+{
+  "name": "@utils/global-config",
+  "dependencies": {
+    "@utils/js-utilities": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "20.2.3",
+    "@config/typescript": "workspace:*",
+    "typescript": "5.0.4"
+  }
+}

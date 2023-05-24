@@ -1,0 +1,9 @@
+{
+  "name": "@utils/package-analyzer",
+  "devDependencies": {
+    "@types/node": "20.2.3",
+    "@utils/js-utilities": "workspace:*",
+    "@config/typescript": "workspace:*",
+    "typescript": "5.0.4"
+  }
+}

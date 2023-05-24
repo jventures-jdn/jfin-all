@@ -1,0 +1,10 @@
+compile*:
+  command: hardhat compile
+test*:
+  globalConfig: dev
+  command: pnpm compile && pnpm exec hardhat test --typecheck
+  env:
+    TARGET: '{{target}}'
+    APP_TYPE: '{{type}}'
+    PACKAGE_NAME: '{{packageName}}'
+    LOG_LEVEL: 'debug'

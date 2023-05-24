@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "NestJS App",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "strictPropertyInitialization": false,
+    "target": "es2017",
+    "sourceMap": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "declaration": false,
+    "declarationMap": false,
+    "allowJs": true
+  }
+}
