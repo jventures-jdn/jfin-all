@@ -12,7 +12,7 @@ build*:
     TARGET: '{{target}}'
     NAME: '{{shortName}}'
 start*:
-  command: next start
+  command: '{{#if dist}}npx serve@latest {{dist}}{{else}}next start{{/if}}'
   env:
     PORT: '{{port}}'
 lint*:

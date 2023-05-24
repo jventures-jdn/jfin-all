@@ -1,0 +1,38 @@
+{
+  "name": "@apps/jfin-explorer-web",
+  "port": "3101",
+  "scripts": {
+    "dev": "run",
+    "build": "run",
+    "start": "run *dist=out",
+    "deploy-sandbox": "run *target=sandbox",
+    "deploy-production": "run *target=production",
+    "lint": "run"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "2.6.1",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@utils/app-nextjs": "workspace:*",
+    "@utils/global-config": "workspace:*",
+    "@utils/js-utilities": "workspace:*",
+    "framer-motion": "^10.12.14",
+    "next": "13.4.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-icons": "^4.8.0"
+  },
+  "devDependencies": {
+    "@config/eslint-next": "workspace:*",
+    "@config/postcss": "workspace:*",
+    "@config/tailwind": "workspace:*",
+    "@config/typescript": "workspace:*",
+    "@types/node": "20.2.3",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
+    "@types/react-no-ssr": "^1.1.3",
+    "@utils/cloud-deployer": "workspace:*",
+    "@utils/package-command": "workspace:*",
+    "typescript": "5.0.4"
+  }
+}

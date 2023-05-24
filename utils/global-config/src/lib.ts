@@ -78,7 +78,7 @@ export class GlobalConfig {
 
     // shortcut to database settings
     static database(cluster: string, options?: { unmasked: boolean }, target = process.env.TARGET) {
-        const targetCluster = _.get(this.target(target, options).database, cluster)
+        const targetCluster = _.get((this.target(target, options) as any).database, cluster)
         const targetDatabase = this.pick(`database.${targetCluster}`, options)
         const { dbName, connectionString } = targetDatabase || {}
         return { dbName, connectionString }
@@ -100,12 +100,12 @@ export class GlobalConfig {
 
     // shortcut to pubsub settings (topic names)
     static pubsub(topic: string, target = process.env.TARGET) {
-        const pubsubid = this.target(target).pubsub
+        const pubsubid = (this.target(target) as any).pubsub
         return this.pick(`pubsub.${pubsubid}.${topic}`)
     }
 
     static kms(target = process.env.TARGET) {
-        const kms = this.target(target).kms
+        const kms = (this.target(target) as any).kms
         const iam = this.pick(`iam.kms.${kms.iam}`)
         return { iam }
     }

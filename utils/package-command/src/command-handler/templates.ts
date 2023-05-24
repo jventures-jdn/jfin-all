@@ -11,7 +11,9 @@ export class CommandTemplates {
         const templatePath = path.join(process.cwd(), `templates/${packageType}.yaml`)
         const yamlContent = fs.existsSync(templatePath) && fs.readFileSync(templatePath).toString()
         const template = yamlContent && (yaml.load(yamlContent) as any)
-        const matchedTemplateKey = Object.keys(template).find(key => minimatch(targetScript, key))
+        const matchedTemplateKey = Object.keys(template).find(key =>
+            minimatch.minimatch(targetScript, key),
+        )
         const commandTemplate = matchedTemplateKey && template[matchedTemplateKey]
 
         // Try fallback to `common.yaml`
