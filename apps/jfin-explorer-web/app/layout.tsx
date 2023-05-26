@@ -2,8 +2,8 @@
 
 import { IBM_Plex_Sans_Thai } from 'next/font/google'
 import '../src/styles/global.css'
-import { useUrlQueryRemover } from '@utils/app-nextjs'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import { MenuDemo } from '../components/menu'
 const tailwindConfig = require('@config/tailwind')
 
 const plexSans = IBM_Plex_Sans_Thai({
@@ -13,8 +13,6 @@ const plexSans = IBM_Plex_Sans_Thai({
 })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-    // auto remove `at` query param from url
-    useUrlQueryRemover(['at'])
     return (
         <html lang="en">
             <head />
@@ -30,7 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         },
                     })}
                 >
-                    {children}
+                    {/* Menu */}
+                    <MenuDemo />
+                    {/* Main */}
+                    <div style={{ padding: 20 }}>{children}</div>
                 </ChakraProvider>
             </body>
         </html>

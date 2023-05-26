@@ -1,0 +1,17 @@
+{
+  "name": "@libs/blockscout-client-react",
+  "dependencies": {
+    "@utils/global-config": "workspace:*",
+    "@utils/js-utilities": "workspace:*",
+    "react-use-websocket": "^4.3.1",
+    "swr": "2.1.5",
+    "zustand": "4.3.8"
+  },
+  "devDependencies": {
+    "@config/typescript": "workspace:*",
+    "@types/node": "20.2.3",
+    "@types/react": "18.2.6",
+    "@utils/package-command": "workspace:*",
+    "typescript": "5.0.4"
+  }
+}
