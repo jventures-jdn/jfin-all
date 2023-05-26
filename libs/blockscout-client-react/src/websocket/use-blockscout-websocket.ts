@@ -5,6 +5,7 @@ import { blockScoutWebSocketRecord } from '../store/helpers'
 type BlockscoutWebSocketOptions = {
     socketUrl?: string
     newBlocks?: any
+    newTransactions?: any
     onMessageReceived?: (data: any, rawMessage: MessageEvent) => void
 }
 
@@ -31,6 +32,10 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
         } else if (readyState === ReadyState.OPEN) {
             if (options?.newBlocks)
                 sendMessage(JSON.stringify(['12', '12', 'blocks:new_block', 'phx_join', {}]))
+            if (options?.newTransactions)
+                sendMessage(
+                    JSON.stringify(['18', '18', 'transactions:new_transaction', 'phx_join', {}]),
+                )
         }
     }, [readyState])
 

@@ -13,8 +13,7 @@ export function BlockComponentDemo(props: { blockNumber: number; fullData?: bool
 }
 
 export function BlocksListComponentDemo(props: { count: number }) {
-    const meta = useBlockscout().blocks().meta()
-    const currentBlockNumber = meta?.currentBlockNumber
+    const { currentBlockNumber } = useBlockscout().blocks().meta()
     if (!currentBlockNumber) return null
     return (
         <div>

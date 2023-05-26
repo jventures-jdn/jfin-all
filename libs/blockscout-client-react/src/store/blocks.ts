@@ -5,10 +5,26 @@ import { GlobalApis } from '../apis/global-apis'
 
 const key = (blockNumber: number) => `blocks/${blockNumber}`
 
+const fullBlockFetcher = (blockNumber: number) => {
+    return GraphQLFetcher.query(
+        `{block(number: ${blockNumber}) { number, hash, minerHash, difficulty, gasUsed, gasLimit }}`,
+        response =>
+            ({
+                block_number: response.data.block.number,
+                hash: response.data.block.hash,
+                miner: response.data.block.minerHash,
+                difficulty: response.data.block.difficulty,
+                gas_used: response.data.block.gasUsed,
+                gas_limit: response.data.block.gasLimit,
+                // TODO: more fields?
+                is_full_data: true,
+            } as Block),
+    )
+}
+
 export function useBlockscoutStoreBlocks() {
     return {
         get: blockStoreGet,
-        set: blockStoreSet,
         meta: blockStoreMeta,
     }
 }
@@ -39,23 +55,6 @@ function blockStoreGet(
     return existing
 }
 
-const fullBlockFetcher = (blockNumber: number) => {
-    return GraphQLFetcher.query(
-        `{block(number: ${blockNumber}) { number, hash, minerHash, difficulty, gasUsed, gasLimit }}`,
-        response =>
-            ({
-                block_number: response.data.block.number,
-                hash: response.data.block.hash,
-                miner_hash: response.data.block.minerHash,
-                difficulty: response.data.block.difficulty,
-                gas_used: response.data.block.gasUsed,
-                gas_limit: response.data.block.gasLimit,
-                // TODO: more fields?
-                is_full_data: true,
-            } as Block),
-    )
-}
-
 // For updating scrape block data from Websocket
 export function blockStoreSet(blockNumber: number, data: Partial<Block>) {
     mutate(key(blockNumber), data, {
@@ -72,16 +71,14 @@ function blockStoreMeta() {
         revalidateOnFocus: false,
     })
 
-    const data = existing.data as unknown as
-        | {
-              currentBlockNumber: number
-          }
-        | undefined
+    const data = existing.data as unknown as {
+        currentBlockNumber?: number
+    }
 
     // Initial Block for fast loading (currently not working)
     // if (!data && !existing.isValidating) {
     //     existing.mutate(GlobalApis.chainBlocks() as any, { revalidate: false })
     // }
 
-    return data
+    return data || {}
 }

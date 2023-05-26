@@ -3,7 +3,7 @@ export type Block = {
     nonce: string
     hash: string
     parent_hash: string
-    miner_hash: string
+    miner: string
     difficulty: string
     gas_used: string
     gas_limit: string
