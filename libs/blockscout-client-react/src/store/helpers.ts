@@ -1,4 +1,4 @@
-import { blockStoreSet } from './use-blockscout-store-blocks'
+import { blockStoreSet } from './blocks'
 
 export function blockScoutWebSocketRecord(data: any) {
     if (data[3] === 'new_block')

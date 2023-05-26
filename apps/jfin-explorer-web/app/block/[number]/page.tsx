@@ -20,7 +20,7 @@ export default function BlockPage() {
 
     return (
         <div>
-            <div>{JSON.stringify(get.data, null, 2)}</div>
+            <pre>{JSON.stringify(get.data, null, 2)}</pre>
             {/* Loading first time */}
             {get.isLoading && <div>Loading...</div>}
             {/* Loading second time and so on e.g. fetching full data */}

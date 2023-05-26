@@ -7,7 +7,7 @@ export function BlockComponentDemo(props: { blockNumber: number; fullData?: bool
     if (block.isLoading) return <span>Loading...</span>
     return (
         <div>
-            <Link href={`/block/${blockNumber}`}>{JSON.stringify(block.data)}</Link>
+            <Link href={`/block/${blockNumber}`}>📦 {JSON.stringify(block.data)}</Link>
         </div>
     )
 }

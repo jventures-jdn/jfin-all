@@ -1,4 +1,4 @@
-import { useBlockscoutStoreBlocks } from '../store/use-blockscout-store-blocks'
+import { useBlockscoutStoreBlocks } from '../store/blocks'
 import { useBlockscoutWebSocket } from '../websocket/use-blockscout-websocket'
 
 export function useBlockscout() {

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 import { blockScoutWebSocketRecord } from '../store/helpers'
-import { blockStoreClear } from '../store/use-blockscout-store-blocks'
 
 type BlockscoutWebSocketOptions = {
     socketUrl?: string
@@ -29,7 +28,6 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
     // Auto send message on open
     useEffect(() => {
         if (readyState === ReadyState.CONNECTING) {
-            // blockStoreClear()
         } else if (readyState === ReadyState.OPEN) {
             if (options?.newBlocks)
                 sendMessage(JSON.stringify(['12', '12', 'blocks:new_block', 'phx_join', {}]))

@@ -6,7 +6,7 @@ export class GraphQLFetcher {
             await new Promise(r => setTimeout(r, time || 1000))
     }
 
-    static async fetch<T>(query: any, parse: (response: any) => T) {
+    static async query<T>(query: any, parse: (response: any) => T) {
         console.log('🌏', 'query ===>', query)
         await this.simulateWait()
         const _fetch = await fetch(`https://exp.jfinchain.com/graphiql`, {

@@ -1,6 +1,7 @@
 import useSWR, { mutate } from 'swr'
 import { GraphQLFetcher } from '../fetcher/graphql-fetcher'
 import { Block } from '../types'
+import { GlobalApis } from '../apis/global-apis'
 
 const key = (blockNumber: number) => `blocks/${blockNumber}`
 
@@ -12,7 +13,7 @@ export function useBlockscoutStoreBlocks() {
     }
 }
 
-export function blockStoreGet(
+function blockStoreGet(
     blockNumber: number,
     options?: {
         fullData?: boolean
@@ -39,13 +40,17 @@ export function blockStoreGet(
 }
 
 const fullBlockFetcher = (blockNumber: number) => {
-    return GraphQLFetcher.fetch(
-        `{block(number: ${blockNumber}) { number, minerHash, gasUsed }}`,
+    return GraphQLFetcher.query(
+        `{block(number: ${blockNumber}) { number, hash, minerHash, difficulty, gasUsed, gasLimit }}`,
         response =>
             ({
                 block_number: response.data.block.number,
+                hash: response.data.block.hash,
                 miner_hash: response.data.block.minerHash,
+                difficulty: response.data.block.difficulty,
                 gas_used: response.data.block.gasUsed,
+                gas_limit: response.data.block.gasLimit,
+                // TODO: more fields?
                 is_full_data: true,
             } as Block),
     )
@@ -60,14 +65,23 @@ export function blockStoreSet(blockNumber: number, data: Partial<Block>) {
     mutate('blocks', { currentBlockNumber: blockNumber }, { revalidate: false })
 }
 
-export function blockStoreMeta() {
-    return useSWR('blocks', () => {}, {
+function blockStoreMeta() {
+    const existing = useSWR('blocks', () => {}, {
         revalidateOnMount: false,
         revalidateIfStale: false,
         revalidateOnFocus: false,
-    }).data as unknown as
+    })
+
+    const data = existing.data as unknown as
         | {
               currentBlockNumber: number
           }
         | undefined
+
+    // Initial Block for fast loading (currently not working)
+    // if (!data && !existing.isValidating) {
+    //     existing.mutate(GlobalApis.chainBlocks() as any, { revalidate: false })
+    // }
+
+    return data
 }
