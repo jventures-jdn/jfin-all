@@ -1,17 +1,15 @@
+import { RESTFetcher } from '../fetcher/rest-fetcher'
+
 export class GlobalApis {
     static async initialBlocks() {
-        const _fetch = await fetch(`https://exp.jfinchain.com/api/v2/main-page/blocks`, {
-            method: 'GET',
-        })
-        const json = await _fetch.json()
-        return json
+        return RESTFetcher.apiv2Get('/main-page/blocks')
+    }
+
+    static async initialTransactions() {
+        return RESTFetcher.apiv2Get('/main-page/transactions')
     }
 
     static async blocks() {
-        const _fetch = await fetch(`https://exp.jfinchain.com/api/v2/blocks`, {
-            method: 'GET',
-        })
-        const json = await _fetch.json()
-        return json
+        return RESTFetcher.apiv2Get('/blocks')
     }
 }
