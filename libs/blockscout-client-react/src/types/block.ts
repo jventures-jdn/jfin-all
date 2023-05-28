@@ -9,5 +9,6 @@ export type Block = {
     gas_limit: string
 
     // internal use
+    data_source: 'init' | 'ws' | 'fetch'
     is_full_data: boolean
 }

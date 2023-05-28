@@ -4,6 +4,7 @@ import { transactionStoreSet } from './transactions'
 export function blockScoutWebSocketRecord(data: any) {
     if (data[2] === 'blocks:new_block' && data[3] === 'new_block')
         blockStoreSet(data[4].block_number, {
+            data_source: 'ws',
             block_number: data[4].block_number,
             miner: data[4].block_miner_hash,
         })

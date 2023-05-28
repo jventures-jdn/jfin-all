@@ -10,13 +10,14 @@ const fullBlockFetcher = (blockNumber: number) => {
         `{block(number: ${blockNumber}) { number, hash, minerHash, difficulty, gasUsed, gasLimit }}`,
         response =>
             ({
+                data_source: 'fetch',
                 block_number: response.data.block.number,
                 hash: response.data.block.hash,
                 miner: response.data.block.minerHash,
                 difficulty: response.data.block.difficulty,
                 gas_used: response.data.block.gasUsed,
                 gas_limit: response.data.block.gasLimit,
-                // TODO: more fields?
+                // TODO: more fields
                 is_full_data: true,
             } as Block),
     )
@@ -25,7 +26,8 @@ const fullBlockFetcher = (blockNumber: number) => {
 export function useBlockscoutStoreBlocks() {
     return {
         get: blockStoreGet,
-        meta: blockStoreMeta,
+        initial: blockStoreInitial(),
+        meta: blockStoreMeta(),
     }
 }
 
@@ -61,24 +63,42 @@ export function blockStoreSet(blockNumber: number, data: Partial<Block>) {
         populateCache: (data, current) => ({ ...current, ...data }),
         revalidate: false,
     })
-    mutate('blocks', { currentBlockNumber: blockNumber }, { revalidate: false })
+    mutate('blocks-meta', { currentBlockNumber: blockNumber }, { revalidate: false })
 }
 
+function blockStoreInitial() {
+    return useSWR('initial-blocks', GlobalApis.initialBlocks, {
+        // revalidateOnMount: false,
+        revalidateIfStale: false,
+        revalidateOnFocus: false,
+        onSuccess: response => {
+            const items = response
+            items.forEach((item: any, index: number) => {
+                if (index < 10) {
+                    mutate(
+                        key(item.height),
+                        {
+                            data_source: 'init',
+                            block_number: item.height,
+                            hash: item.hash,
+                            miner: item.miner.hash,
+                            // TODO: more fields
+                            is_full_data: true,
+                        } as Block,
+                        { revalidate: false },
+                    )
+                }
+            })
+
+            const recent = items[0]
+            const { height: currentBlockNumber } = recent
+            mutate('blocks-meta', { currentBlockNumber }, { revalidate: false })
+        },
+    })
+}
 function blockStoreMeta() {
-    const existing = useSWR('blocks', () => {}, {
-        revalidateOnMount: false,
+    return useSWR('blocks-meta', null, {
         revalidateIfStale: false,
         revalidateOnFocus: false,
     })
-
-    const data = existing.data as unknown as {
-        currentBlockNumber?: number
-    }
-
-    // Initial Block for fast loading (currently not working)
-    // if (!data && !existing.isValidating) {
-    //     existing.mutate(GlobalApis.chainBlocks() as any, { revalidate: false })
-    // }
-
-    return data || {}
 }

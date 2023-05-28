@@ -1,7 +1,7 @@
 'use client'
 
-import { useBlockscout, ReadyState } from '@libs/blockscout-client-react'
-import { BlockComponentDemo, BlocksListComponentDemo } from '../components/block'
+import { useBlockscout } from '@libs/blockscout-client-react'
+import { BlocksListComponentDemo } from '../components/block'
 import { TransactionsListComponentDemo } from '../components/transaction'
 
 export default function HomePage() {
@@ -14,26 +14,23 @@ export default function HomePage() {
         // },
     })
 
-    // Get current block number
-    const { currentBlockNumber } = useBlockscout().blocks().meta()
-    const { latestTransactions } = useBlockscout().transactions().meta()
-    const { readyState } = ws
+    const { connectionStatus } = ws
+    const { initial } = useBlockscout().blocks()
 
     return (
         <div>
-            {readyState === ReadyState.CONNECTING && <div>Connecting...</div>}
-            {readyState === ReadyState.OPEN && !currentBlockNumber && <div>Waiting Data</div>}
+            <div>Initial Blocks : {initial.isLoading ? 'Loading...' : 'Loaded'}</div>
+            <div>Web Socket Status: {connectionStatus}</div>
+            <br />
 
-            {currentBlockNumber && (
-                <>
-                    <div>
-                        Blocks : <BlocksListComponentDemo count={6} />
-                    </div>
-                    <div>
-                        Transactions : <TransactionsListComponentDemo count={6} />
-                    </div>
-                </>
-            )}
+            <div>
+                Blocks : <BlocksListComponentDemo count={4} />
+            </div>
+            <br />
+
+            <div>
+                Transactions : <TransactionsListComponentDemo count={6} />
+            </div>
         </div>
     )
 }
