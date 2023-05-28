@@ -15,11 +15,15 @@ export default function HomePage() {
     })
 
     const { connectionStatus } = ws
-    const { initial } = useBlockscout().blocks()
+    const initialBlocks = useBlockscout().blocks().initial()
+    const initialTransactions = useBlockscout().transactions().initial()
 
     return (
         <div>
-            <div>Initial Blocks : {initial.isLoading ? 'Loading...' : 'Loaded'}</div>
+            <div>Initial Blocks : {initialBlocks.isLoading ? 'Loading...' : 'Loaded'}</div>
+            <div>
+                Initial Transactions : {initialTransactions.isLoading ? 'Loading...' : 'Loaded'}
+            </div>
             <div>Web Socket Status: {connectionStatus}</div>
             <br />
 

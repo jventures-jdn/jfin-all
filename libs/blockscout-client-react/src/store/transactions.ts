@@ -1,16 +1,21 @@
 import useSWR, { mutate } from 'swr'
-import { GraphQLFetcher } from '../fetcher/graphql-fetcher'
+import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { Transaction } from '../types'
+import { GlobalApis } from '../apis/global-apis'
 
 const key = (transactionHash: string) => `transactions/${transactionHash}`
 
-const fullTransactionFetcher = (transactionHash: string) => {
-    return GraphQLFetcher.query(
-        `{transaction(hash: "${transactionHash}") { hash }}`,
+// Fetch transaction data from api
+const _fullTransactionFetcher = (transactionHash: string) => {
+    return RESTFetcher.apiv2Get(
+        `/transactions/${transactionHash}`,
         response =>
             ({
-                hash: response.data.transaction.hash,
-                // TODO: more fields?
+                // Parse response from api
+                data_source: 'fetch',
+                hash: response.hash,
+                block_number: response.block,
+                // TODO: more fields
                 is_full_data: true,
             } as Transaction),
     )
@@ -18,18 +23,19 @@ const fullTransactionFetcher = (transactionHash: string) => {
 
 export function useBlockscoutStoreTransactions() {
     return {
-        get: transactionStoreGet,
-        meta: transacitonStoreMeta,
+        get: _transactionStoreGet,
+        initial: _transactionStoreInitial,
+        meta: _transacitonStoreMeta,
     }
 }
 
-function transactionStoreGet(
+function _transactionStoreGet(
     transactionHash: string,
     options?: {
         fullData?: boolean
     },
 ) {
-    const existing = useSWR(key(transactionHash), () => fullTransactionFetcher(transactionHash), {
+    const existing = useSWR(key(transactionHash), () => _fullTransactionFetcher(transactionHash), {
         // will not fetch when mounted but data already exist
         revalidateIfStale: false,
         // will not fetch when window focused
@@ -49,35 +55,64 @@ function transactionStoreGet(
     return existing
 }
 
-// For updating scrape transaction data from Websocket
-export function transactionStoreSet(transactionHash: string, data: Partial<Transaction>) {
-    mutate(key(transactionHash), data, {
+// Handle new data from web socket
+export function transactionWebSocketRecord(data: any) {
+    const txHash = data[4].transaction_hash
+    const parsedData = {
+        data_source: 'ws',
+        hash: txHash,
+    }
+    mutate(key(txHash), parsedData, {
         populateCache: (data, current) => ({ ...current, ...data }),
         revalidate: false,
     })
+    _updateTransactionMeta(txHash)
+}
 
+// Internal helper to push new transaction hash to global meta store
+function _updateTransactionMeta(newTransactionHash: string) {
     mutate(
-        'transactions',
+        'transactions-meta',
         (existing: any) => {
             const txs = existing
-                ? [transactionHash, ...existing.latestTransactions].slice(0, 100)
-                : [transactionHash]
+                ? [newTransactionHash, ...existing.latestTransactions].slice(0, 100)
+                : [newTransactionHash]
             return { latestTransactions: txs }
         },
         { revalidate: false },
     )
 }
 
-function transacitonStoreMeta() {
-    const existing = useSWR('transactions', () => {}, {
-        revalidateOnMount: false,
+// Initial transactions loading
+function _transactionStoreInitial() {
+    return useSWR('initial-transactions', GlobalApis.initialTransactions, {
+        revalidateIfStale: false,
+        revalidateOnFocus: false,
+        onSuccess: response => {
+            const items = response
+            items.forEach((item: any, index: number) => {
+                if (index < 10) {
+                    mutate(
+                        key(item.hash),
+                        {
+                            data_source: 'init',
+                            hash: item.hash,
+                            // TODO: more fields
+                            is_full_data: true,
+                        } as Transaction,
+                        { revalidate: false },
+                    )
+                    _updateTransactionMeta(item.hash)
+                }
+            })
+        },
+    })
+}
+
+// Global transactions state
+function _transacitonStoreMeta() {
+    return useSWR('transactions-meta', null, {
         revalidateIfStale: false,
         revalidateOnFocus: false,
     })
-
-    const data = existing.data as unknown as {
-        latestTransactions?: string[]
-    }
-
-    return data || {}
 }

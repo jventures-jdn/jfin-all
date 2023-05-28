@@ -13,11 +13,11 @@ export function TransactionComponentDemo(props: { transactionHash: string; fullD
 }
 
 export function TransactionsListComponentDemo(props: { count: number }) {
-    const { latestTransactions } = useBlockscout().transactions().meta()
+    const latestTransactions = useBlockscout().transactions().meta().data?.latestTransactions
     if (!latestTransactions) return null
     return (
         <div>
-            {latestTransactions.slice(0, props.count).map((txHash, index) => (
+            {latestTransactions.slice(0, props.count).map((txHash: string, index: number) => (
                 <div key={index}>
                     <TransactionComponentDemo transactionHash={txHash} />
                 </div>

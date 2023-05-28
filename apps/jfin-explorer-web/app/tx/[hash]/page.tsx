@@ -4,14 +4,11 @@ import { useBlockscout } from '@libs/blockscout-client-react'
 import { useParams } from 'next/navigation'
 
 export default function TransactionPage() {
-    // Hook
-    const transactions = useBlockscout().transactions()
-
     // Get block number from url
     const { hash } = useParams()
 
     // Get full transaction data
-    const get = transactions.get(hash, { fullData: true })
+    const get = useBlockscout().transactions().get(hash, { fullData: true })
 
     return (
         <div>

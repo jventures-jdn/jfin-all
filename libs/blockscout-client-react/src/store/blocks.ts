@@ -1,22 +1,24 @@
 import useSWR, { mutate } from 'swr'
-import { GraphQLFetcher } from '../fetcher/graphql-fetcher'
+import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { Block } from '../types'
 import { GlobalApis } from '../apis/global-apis'
 
 const key = (blockNumber: number) => `blocks/${blockNumber}`
 
-const fullBlockFetcher = (blockNumber: number) => {
-    return GraphQLFetcher.query(
-        `{block(number: ${blockNumber}) { number, hash, minerHash, difficulty, gasUsed, gasLimit }}`,
+// Fetch block data from api
+const _fullBlockFetcher = (blockNumber: number) => {
+    return RESTFetcher.apiv2Get(
+        `/blocks/${blockNumber}`,
         response =>
             ({
+                // Parse response from api
                 data_source: 'fetch',
-                block_number: response.data.block.number,
-                hash: response.data.block.hash,
-                miner: response.data.block.minerHash,
-                difficulty: response.data.block.difficulty,
-                gas_used: response.data.block.gasUsed,
-                gas_limit: response.data.block.gasLimit,
+                block_number: response.height,
+                hash: response.hash,
+                miner: response.miner.hash,
+                difficulty: response.difficulty,
+                gas_used: response.gas_used,
+                gas_limit: response.gas_limit,
                 // TODO: more fields
                 is_full_data: true,
             } as Block),
@@ -25,19 +27,19 @@ const fullBlockFetcher = (blockNumber: number) => {
 
 export function useBlockscoutStoreBlocks() {
     return {
-        get: blockStoreGet,
-        initial: blockStoreInitial(),
-        meta: blockStoreMeta(),
+        get: _blockStoreGet,
+        initial: _blockStoreInitial,
+        meta: _blockStoreMeta,
     }
 }
 
-function blockStoreGet(
+function _blockStoreGet(
     blockNumber: number,
     options?: {
         fullData?: boolean
     },
 ) {
-    const existing = useSWR(key(blockNumber), () => fullBlockFetcher(blockNumber), {
+    const existing = useSWR(key(blockNumber), () => _fullBlockFetcher(blockNumber), {
         // will not fetch when mounted but data already exist
         revalidateIfStale: false,
         // will not fetch when window focused
@@ -66,9 +68,9 @@ export function blockStoreSet(blockNumber: number, data: Partial<Block>) {
     mutate('blocks-meta', { currentBlockNumber: blockNumber }, { revalidate: false })
 }
 
-function blockStoreInitial() {
+// Initial blocks loading
+function _blockStoreInitial() {
     return useSWR('initial-blocks', GlobalApis.initialBlocks, {
-        // revalidateOnMount: false,
         revalidateIfStale: false,
         revalidateOnFocus: false,
         onSuccess: response => {
@@ -96,9 +98,20 @@ function blockStoreInitial() {
         },
     })
 }
-function blockStoreMeta() {
+
+// Global blocks state
+function _blockStoreMeta() {
     return useSWR('blocks-meta', null, {
         revalidateIfStale: false,
         revalidateOnFocus: false,
+    })
+}
+
+// Handle new data from web socket
+export function blockWebSocketRecord(data: any) {
+    blockStoreSet(data[4].block_number, {
+        data_source: 'ws',
+        block_number: data[4].block_number,
+        miner: data[4].block_miner_hash,
     })
 }
