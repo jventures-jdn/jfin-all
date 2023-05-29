@@ -10,26 +10,26 @@
     "lint": "run"
   },
   "dependencies": {
-    "@libs/blockscout-client-react": "workspace:*",
     "@chakra-ui/react": "2.6.1",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
+    "@libs/blockscout-client-react": "workspace:*",
     "@utils/app-nextjs": "workspace:*",
     "@utils/global-config": "workspace:*",
     "@utils/js-utilities": "workspace:*",
-    "framer-motion": "^10.12.14",
-    "next": "13.4.3",
+    "framer-motion": "^10.12.16",
+    "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-icons": "^4.8.0"
+    "react-icons": "^4.9.0"
   },
   "devDependencies": {
     "@config/eslint-next": "workspace:*",
     "@config/postcss": "workspace:*",
     "@config/tailwind": "workspace:*",
     "@config/typescript": "workspace:*",
-    "@types/node": "20.2.3",
-    "@types/react": "18.2.6",
+    "@types/node": "20.2.5",
+    "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",
     "@types/react-no-ssr": "^1.1.3",
     "@utils/cloud-deployer": "workspace:*",

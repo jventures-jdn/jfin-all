@@ -4,8 +4,8 @@
     "@utils/js-utilities": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "20.2.3",
     "@config/typescript": "workspace:*",
+    "@types/node": "20.2.5",
     "typescript": "5.0.4"
   }
 }

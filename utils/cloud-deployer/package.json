@@ -5,7 +5,7 @@
   },
   "devDependencies": {
     "@config/typescript": "workspace:*",
-    "@types/node": "20.2.3",
+    "@types/node": "20.2.5",
     "@utils/global-config": "workspace:*",
     "ts-node": "10.9.1",
     "typescript": "5.0.4"

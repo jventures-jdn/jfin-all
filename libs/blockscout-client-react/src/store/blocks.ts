@@ -1,4 +1,5 @@
-import useSWR, { mutate } from 'swr'
+import { mutate } from 'swr'
+import useSWR from 'swr/immutable'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { Block } from '../types'
 import { GlobalApis } from '../apis/global-apis'
@@ -31,12 +32,7 @@ function _blockStoreGet(
         scrape?: boolean
     },
 ) {
-    const existing = useSWR(key(blockNumber), () => _fullBlockFetcher(blockNumber), {
-        // will not fetch when mounted but data already exist
-        revalidateIfStale: false,
-        // will not fetch when window focused
-        revalidateOnFocus: false,
-    })
+    const existing = useSWR(key(blockNumber), () => _fullBlockFetcher(blockNumber))
 
     // force fetch if full data is required and not yet presented
     if (
@@ -58,20 +54,25 @@ export function blockStoreSet(blockNumber: number, data: Partial<Block>) {
         populateCache: (data, current) => ({ ...current, ...data }),
         revalidate: false,
     })
-    mutate('blocks-meta', { currentBlockNumber: blockNumber }, { revalidate: false })
+    _updateBlockMeta(blockNumber)
+}
+
+// Internal helper to update latest block number
+function _updateBlockMeta(blockNumber: number) {
+    mutate('blocks-meta', { currentBlockNumber: blockNumber })
 }
 
 // Initial blocks loading
 function _blockStoreInitial() {
-    // auto clear on mount
+    // auto clear on unmount
     useEffect(() => {
-        mutate('initial-blocks', undefined)
-        mutate('blocks-meta', undefined)
+        return () => {
+            mutate('initial-blocks', undefined)
+            mutate('blocks-meta', undefined)
+        }
     }, [])
 
     return useSWR('initial-blocks', GlobalApis.initialBlocks, {
-        revalidateIfStale: false,
-        revalidateOnFocus: false,
         onSuccess: response => {
             const items = response
             items.forEach((item: any, index: number) => {
@@ -84,19 +85,14 @@ function _blockStoreInitial() {
             })
 
             // update meta e.g. current block number
-            const recent = items[0]
-            const { height: currentBlockNumber } = recent
-            mutate('blocks-meta', { currentBlockNumber }, { revalidate: false })
+            _updateBlockMeta(items[0].height)
         },
     })
 }
 
 // Global blocks state
 function _blockStoreMeta() {
-    return useSWR('blocks-meta', null, {
-        revalidateIfStale: false,
-        revalidateOnFocus: false,
-    })
+    return useSWR('blocks-meta', null)
 }
 
 // Handle new data from web socket

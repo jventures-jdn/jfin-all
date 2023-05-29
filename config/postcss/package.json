@@ -2,6 +2,6 @@
   "name": "@config/postcss",
   "main": "index.js",
   "dependencies": {
-    "postcss": "^8.4.23"
+    "postcss": "^8.4.24"
   }
 }

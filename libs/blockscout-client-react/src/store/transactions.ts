@@ -1,4 +1,5 @@
-import useSWR, { mutate } from 'swr'
+import { mutate } from 'swr'
+import useSWR from 'swr/immutable'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { Transaction } from '../types'
 import { GlobalApis } from '../apis/global-apis'
@@ -31,12 +32,7 @@ function _transactionStoreGet(
         scrape?: boolean
     },
 ) {
-    const existing = useSWR(key(transactionHash), () => _fullTransactionFetcher(transactionHash), {
-        // will not fetch when mounted but data already exist
-        revalidateIfStale: false,
-        // will not fetch when window focused
-        revalidateOnFocus: false,
-    })
+    const existing = useSWR(key(transactionHash), () => _fullTransactionFetcher(transactionHash))
 
     // force fetch if full data is required and not yet presented
     if (
@@ -68,29 +64,25 @@ export function transactionWebSocketRecord(data: any) {
 
 // Internal helper to push new transaction hash to global meta store
 function _updateTransactionMeta(newTransactionHash: string) {
-    mutate(
-        'transactions-meta',
-        (existing: any) => {
-            const txs = existing
-                ? [newTransactionHash, ...existing.latestTransactions].slice(0, 100)
-                : [newTransactionHash]
-            return { latestTransactions: txs }
-        },
-        { revalidate: false },
-    )
+    mutate('transactions-meta', (existing: any) => {
+        const txs = existing
+            ? [newTransactionHash, ...existing.latestTransactions].slice(0, 100)
+            : [newTransactionHash]
+        return { latestTransactions: txs }
+    })
 }
 
 // Initial transactions loading
 function _transactionStoreInitial() {
-    // auto clear on mount
+    // auto clear on unmount
     useEffect(() => {
-        mutate('initial-transactions', undefined)
-        mutate('transactions-meta', undefined)
+        return () => {
+            mutate('initial-transactions', undefined)
+            mutate('transactions-meta', undefined)
+        }
     }, [])
 
     return useSWR('initial-transactions', GlobalApis.initialTransactions, {
-        revalidateIfStale: false,
-        revalidateOnFocus: false,
         onSuccess: response => {
             // iterate through respond transactions
             const items = response
@@ -110,10 +102,7 @@ function _transactionStoreInitial() {
 
 // Global transactions state
 function _transacitonStoreMeta() {
-    return useSWR('transactions-meta', null, {
-        revalidateIfStale: false,
-        revalidateOnFocus: false,
-    })
+    return useSWR('transactions-meta', null)
 }
 
 // Format data from api response (both init and fetch)

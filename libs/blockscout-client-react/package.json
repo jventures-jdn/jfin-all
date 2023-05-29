@@ -9,8 +9,8 @@
   },
   "devDependencies": {
     "@config/typescript": "workspace:*",
-    "@types/node": "20.2.3",
-    "@types/react": "18.2.6",
+    "@types/node": "20.2.5",
+    "@types/react": "18.2.7",
     "@utils/package-command": "workspace:*",
     "typescript": "5.0.4"
   }
