@@ -1,5 +1,5 @@
-import { blockWebSocketRecord } from './blocks'
-import { transactionWebSocketRecord } from './transactions'
+import { blockStoreInitialClear, blockWebSocketRecord } from './blocks'
+import { transactionStoreInitialClear, transactionWebSocketRecord } from './transactions'
 
 // Handle new data from web socket
 export function blockScoutWebSocketRecord(data: any) {
@@ -8,4 +8,10 @@ export function blockScoutWebSocketRecord(data: any) {
     } else if (data[2] === 'transactions:new_transaction' && data[3] === 'transaction') {
         transactionWebSocketRecord(data)
     }
+}
+
+// Handle when websocket just closed
+export function clearInitialData() {
+    blockStoreInitialClear()
+    transactionStoreInitialClear()
 }

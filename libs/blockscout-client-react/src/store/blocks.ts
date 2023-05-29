@@ -66,10 +66,7 @@ function _updateBlockMeta(blockNumber: number) {
 function _blockStoreInitial() {
     // auto clear on unmount
     useEffect(() => {
-        return () => {
-            mutate('initial-blocks', undefined)
-            mutate('blocks-meta', undefined)
-        }
+        return blockStoreInitialClear
     }, [])
 
     return useSWR('initial-blocks', GlobalApis.initialBlocks, {
@@ -88,6 +85,11 @@ function _blockStoreInitial() {
             _updateBlockMeta(items[0].height)
         },
     })
+}
+
+export function blockStoreInitialClear() {
+    mutate('initial-blocks', undefined)
+    mutate('blocks-meta', undefined)
 }
 
 // Global blocks state

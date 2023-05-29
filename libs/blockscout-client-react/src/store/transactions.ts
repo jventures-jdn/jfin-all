@@ -76,10 +76,7 @@ function _updateTransactionMeta(newTransactionHash: string) {
 function _transactionStoreInitial() {
     // auto clear on unmount
     useEffect(() => {
-        return () => {
-            mutate('initial-transactions', undefined)
-            mutate('transactions-meta', undefined)
-        }
+        return transactionStoreInitialClear
     }, [])
 
     return useSWR('initial-transactions', GlobalApis.initialTransactions, {
@@ -98,6 +95,11 @@ function _transactionStoreInitial() {
             })
         },
     })
+}
+
+export function transactionStoreInitialClear() {
+    mutate('initial-transactions', undefined)
+    mutate('transactions-meta', undefined)
 }
 
 // Global transactions state

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
-import { blockScoutWebSocketRecord } from '../store/helpers'
+import { blockScoutWebSocketRecord, clearInitialData } from '../store/helpers'
 
 type BlockscoutWebSocketOptions = {
     socketUrl?: string
@@ -15,8 +15,12 @@ const defaultOptions = {
 
 export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
     const [socketUrl, setSocketUrl] = useState(options?.socketUrl || defaultOptions.socketUrl)
-    // TODO: handle socket url change
-    const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl)
+
+    const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+        shouldReconnect: closeEvent => true,
+        reconnectAttempts: 10,
+        reconnectInterval: attemptNumber => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
+    })
 
     useEffect(() => {
         if (lastMessage !== null) {
@@ -28,7 +32,8 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
 
     // Auto send message on open
     useEffect(() => {
-        if (readyState === ReadyState.CONNECTING) {
+        if (readyState === ReadyState.CLOSED) {
+            clearInitialData()
         } else if (readyState === ReadyState.OPEN) {
             if (options?.newBlocks)
                 sendMessage(JSON.stringify(['12', '12', 'blocks:new_block', 'phx_join', {}]))
