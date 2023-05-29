@@ -1,9 +1,9 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
 import Link from 'next/link'
 
-export function BlockComponentDemo(props: { blockNumber: number; fullData?: boolean }) {
-    const { blockNumber, fullData } = props
-    const block = useBlockscout().blocks().get(blockNumber, { fullData })
+export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolean }) {
+    const { blockNumber, scrape } = props
+    const block = useBlockscout().blocks().get(blockNumber, { scrape })
     if (block.isLoading) return <span>Loading...</span>
     return (
         <div>
@@ -19,7 +19,7 @@ export function BlocksListComponentDemo(props: { count: number }) {
         <div>
             {Array.from(Array(props.count)).map((val, index) => (
                 <div key={index}>
-                    <BlockComponentDemo blockNumber={currentBlockNumber - index} />
+                    <BlockComponentDemo blockNumber={currentBlockNumber - index} scrape />
                 </div>
             ))}
         </div>

@@ -5,26 +5,7 @@ import { GlobalApis } from '../apis/global-apis'
 
 const key = (blockNumber: number) => `blocks/${blockNumber}`
 
-// Fetch block data from api
-const _fullBlockFetcher = (blockNumber: number) => {
-    return RESTFetcher.apiv2Get(
-        `/blocks/${blockNumber}`,
-        response =>
-            ({
-                // Parse response from api
-                data_source: 'fetch',
-                block_number: response.height,
-                hash: response.hash,
-                miner: response.miner.hash,
-                difficulty: response.difficulty,
-                gas_used: response.gas_used,
-                gas_limit: response.gas_limit,
-                // TODO: more fields
-                is_full_data: true,
-            } as Block),
-    )
-}
-
+// Root hook
 export function useBlockscoutStoreBlocks() {
     return {
         get: _blockStoreGet,
@@ -33,10 +14,20 @@ export function useBlockscoutStoreBlocks() {
     }
 }
 
+// Fetch block data from api
+const _fullBlockFetcher = (blockNumber: number) => {
+    return RESTFetcher.apiv2Get(
+        `/blocks/${blockNumber}`,
+        // convert blcok data to our format
+        item => _formatFullData(item, 'fetch'),
+    )
+}
+
+// Individual block state
 function _blockStoreGet(
     blockNumber: number,
     options?: {
-        fullData?: boolean
+        scrape?: boolean
     },
 ) {
     const existing = useSWR(key(blockNumber), () => _fullBlockFetcher(blockNumber), {
@@ -46,13 +37,14 @@ function _blockStoreGet(
         revalidateOnFocus: false,
     })
 
-    // force fetch if fullData is required and not yet presented
+    // force fetch if full data is required and not yet presented
     if (
-        options?.fullData &&
+        !options?.scrape &&
         existing.data &&
         !existing.data.is_full_data &&
         !existing.isValidating
     ) {
+        // clear cache so that full block data is auto fetched
         existing.mutate(undefined, { revalidate: true, populateCache: false })
     }
 
@@ -77,21 +69,14 @@ function _blockStoreInitial() {
             const items = response
             items.forEach((item: any, index: number) => {
                 if (index < 10) {
-                    mutate(
-                        key(item.height),
-                        {
-                            data_source: 'init',
-                            block_number: item.height,
-                            hash: item.hash,
-                            miner: item.miner.hash,
-                            // TODO: more fields
-                            is_full_data: true,
-                        } as Block,
-                        { revalidate: false },
-                    )
+                    // convert block data to our format
+                    const parsed = _formatFullData(item, 'init')
+                    // write individual block data to cache
+                    mutate(key(item.height), parsed, { revalidate: false })
                 }
             })
 
+            // update meta e.g. current block number
             const recent = items[0]
             const { height: currentBlockNumber } = recent
             mutate('blocks-meta', { currentBlockNumber }, { revalidate: false })
@@ -114,4 +99,19 @@ export function blockWebSocketRecord(data: any) {
         block_number: data[4].block_number,
         miner: data[4].block_miner_hash,
     })
+}
+
+// Format data from api response (both init and fetch)
+function _formatFullData(item: any, from: Block['data_source']) {
+    return {
+        data_source: from,
+        block_number: item.height,
+        hash: item.hash,
+        miner: item.miner.hash,
+        difficulty: item.difficulty,
+        gas_used: item.gas_used,
+        gas_limit: item.gas_limit,
+        // TODO: more fields
+        is_full_data: true,
+    } as Block
 }

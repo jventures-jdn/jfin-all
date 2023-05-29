@@ -16,7 +16,7 @@ export default function BlockPage() {
     if (!blockNumber) return <div>Invalid block number</div>
 
     // Get full block data
-    const get = blocks.get(blockNumber, { fullData: true })
+    const get = blocks.get(blockNumber)
 
     return (
         <div>

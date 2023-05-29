@@ -1,9 +1,9 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
 import Link from 'next/link'
 
-export function TransactionComponentDemo(props: { transactionHash: string; fullData?: boolean }) {
-    const { transactionHash, fullData } = props
-    const tx = useBlockscout().transactions().get(transactionHash, { fullData })
+export function TransactionComponentDemo(props: { transactionHash: string; scrape?: boolean }) {
+    const { transactionHash, scrape } = props
+    const tx = useBlockscout().transactions().get(transactionHash, { scrape })
     if (tx.isLoading) return <span>Loading...</span>
     return (
         <div>
@@ -19,7 +19,7 @@ export function TransactionsListComponentDemo(props: { count: number }) {
         <div>
             {latestTransactions.slice(0, props.count).map((txHash: string, index: number) => (
                 <div key={index}>
-                    <TransactionComponentDemo transactionHash={txHash} />
+                    <TransactionComponentDemo transactionHash={txHash} scrape />
                 </div>
             ))}
         </div>

@@ -5,22 +5,7 @@ import { GlobalApis } from '../apis/global-apis'
 
 const key = (transactionHash: string) => `transactions/${transactionHash}`
 
-// Fetch transaction data from api
-const _fullTransactionFetcher = (transactionHash: string) => {
-    return RESTFetcher.apiv2Get(
-        `/transactions/${transactionHash}`,
-        response =>
-            ({
-                // Parse response from api
-                data_source: 'fetch',
-                hash: response.hash,
-                block_number: response.block,
-                // TODO: more fields
-                is_full_data: true,
-            } as Transaction),
-    )
-}
-
+// Root hook
 export function useBlockscoutStoreTransactions() {
     return {
         get: _transactionStoreGet,
@@ -29,10 +14,20 @@ export function useBlockscoutStoreTransactions() {
     }
 }
 
+// Fetch transaction data from api
+const _fullTransactionFetcher = (transactionHash: string) => {
+    return RESTFetcher.apiv2Get(
+        `/transactions/${transactionHash}`,
+        // convert transaction data to our format
+        item => _formatFullData(item, 'fetch'),
+    )
+}
+
+// Individual transaction state
 function _transactionStoreGet(
     transactionHash: string,
     options?: {
-        fullData?: boolean
+        scrape?: boolean
     },
 ) {
     const existing = useSWR(key(transactionHash), () => _fullTransactionFetcher(transactionHash), {
@@ -42,13 +37,14 @@ function _transactionStoreGet(
         revalidateOnFocus: false,
     })
 
-    // force fetch if fullData is required and not yet presented
+    // force fetch if full data is required and not yet presented
     if (
-        options?.fullData &&
+        !options?.scrape &&
         existing.data &&
         !existing.data.is_full_data &&
         !existing.isValidating
     ) {
+        // clear cache so that full transaction data is auto fetched
         existing.mutate(undefined, { revalidate: true, populateCache: false })
     }
 
@@ -89,19 +85,15 @@ function _transactionStoreInitial() {
         revalidateIfStale: false,
         revalidateOnFocus: false,
         onSuccess: response => {
+            // iterate through respond transactions
             const items = response
             items.forEach((item: any, index: number) => {
                 if (index < 10) {
-                    mutate(
-                        key(item.hash),
-                        {
-                            data_source: 'init',
-                            hash: item.hash,
-                            // TODO: more fields
-                            is_full_data: true,
-                        } as Transaction,
-                        { revalidate: false },
-                    )
+                    // convert transaction data to our format
+                    const parsed = _formatFullData(item, 'init')
+                    // write individual transaction data to cache
+                    mutate(key(item.hash), parsed, { revalidate: false })
+                    // update meta e.g. latest transactions
                     _updateTransactionMeta(item.hash)
                 }
             })
@@ -115,4 +107,15 @@ function _transacitonStoreMeta() {
         revalidateIfStale: false,
         revalidateOnFocus: false,
     })
+}
+
+// Format data from api response (both init and fetch)
+function _formatFullData(item: any, from: Transaction['data_source']) {
+    return {
+        data_source: from,
+        hash: item.hash,
+        block_number: item.block,
+        // TODO: more fields
+        is_full_data: true,
+    } as Transaction
 }
