@@ -2,6 +2,7 @@ import useSWR, { mutate } from 'swr'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { Block } from '../types'
 import { GlobalApis } from '../apis/global-apis'
+import { useEffect } from 'react'
 
 const key = (blockNumber: number) => `blocks/${blockNumber}`
 
@@ -62,6 +63,12 @@ export function blockStoreSet(blockNumber: number, data: Partial<Block>) {
 
 // Initial blocks loading
 function _blockStoreInitial() {
+    // auto clear on mount
+    useEffect(() => {
+        mutate('initial-blocks', undefined)
+        mutate('blocks-meta', undefined)
+    }, [])
+
     return useSWR('initial-blocks', GlobalApis.initialBlocks, {
         revalidateIfStale: false,
         revalidateOnFocus: false,

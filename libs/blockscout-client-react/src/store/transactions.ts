@@ -2,6 +2,7 @@ import useSWR, { mutate } from 'swr'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { Transaction } from '../types'
 import { GlobalApis } from '../apis/global-apis'
+import { useEffect } from 'react'
 
 const key = (transactionHash: string) => `transactions/${transactionHash}`
 
@@ -81,6 +82,12 @@ function _updateTransactionMeta(newTransactionHash: string) {
 
 // Initial transactions loading
 function _transactionStoreInitial() {
+    // auto clear on mount
+    useEffect(() => {
+        mutate('initial-transactions', undefined)
+        mutate('transactions-meta', undefined)
+    }, [])
+
     return useSWR('initial-transactions', GlobalApis.initialTransactions, {
         revalidateIfStale: false,
         revalidateOnFocus: false,
