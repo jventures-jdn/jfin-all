@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 export function TransactionComponentDemo(props: { transactionHash: string; scrape?: boolean }) {
     const { transactionHash, scrape } = props
+    // Get transaction data, this will auto fetch if data not exist
     const tx = useBlockscout().transactions().get(transactionHash, { scrape })
     if (tx.isLoading) return <span>Loading...</span>
     return (
@@ -13,6 +14,9 @@ export function TransactionComponentDemo(props: { transactionHash: string; scrap
 }
 
 export function TransactionsListComponentDemo(props: { count: number }) {
+    // Auto fetch initial transactions
+    useBlockscout().transactions().initial()
+    // look for latest transactions
     const latestTransactions = useBlockscout().transactions().meta().data?.latestTransactions
     if (!latestTransactions) return null
     return (

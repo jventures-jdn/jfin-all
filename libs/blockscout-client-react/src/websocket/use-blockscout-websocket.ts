@@ -4,7 +4,9 @@ import { blockScoutWebSocketRecord, clearInitialData } from '../store/helpers'
 
 type BlockscoutWebSocketOptions = {
     socketUrl?: string
+    /** Receive new block messages */
     newBlocks?: any
+    /** Receive new transaction messages */
     newTransactions?: any
     onMessageReceived?: (data: any, rawMessage: MessageEvent) => void
 }
@@ -14,14 +16,21 @@ const defaultOptions = {
 }
 
 export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
-    const [socketUrl, setSocketUrl] = useState(options?.socketUrl || defaultOptions.socketUrl)
+    // Socket url
+    const [socketUrl] = useState(options?.socketUrl || defaultOptions.socketUrl)
 
-    const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
-        shouldReconnect: closeEvent => true,
-        reconnectAttempts: 10,
-        reconnectInterval: attemptNumber => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
-    })
+    // WebSocket hook
+    const { sendMessage, lastMessage, readyState } = useWebSocket(
+        socketUrl,
+        // Reconnection settings
+        {
+            shouldReconnect: closeEvent => true,
+            reconnectAttempts: 10,
+            reconnectInterval: attemptNumber => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
+        },
+    )
 
+    // Handle when new message received
     useEffect(() => {
         if (lastMessage !== null) {
             const data = JSON.parse(lastMessage.data)
@@ -30,11 +39,14 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
         }
     }, [lastMessage])
 
-    // Auto send message on open
+    // Handle when connection state changed
     useEffect(() => {
         if (readyState === ReadyState.CLOSED) {
+            // Auto clear initial data when connection closed
+            // (So that new data is auto fetched when reconnected)
             clearInitialData()
         } else if (readyState === ReadyState.OPEN) {
+            // Auto send message on open
             if (options?.newBlocks)
                 sendMessage(JSON.stringify(['12', '12', 'blocks:new_block', 'phx_join', {}]))
             if (options?.newTransactions)
@@ -44,6 +56,7 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
         }
     }, [readyState])
 
+    // Map connection state to readable text, useful for debugging
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
         [ReadyState.OPEN]: 'Open',
