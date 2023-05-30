@@ -8,10 +8,9 @@ import { useEffect } from 'react'
 const key = (blockNumber: number) => `blocks/${blockNumber}`
 
 // Root hook
-export function useBlockscoutStoreBlocks() {
+export function useBlockscoutBlocks() {
     return {
         get: _blockStoreGet,
-        initial: _blockStoreInitial,
         meta: _blockStoreMeta,
     }
 }
@@ -48,15 +47,6 @@ function _blockStoreGet(
     return existing
 }
 
-// For updating scrape block data from Websocket
-export function blockStoreSet(blockNumber: number, data: Partial<Block>) {
-    mutate(key(blockNumber), data, {
-        populateCache: (data, current) => ({ ...current, ...data }),
-        revalidate: false,
-    })
-    _updateBlockMeta(blockNumber)
-}
-
 // Internal helper to update latest block number
 function _updateBlockMeta(blockNumber: number) {
     mutate('blocks-meta', { currentBlockNumber: blockNumber })
@@ -69,6 +59,7 @@ function _blockStoreInitial() {
         return blockStoreInitialClear
     }, [])
 
+    // Fetch initial blocks when mounted
     return useSWR('initial-blocks', GlobalApis.initialBlocks, {
         onSuccess: response => {
             const items = response
@@ -94,16 +85,27 @@ export function blockStoreInitialClear() {
 
 // Global blocks state
 function _blockStoreMeta() {
-    return useSWR('blocks-meta', null)
+    // Auto fetch initial blocks
+    _blockStoreInitial()
+    return useSWR('blocks-meta', null).data || {}
 }
 
-// Handle new data from web socket
+// Handle new scrape block data from web socket
 export function blockWebSocketRecord(data: any) {
-    blockStoreSet(data[4].block_number, {
+    const blockNumber = data[4].block_number
+    const blockData = {
         data_source: 'ws',
         block_number: data[4].block_number,
         miner: data[4].block_miner_hash,
+    } as Block
+
+    mutate(key(blockNumber), blockData, {
+        // merge with existing data if exist
+        populateCache: (data, current) => ({ ...current, ...data }),
+        revalidate: false,
     })
+
+    _updateBlockMeta(blockNumber)
 }
 
 // Format data from api response (both init and fetch)

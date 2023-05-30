@@ -14,18 +14,16 @@ export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolea
 }
 
 export function BlocksListComponentDemo(props: { count: number }) {
-    // Auto fetch initial blocks
-    useBlockscout().blocks().initial()
     // Look for current block number
-    const currentBlockNumber = useBlockscout().blocks().meta().data?.currentBlockNumber
-    if (!currentBlockNumber) return null
+    const { currentBlockNumber } = useBlockscout().blocks().meta()
     return (
         <div>
-            {Array.from(Array(props.count)).map((val, index) => (
-                <div key={index}>
-                    <BlockComponentDemo blockNumber={currentBlockNumber - index} scrape />
-                </div>
-            ))}
+            {currentBlockNumber &&
+                Array.from(Array(props.count)).map((val, index) => (
+                    <div key={index}>
+                        <BlockComponentDemo blockNumber={currentBlockNumber - index} scrape />
+                    </div>
+                ))}
         </div>
     )
 }

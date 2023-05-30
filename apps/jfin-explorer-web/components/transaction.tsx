@@ -14,18 +14,16 @@ export function TransactionComponentDemo(props: { transactionHash: string; scrap
 }
 
 export function TransactionsListComponentDemo(props: { count: number }) {
-    // Auto fetch initial transactions
-    useBlockscout().transactions().initial()
     // look for latest transactions
-    const latestTransactions = useBlockscout().transactions().meta().data?.latestTransactions
-    if (!latestTransactions) return null
+    const { latestTransactions } = useBlockscout().transactions().meta()
     return (
         <div>
-            {latestTransactions.slice(0, props.count).map((txHash: string, index: number) => (
-                <div key={index}>
-                    <TransactionComponentDemo transactionHash={txHash} scrape />
-                </div>
-            ))}
+            {latestTransactions &&
+                latestTransactions.slice(0, props.count).map((txHash: string, index: number) => (
+                    <div key={index}>
+                        <TransactionComponentDemo transactionHash={txHash} scrape />
+                    </div>
+                ))}
         </div>
     )
 }

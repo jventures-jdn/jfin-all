@@ -8,10 +8,9 @@ import { useEffect } from 'react'
 const key = (transactionHash: string) => `transactions/${transactionHash}`
 
 // Root hook
-export function useBlockscoutStoreTransactions() {
+export function useBlockscoutTransactions() {
     return {
         get: _transactionStoreGet,
-        initial: _transactionStoreInitial,
         meta: _transacitonStoreMeta,
     }
 }
@@ -48,17 +47,20 @@ function _transactionStoreGet(
     return existing
 }
 
-// Handle new data from web socket
+// Handle new  scrape transaction data from web socket
 export function transactionWebSocketRecord(data: any) {
     const txHash = data[4].transaction_hash
-    const parsedData = {
+    const transactionData = {
         data_source: 'ws',
         hash: txHash,
-    }
-    mutate(key(txHash), parsedData, {
+    } as Transaction
+
+    mutate(key(txHash), transactionData, {
+        // merge with existing data if exist
         populateCache: (data, current) => ({ ...current, ...data }),
         revalidate: false,
     })
+
     _updateTransactionMeta(txHash)
 }
 
@@ -79,6 +81,7 @@ function _transactionStoreInitial() {
         return transactionStoreInitialClear
     }, [])
 
+    // Fetch initial transactions when mounted
     return useSWR('initial-transactions', GlobalApis.initialTransactions, {
         onSuccess: response => {
             // iterate through respond transactions
@@ -104,7 +107,9 @@ export function transactionStoreInitialClear() {
 
 // Global transactions state
 function _transacitonStoreMeta() {
-    return useSWR('transactions-meta', null)
+    // Auto fetch initial transactions
+    _transactionStoreInitial()
+    return useSWR('transactions-meta', null).data || {}
 }
 
 // Format data from api response (both init and fetch)

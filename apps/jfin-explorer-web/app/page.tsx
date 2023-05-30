@@ -9,32 +9,17 @@ export default function HomePage() {
     const ws = useBlockscout().webSocket({
         newBlocks: true,
         newTransactions: true,
-        // onMessageReceived: data => {
-        //     console.log(data)
-        // },
+        // Uncomment this line to show ws logs
+        // onMessageReceived: console.log,
     })
 
-    const { connectionStatus } = ws
-    const initialBlocks = useBlockscout().blocks().initial()
-    const initialTransactions = useBlockscout().transactions().initial()
-
     return (
-        <div>
-            <div>Initial Blocks : {initialBlocks.isLoading ? 'Loading...' : 'Loaded'}</div>
-            <div>
-                Initial Transactions : {initialTransactions.isLoading ? 'Loading...' : 'Loaded'}
-            </div>
-            <div>Web Socket Status: {connectionStatus}</div>
+        <>
+            <div>WebSocket : {ws.connectionStatus}</div>
             <br />
-
-            <div>
-                Blocks : <BlocksListComponentDemo count={4} />
-            </div>
+            Blocks : <BlocksListComponentDemo count={4} />
             <br />
-
-            <div>
-                Transactions : <TransactionsListComponentDemo count={6} />
-            </div>
-        </div>
+            Transactions : <TransactionsListComponentDemo count={6} />
+        </>
     )
 }
