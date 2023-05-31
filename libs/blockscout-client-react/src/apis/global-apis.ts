@@ -12,4 +12,8 @@ export class GlobalApis {
     static async blocks() {
         return RESTFetcher.apiv2Get('/blocks')
     }
+
+    static async stats() {
+        return RESTFetcher.apiv2Get('/stats')
+    }
 }

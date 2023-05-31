@@ -1,7 +1,7 @@
 export type Stats = {
     average_block_time: number
     total_addresses: string
-    total_blocks: string
+    total_blocks: any // block_number
     total_transactions: string
     // TODO: more fields
 
