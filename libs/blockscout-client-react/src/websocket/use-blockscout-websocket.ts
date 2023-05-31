@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 import { blockScoutWebSocketRecord, clearInitialData } from '../store/helpers'
+import { GlobalConfig } from '@utils/global-config'
 
 type BlockscoutWebSocketOptions = {
     socketUrl?: string
@@ -12,7 +13,7 @@ type BlockscoutWebSocketOptions = {
 }
 
 const defaultOptions = {
-    socketUrl: 'wss://exp.jfinchain.com/socket/websocket?locale=en&vsn=2.0.0',
+    socketUrl: GlobalConfig.endpoint('webSocket'),
 }
 
 export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {

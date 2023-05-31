@@ -1,0 +1,17 @@
+{
+    "projects": {
+        "default": "jfin-all"
+    },
+    "targets": {
+        "jfin-all": {
+            "hosting": {
+                "explorer-mainnet": [
+                    "jfin-explorer-mainnet"
+                ],
+                "explorer-testnet": [
+                    "jfin-explorer-testnet"
+                ]
+            }
+        }
+    }
+}

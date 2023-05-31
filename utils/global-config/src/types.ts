@@ -1,6 +1,6 @@
 import { GlobalConfigDev } from './dev'
 import GlobalConfig from './default'
-export type GlobalConfigFormat = typeof GlobalConfig & ReturnType<typeof GlobalConfigDev.system>
+export type GlobalConfigFormat = any // typeof GlobalConfig & ReturnType<typeof GlobalConfigDev.system>
 
 // export type BlockChainConfig = {
 //     chainId: number

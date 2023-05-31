@@ -8,7 +8,9 @@ export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolea
     if (block.isLoading) return <span>Loading...</span>
     return (
         <div>
-            <Link href={`/block/${blockNumber}`}>📦 {JSON.stringify(block.data)}</Link>
+            <Link href={`/block/${blockNumber}`} prefetch={false}>
+                📦 {JSON.stringify(block.data)}
+            </Link>
         </div>
     )
 }

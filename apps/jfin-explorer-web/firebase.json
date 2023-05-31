@@ -1,0 +1,39 @@
+{
+  "hosting": [
+    {
+      "target": "explorer-mainnet",
+      "public": "public",
+      "cleanUrls": true,
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "nextjs-server-explorer-mainnet"
+        }
+      ]
+    },
+    {
+      "target": "explorer-testnet",
+      "public": "public",
+      "cleanUrls": true,
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "nextjs-server-explorer-testnet"
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "source": "functions",
+    "ignore": [
+      "**/node_modules/**",
+      "package-lock.json",
+      "cache",
+      "standalone",
+      "types",
+      "trace",
+      "next-server.js.nft.json",
+      "required-server-files.json"
+    ]
+  }
+}

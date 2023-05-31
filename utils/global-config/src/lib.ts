@@ -47,7 +47,7 @@ export class GlobalConfig {
 
     // shortcut to target settings
     static target(target = process.env.TARGET, options?: { unmasked: boolean }) {
-        return this.pick(`target.${target}`, options) as GlobalConfigFormat['target']['development']
+        return this.pick(`target.${target}`, options)
     }
 
     // shortcut to blockchain settings
@@ -67,8 +67,8 @@ export class GlobalConfig {
     static blockchains() {
         const networks = this.pick('blockchain') as GlobalConfigFormat['blockchain']
         return Object.entries(networks).reduce((prev, [, subNetworks]) => {
-            const chains = Object.entries(subNetworks).reduce((prev, [, chain]) => {
-                Object.keys(chain).length &&
+            const chains = Object.entries(subNetworks as any).reduce((prev, [, chain]) => {
+                Object.keys(chain as any).length &&
                     prev.push(chain as GlobalConfigFormat['blockchain']['jfin']['mainnet'])
                 return prev
             }, [] as GlobalConfigFormat['blockchain']['jfin']['mainnet'][])
