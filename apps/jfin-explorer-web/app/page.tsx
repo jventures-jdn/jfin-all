@@ -3,19 +3,25 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
 import { BlocksListComponentDemo } from '../components/block'
 import { TransactionsListComponentDemo } from '../components/transaction'
+import { StatsComponentDemo } from '../components/stats'
 
 export default function HomePage() {
     // Create Websocket Connection
     const ws = useBlockscout().webSocket({
         newBlocks: true,
-        newTransactions: true,
+        // newTransactions: true,
         // Uncomment this line to show ws logs
         // onMessageReceived: console.log,
     })
 
+    // const stats = useBlockscout().stats().get()
+    // console.log('stats', stats.isLoading + ':' + stats.data)
+
     return (
         <>
             <div>WebSocket : {ws.connectionStatus}</div>
+            <br />
+            stats: <StatsComponentDemo />
             <br />
             Blocks : <BlocksListComponentDemo count={4} />
             <br />
