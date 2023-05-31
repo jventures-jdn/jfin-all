@@ -3,7 +3,7 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
 import { BlocksListComponentDemo } from '../components/block'
 import { TransactionsListComponentDemo } from '../components/transaction'
-import { StatsComponentDemo } from '../components/stats'
+import { StatsListComponentDemo } from '../components/stats'
 
 export default function HomePage() {
     // Create Websocket Connection
@@ -19,9 +19,9 @@ export default function HomePage() {
 
     return (
         <>
-            <div>WebSocket : {ws.connectionStatus}</div>
-            <br />
-            stats: <StatsComponentDemo />
+            {/* <div>WebSocket : {ws.connectionStatus}</div> */}
+            {/* <br /> */}
+            stats: <StatsListComponentDemo count={4} />
             <br />
             Blocks : <BlocksListComponentDemo count={4} />
             <br />

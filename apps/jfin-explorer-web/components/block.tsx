@@ -16,6 +16,7 @@ export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolea
 export function BlocksListComponentDemo(props: { count: number }) {
     // Look for current block number
     const { currentBlockNumber } = useBlockscout().blocks().meta()
+
     return (
         <div>
             {currentBlockNumber &&

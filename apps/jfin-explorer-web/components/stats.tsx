@@ -1,34 +1,30 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
-import Link from 'next/link'
 
-export function StatsComponentDemo(props: { scrape?: boolean }) {
-    const { scrape } = props
-    console.log('scrape', scrape)
+export function StatsComponentDemo(props: { blockTotal: any; scrape?: boolean }) {
+    const { blockTotal, scrape } = props
+    console.log('props', props)
+    // console.log('scrape', scrape)
 
     // Get block data, this will auto fetch if data not exist
-    const stats = useBlockscout().stats().get()
-    // if (stats.isLoading) return <span>Loading...</span>
-    console.log('StatsComponentDemo=>stats', stats)
-    return <div> {`stats`} </div>
+    // const stats = useBlockscout().stats().get({ scrape: true }) // set true
+    const stats = useBlockscout().stats().get(blockTotal, { scrape }) // set true
+    if (stats.isLoading) return <span>Loading...</span>
+    console.log('currentStats => stats', stats)
+    return <div> {JSON.stringify(stats.data)} </div>
 }
 
-export function StatsListComponentDemo() {
+export function StatsListComponentDemo(props: { count: number }) {
     // Look for current block number
-    // const { currentBlockNumber } = useBlockscout().blocks().meta()
-
+    const { currentStats } = useBlockscout().stats().meta()
+    console.log(`currentStats ${currentStats}`)
     return (
         <div>
-            <StatsComponentDemo scrape />
-
-            {/* {currentBlockNumber &&
+            {currentStats &&
                 Array.from(Array(props.count)).map((val, index) => (
                     <div key={index}>
-                        {index}
-                        <br />
-                        {currentBlockNumber}
-                        <BlockComponentDemo blockNumber={currentBlockNumber - index} scrape />
+                        <StatsComponentDemo blockTotal={currentStats - index} scrape />
                     </div>
-                ))} */}
+                ))}
         </div>
     )
 }
