@@ -9,7 +9,8 @@
   "devDependencies": {
     "cross-env": "7.0.3",
     "prettier": "2.8.8",
-    "turbo": "1.9.9"
+    "turbo": "1.9.9",
+    "wagmi": "1.0.8"
   },
   "pnpm": {
     "peerDependencyRules": {

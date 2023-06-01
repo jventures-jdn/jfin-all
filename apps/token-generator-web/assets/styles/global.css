@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import './layout';
+
+* {
+    font-family: var(--font-plex-sans);
+}
+
+body {
+    background-image: url('/page-bg.png');
+    background-size: 100%;
+    background-position: top;
+    background-repeat: no-repeat;
+    min-height: 100%;
+    @apply bg-base-300;
+}

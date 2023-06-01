@@ -1,0 +1,10 @@
+.page {
+    @apply h-[calc(100vh_-_82px_-_36px)] min-h-[calc(100vh_-_82px_-_36px)] text-primary-content;
+}
+
+.wrapper {
+    @apply h-full;
+    &.center {
+        @apply flex justify-center items-center;
+    }
+}

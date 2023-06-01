@@ -1,0 +1,8 @@
+{
+  "extends": "@config/typescript/nextjs-app.json",
+  "include": ["next-env.d.ts", "hardhat.config.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "baseUrl": "."
+  }
+}
