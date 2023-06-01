@@ -5,7 +5,6 @@ import { GlobalApis } from '../apis/global-apis'
 import { Stats } from '../types'
 import { useEffect } from 'react'
 
-// const key = () => `stats`
 const key = (blockTotal: any) => `stats/${blockTotal}`
 
 // Root hook
@@ -17,12 +16,16 @@ export function useBlockscoutStats() {
 }
 
 // Fetch stats data from api
-function _fullStatsFetcher() {
-    return RESTFetcher.apiv2Get(`/stats`, item => _formatFullData(item, 'fetch'))
+const _fullStatsFetcher = () => {
+    return RESTFetcher.apiv2Get(
+        `/stats`,
+        // convert blcok data to our format
+        item => _formatFullData(item, 'fetch'),
+    )
 }
+
 // Individual stats state
-function _statsStoreGet(blockTotal?: any, options?: { scrape?: boolean }) {
-    console.log(`blockTotal=> ${blockTotal}`)
+function _statsStoreGet(blockTotal: any, options?: { scrape?: boolean }) {
     const existing = useSWR(key(blockTotal), () => _fullStatsFetcher())
 
     // force fetch if full data is required and not yet presented
@@ -53,22 +56,13 @@ function _statsStoreInitial() {
 
     // Fetch initial stats when mounted
     return useSWR('initial-stats', GlobalApis.stats, {
-        // onSuccess: response => {
-        //     // iterate through respond transactions
-        //     const items = response
-        //     items.forEach((item: any, index: number) => {
-        //         if (index < 10) {
-        //             // convert transaction data to our format
-        //             const parsed = _formatFullData(item, 'init')
-        //             // write individual transaction data to cache
-        //             mutate(key(item.hash), parsed, { revalidate: false })
-        //             // update meta e.g. latest transactions
-        //             _updateTransactionMeta(item.hash)
-        //         }
-        //     })
-        // },
-        // update meta e.g. current block number
-        //  _updateBlockMeta(items[0].height)
+        onSuccess: response => {
+            const items = response
+            const parsed = _formatFullData(items, 'init')
+            mutate(key(items), parsed, { revalidate: false })
+
+            _updateBlockMeta(items.total_blocks)
+        },
     })
 }
 
@@ -81,6 +75,10 @@ export function statsStoreInitialClear() {
 function _statsStoreMeta() {
     // Auto fetch initial transactions
     _statsStoreInitial()
+
+    // console.log('_blockStoreMeta : stats', _statsStoreInitial())
+    // console.log('_blockStoreMeta : stats', useSWR('stats-meta', null).data || {})
+
     return useSWR('stats-meta', null).data || {}
 }
 
