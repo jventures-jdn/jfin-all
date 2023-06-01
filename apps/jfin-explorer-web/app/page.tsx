@@ -9,7 +9,7 @@ export default function HomePage() {
     // Create Websocket Connection
     const ws = useBlockscout().webSocket({
         newBlocks: true,
-        // newTransactions: true,
+        newTransactions: true,
         // Uncomment this line to show ws logs
         // onMessageReceived: console.log,
     })
