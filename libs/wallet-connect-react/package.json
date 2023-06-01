@@ -1,0 +1,22 @@
+{
+  "name": "@libs/wallet-connect-react",
+  "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@web3modal/react": "2.4.1"
+  },
+  "main": "index.ts",
+  "devDependencies": {
+    "@config/typescript": "workspace:*",
+    "@utils/package-command": "workspace:*",
+    "@tanstack/query-core": "^4.29.11",
+    "@types/node": "20.2.5",
+    "@web3modal/ethereum": "2.4.1",
+    "swr": "2.1.5",
+    "typescript": "5.0.4",
+    "viem": "^0.3.37",
+    "zustand": "4.3.8",
+    "@types/react": "18.2.7",
+    "@types/react-dom": "18.2.4"
+  }
+}
