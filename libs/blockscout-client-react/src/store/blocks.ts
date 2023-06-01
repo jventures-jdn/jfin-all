@@ -11,8 +11,9 @@ const key = (blockNumber: number) => `blocks/${blockNumber}`
 export function useBlockscoutBlocks() {
     return {
         get: _blockStoreGet,
+        getAll: (blockNumber?: number) => _blocksStoreGet(blockNumber),
         meta: _blockStoreMeta,
-    }
+    };
 }
 
 // Fetch block data from api
@@ -106,6 +107,7 @@ export function blockWebSocketRecord(data: any) {
     })
 
     _updateBlockMeta(blockNumber)
+    mutate('blocks-meta', { currentPageBlockNumber: blockNumber })
 }
 
 // Format data from api response (both init and fetch)
@@ -121,4 +123,26 @@ function _formatFullData(item: any, from: Block['data_source']) {
         // TODO: more fields
         is_full_data: true,
     } as Block
+}
+
+// All blocks
+function _blocksStoreGet(blockNumber: any) {
+    useEffect(() => {
+        mutate(`blocks${blockNumber}`, undefined)
+    }, [blockNumber])
+
+    // Fetch all blocks when mounted
+    return useSWR(`blocks${blockNumber}`, () => GlobalApis.blocks(blockNumber), {
+        onSuccess: response => {
+            const items = response
+            items.items.forEach((item: any, index: number) => {
+                const parsed = _formatFullData(item, 'fetch')
+
+                // write individual block data to cache
+                mutate(key(item.height), parsed, { revalidate: false })
+            })
+            mutate('blocks-meta', { currentPageBlockNumber: items.items[0].height })
+        },
+    }
+    )
 }

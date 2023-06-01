@@ -27,3 +27,18 @@ export function BlocksListComponentDemo(props: { count: number }) {
         </div>
     )
 }
+
+export function BlocksListComponent(props: { count: number }) {
+    // Look for current page block number
+    const { currentPageBlockNumber } = useBlockscout().blocks().meta()
+    return (
+        <div>
+            {currentPageBlockNumber &&
+                Array.from(Array(props.count)).map((val, index) => (
+                    <div key={index}>
+                        <BlockComponentDemo blockNumber={currentPageBlockNumber - index} scrape />
+                    </div>
+                ))}
+        </div>
+    )
+}
