@@ -12,16 +12,14 @@ export default function HomePage() {
         newTransactions: true,
         // Uncomment this line to show ws logs
         // onMessageReceived: console.log,
+        newStats: true,
     })
-
-    // const stats = useBlockscout().stats().get()
-    // console.log('stats', stats.isLoading + ':' + stats.data)
 
     return (
         <>
-            {/* <div>WebSocket : {ws.connectionStatus}</div> */}
-            {/* <br /> */}
-            stats: <StatsListComponentDemo count={4} />
+            <div>WebSocket : {ws.connectionStatus}</div>
+            <br />
+            stats: <StatsListComponentDemo count={1} />
             <br />
             Blocks : <BlocksListComponentDemo count={4} />
             <br />
