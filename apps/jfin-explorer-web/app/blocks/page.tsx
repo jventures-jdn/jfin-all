@@ -4,7 +4,7 @@ import { useBlockscout } from '@libs/blockscout-client-react'
 import { BlocksListComponent } from '../../components/block'
 import { Button } from '@chakra-ui/react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export default function BlocksPage() {
     const searchParams = useSearchParams()

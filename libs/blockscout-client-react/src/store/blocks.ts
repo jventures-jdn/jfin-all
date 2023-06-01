@@ -13,7 +13,7 @@ export function useBlockscoutBlocks() {
         get: _blockStoreGet,
         getAll: (blockNumber?: number) => _blocksStoreGet(blockNumber),
         meta: _blockStoreMeta,
-    };
+    }
 }
 
 // Fetch block data from api
@@ -50,7 +50,7 @@ function _blockStoreGet(
 
 // Internal helper to update latest block number
 function _updateBlockMeta(blockNumber: number) {
-    mutate('blocks-meta', { currentBlockNumber: blockNumber })
+    mutate('blocks-meta', { currentBlockNumber: blockNumber, currentPageBlockNumber: blockNumber })
 }
 
 // Initial blocks loading
@@ -107,7 +107,6 @@ export function blockWebSocketRecord(data: any) {
     })
 
     _updateBlockMeta(blockNumber)
-    mutate('blocks-meta', { currentPageBlockNumber: blockNumber })
 }
 
 // Format data from api response (both init and fetch)
