@@ -11,49 +11,39 @@ export default function BlocksPage() {
     const blockNumber = searchParams.get('block_number')
     const itemCount = searchParams.get('items_count') || '50'
     const { currentPageBlockNumber } = useBlockscout().blocks().meta()
-    const [currentBlockNumber, setCurrentBlockNumber] = useState<any>(blockNumber)
     const [pageNumber, setPageNumber] = useState<number>(1)
     const router = useRouter()
     const pathname = usePathname()
-    let ws = null
+    const isPreviousPageDisabled =
+        blockNumber !== null && parseInt(blockNumber) < parseInt(itemCount)
 
-    useEffect(() => {
-        setCurrentBlockNumber(blockNumber)
-    }, [blockNumber])
+    let ws = null
 
     // Hook
     const blocks = useBlockscout().blocks()
-    const get = blocks.getAll(currentBlockNumber)
+    const get = blocks.getAll(blockNumber ? parseInt(blockNumber) : undefined)
 
     // Create Websocket Connection
     ws = useBlockscout().webSocket({
         newBlocks: true,
-        closeConnection: currentBlockNumber ? false : true,
+        closeConnection: blockNumber ? false : true,
     })
 
-    // Event handler for button click
+    const calculateNewBlockNumber = (addition: number) => {
+        const currentBlockNumber = blockNumber ? parseInt(blockNumber) : currentPageBlockNumber
+        return currentBlockNumber + 1 + addition * parseInt(itemCount)
+    }
+
     const goToNextPage = () => {
-        if (currentPageBlockNumber) {
-            if (pageNumber === 2) {
-                setCurrentBlockNumber(undefined)
-                setPageNumber(pageNumber - 1)
-                return
-            }
-
-            setPageNumber(pageNumber - 1)
-
-            const newBlockNumber = parseInt(currentPageBlockNumber) + 1 + parseInt(itemCount)
-            router.push(`${pathname}?block_number=${newBlockNumber}`)
-        }
+        setPageNumber(pageNumber - 1)
+        const newBlockNumber = calculateNewBlockNumber(1)
+        router.push(`${pathname}${pageNumber !== 2 ? `?block_number=${newBlockNumber}` : ''}`)
     }
 
     const goToPreviousPage = () => {
-        if (currentPageBlockNumber) {
-            setPageNumber(pageNumber + 1)
-
-            const newBlockNumber = parseInt(currentPageBlockNumber) + 1 - parseInt(itemCount)
-            router.push(`${pathname}?block_number=${newBlockNumber}`)
-        }
+        setPageNumber(pageNumber + 1)
+        const newBlockNumber = calculateNewBlockNumber(-1)
+        router.push(`${pathname}?block_number=${newBlockNumber}`)
     }
 
     return (
@@ -62,9 +52,7 @@ export default function BlocksPage() {
             <div>Page Number : {pageNumber}</div>
             <div>Block Number : {blockNumber}</div>
             <div>Current Page Block Number : {currentPageBlockNumber}</div>
-            {/* <div>Block Number Data : {blockNumberData}</div> */}
             <div>Web Socket : {ws ? ws.connectionStatus : 'close'}</div>
-            {/* <div>Is loading : {get.isLoading.toString()}</div> */}
             <div className="flex">
                 <Button
                     isDisabled={pageNumber === 1}
@@ -76,7 +64,7 @@ export default function BlocksPage() {
                     Next
                 </Button>
                 <Button
-                    isDisabled={parseInt(currentBlockNumber) < parseInt(itemCount)}
+                    isDisabled={isPreviousPageDisabled}
                     onClick={goToPreviousPage}
                     colorScheme="teal"
                     size="xs"
@@ -87,7 +75,7 @@ export default function BlocksPage() {
             </div>
             {!get.isLoading && (
                 <>
-                    Blocks : <BlocksListComponent count={50} />
+                    Blocks : <BlocksListComponent count={parseInt(itemCount)} />
                 </>
             )}
             <br />
