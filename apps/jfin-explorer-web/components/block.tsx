@@ -13,30 +13,16 @@ export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolea
     )
 }
 
-export function BlocksListComponentDemo(props: { count: number }) {
+export function BlocksListComponentDemo(props: { count: number; blockNumber?: number }) {
     // Look for current block number
     const { currentBlockNumber } = useBlockscout().blocks().meta()
+    const blockNumber = props.blockNumber ? props.blockNumber : currentBlockNumber
     return (
         <div>
-            {currentBlockNumber &&
+            {blockNumber &&
                 Array.from(Array(props.count)).map((val, index) => (
                     <div key={index}>
-                        <BlockComponentDemo blockNumber={currentBlockNumber - index} scrape />
-                    </div>
-                ))}
-        </div>
-    )
-}
-
-export function BlocksListComponent(props: { count: number }) {
-    // Look for current page block number
-    const { currentPageBlockNumber } = useBlockscout().blocks().meta()
-    return (
-        <div>
-            {currentPageBlockNumber &&
-                Array.from(Array(props.count)).map((val, index) => (
-                    <div key={index}>
-                        <BlockComponentDemo blockNumber={currentPageBlockNumber - index} scrape />
+                        <BlockComponentDemo blockNumber={blockNumber - index} scrape />
                     </div>
                 ))}
         </div>
