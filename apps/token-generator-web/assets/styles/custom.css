@@ -1,0 +1,4 @@
+.cursor-pointer,
+a {
+    @apply hover:opacity-80 transition-opacity;
+}

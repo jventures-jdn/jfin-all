@@ -12,13 +12,13 @@ export default function Navbar() {
             <div className="container">
                 <div className="flex-1 flex-row flex items-center">
                     <Link href="/">
-                        <img src="/brand.svg" />
+                        <img src="/brand.svg" className="h-[25px] lg:h-auto" />
                     </Link>
-                    <div className="w-full   text-sm">
+                    <div className="w-full text-sm hidden lg:block">
                         <Link
                             href="/contract/ERC20"
                             className={`${
-                                pathname === '/contract/ERC20' ? 'text-white' : ''
+                                ['/contract/ERC20'].includes(pathname) ? 'text-white' : ''
                             } pl-10`}
                         >
                             ERC20
