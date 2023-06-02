@@ -27,6 +27,8 @@
 out
 # typechain
 **/typechain-types
+# firebase
+.firebase
 
 ### gitignore specifics ###
 .config**.yaml
