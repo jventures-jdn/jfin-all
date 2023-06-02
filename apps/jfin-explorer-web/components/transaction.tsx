@@ -8,7 +8,9 @@ export function TransactionComponentDemo(props: { transactionHash: string; scrap
     if (tx.isLoading) return <span>Loading...</span>
     return (
         <div>
-            <Link href={`/tx/${transactionHash}`}>📦 {JSON.stringify(tx.data)}</Link>
+            <Link href={`/tx/${transactionHash}`} prefetch={false}>
+                📦 {JSON.stringify(tx.data)}
+            </Link>
         </div>
     )
 }

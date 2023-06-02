@@ -4,6 +4,7 @@ import { IBM_Plex_Sans_Thai } from 'next/font/google'
 import '../src/styles/global.css'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import { MenuDemo } from '../components/menu'
+import NextTopLoader from 'nextjs-toploader'
 const tailwindConfig = require('@config/tailwind')
 
 const plexSans = IBM_Plex_Sans_Thai({
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en">
             <head />
             <body className={`${plexSans.variable}`}>
+                <NextTopLoader color="yellow" />
                 <ChakraProvider
                     theme={extendTheme({
                         config: {

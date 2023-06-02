@@ -5,7 +5,7 @@
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-config-turbo": "^1.9.9",
+    "eslint-config-turbo": "^1.10.1",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0"
   }

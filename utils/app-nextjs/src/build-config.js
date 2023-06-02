@@ -6,7 +6,6 @@ module.exports = (phase, config, customWebpack) => {
     const baseConfig = {
         reactStrictMode: false,
         swcMinify: true,
-        output: 'standalone', // to bundle both client and server in the same docker image
         transpilePackages: ['@libs/*', '@utils/*'],
         experimental: {
             // this includes files from the monorepo base two directories up
