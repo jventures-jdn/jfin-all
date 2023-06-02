@@ -10,6 +10,6 @@ export class GlobalApis {
     }
 
     static async blocks(blockNumber?: number) {
-        return RESTFetcher.apiv2Get(`/blocks?block_number=${blockNumber}`)
+        return RESTFetcher.apiv2Get(`/blocks${blockNumber ? `?block_number=${blockNumber}` : ''}`)
     }
 }
