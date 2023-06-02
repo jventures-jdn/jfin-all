@@ -59,7 +59,7 @@ export default function BlocksPage() {
             <div>WebSocket : {ws.connectionStatus}</div>
             <div className="flex">
                 <Button
-                    isDisabled={pageNumber === 1}
+                    isDisabled={pageNumber === 1 || get.isLoading}
                     onClick={goToNextPage}
                     colorScheme="teal"
                     size="xs"
@@ -68,7 +68,7 @@ export default function BlocksPage() {
                     Next
                 </Button>
                 <Button
-                    isDisabled={isPreviousPageDisabled}
+                    isDisabled={isPreviousPageDisabled || get.isLoading}
                     onClick={goToPreviousPage}
                     colorScheme="teal"
                     size="xs"
@@ -77,6 +77,7 @@ export default function BlocksPage() {
                     Previous
                 </Button>
             </div>
+            {get.isLoading && <>Loading...</>}
             {!get.isLoading && (
                 <>
                     Blocks :
