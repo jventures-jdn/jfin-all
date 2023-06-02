@@ -3,18 +3,24 @@
 const { buildConfig } = require('@utils/app-nextjs/_index')
 
 module.exports = phase =>
-    buildConfig(phase, {
-        images: {
-            remotePatterns: [
-                {
-                    protocol: 'https',
-                    hostname: '**',
-                },
-            ],
+    buildConfig(
+        phase,
+        {
+            images: {
+                remotePatterns: [
+                    {
+                        protocol: 'https',
+                        hostname: '**',
+                    },
+                ],
+            },
+            experimental: {
+                appDir: true,
+            },
+            env: {},
         },
-        experimental: {
-            appDir: true,
+        config => {
+            // TODO: remove this hack
+            config.resolve.alias['handlebars'] = 'handlebars/dist/handlebars.js'
         },
-        env: {},
-        output: 'export',
-    })
+    )

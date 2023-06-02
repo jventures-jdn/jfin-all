@@ -2,15 +2,20 @@
   "name": "@apps/jfin-explorer-web",
   "port": "3101",
   "scripts": {
-    "dev": "run",
-    "build": "run",
-    "start": "run *dist=out",
-    "deploy-sandbox": "run *target=sandbox",
-    "deploy-production": "run *target=production",
+    "dev": "pnpm dev:testnet",
+    "dev:mainnet": "run *target=dev_mainnet",
+    "dev:testnet": "run *target=dev_testnet",
+    "build:mainnet": "run *target=prod_mainnet",
+    "build:testnet": "run *target=prod_testnet",
+    "start": "run",
+    "predeploy": "ncp .next functions/.next && cd functions && npm install",
+    "postdeploy": "firebase functions:config:unset deployment.network && rimraf functions/.next",
+    "deploy:mainnet": "pnpm build:mainnet && pnpm predeploy && firebase functions:config:set deployment.network=mainnet && firebase deploy --only functions:nextjs-server-explorer-mainnet,hosting:explorer-mainnet && pnpm postdeploy",
+    "deploy:testnet": "pnpm build:testnet && pnpm predeploy && firebase functions:config:set deployment.network=testnet && firebase deploy --only functions:nextjs-server-explorer-testnet,hosting:explorer-testnet && pnpm postdeploy",
     "lint": "run"
   },
   "dependencies": {
-    "@chakra-ui/react": "2.6.1",
+    "@chakra-ui/react": "2.7.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@libs/blockscout-client-react": "workspace:*",
@@ -19,6 +24,7 @@
     "@utils/js-utilities": "workspace:*",
     "framer-motion": "^10.12.16",
     "next": "13.4.4",
+    "nextjs-toploader": "^1.4.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.9.0"
@@ -34,6 +40,8 @@
     "@types/react-no-ssr": "^1.1.3",
     "@utils/cloud-deployer": "workspace:*",
     "@utils/package-command": "workspace:*",
+    "ncp": "^2.0.0",
+    "rimraf": "^5.0.1",
     "typescript": "5.0.4"
   }
 }
