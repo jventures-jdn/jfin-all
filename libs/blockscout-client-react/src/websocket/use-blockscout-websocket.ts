@@ -13,7 +13,7 @@ type BlockscoutWebSocketOptions = {
 }
 
 const defaultOptions = {
-    socketUrl: GlobalConfig.endpoint('webSocket'),
+    socketUrl: GlobalConfig.endpoint('websocket'),
 }
 
 export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
