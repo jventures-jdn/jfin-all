@@ -1,9 +1,17 @@
 .page {
-    @apply h-[calc(100vh_-_82px_-_36px)] min-h-[calc(100vh_-_82px_-_36px)] text-primary-content;
+    @apply text-primary-content min-h-screen;
+}
+
+.h-screen {
+    @apply !h-[calc(100vh_-_82px_-_36px)];
+}
+
+.min-h-screen {
+    @apply !min-h-[calc(100vh_-_82px_-_36px_-_2.50rem)];
 }
 
 .wrapper {
-    @apply h-full;
+    @apply h-full w-full;
     &.center {
         @apply flex justify-center items-center;
     }

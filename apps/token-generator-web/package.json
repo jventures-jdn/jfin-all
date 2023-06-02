@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@libs/wallet-connect-react": "workspace:*",
+    "@libs/logger-react": "workspace:*",
     "@utils/app-nextjs": "workspace:*",
     "@utils/global-config": "workspace:*",
     "@utils/js-utilities": "workspace:*",

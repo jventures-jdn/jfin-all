@@ -9,7 +9,7 @@ export default function HomePage() {
     console.log(chain, chains)
     return (
         <div className="home-page page">
-            <div className="wrapper center">
+            <div className="wrapper center h-screen">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 container text-primary-content">
                     <div className="lg:col-span-3 lg:pb-[5vh] flex justify-center flex-col items-center">
                         <span className="text-3xl lg:text-5xl font-bold">Token Generator 🥳</span>

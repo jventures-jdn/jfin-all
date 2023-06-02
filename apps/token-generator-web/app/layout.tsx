@@ -5,6 +5,7 @@ import Navbar from 'components/Common/Navbar'
 import Footer from 'components/Common/Footer'
 import '../assets/styles/global.css'
 import { WalletConnectProvider } from '@libs/wallet-connect-react'
+import { LoggerReactProvider } from '@libs/logger-react'
 
 const plexSans = IBM_Plex_Sans_Thai({
     subsets: ['latin'],
@@ -14,13 +15,16 @@ const plexSans = IBM_Plex_Sans_Thai({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     /* ---------------------------------- Doms ---------------------------------- */
+
     return (
         <html lang="en" className={`${plexSans.variable}`}>
             <body>
                 <WalletConnectProvider>
-                    <Navbar />
-                    <main>{children}</main>
-                    <Footer />
+                    <LoggerReactProvider>
+                        <Navbar />
+                        <main>{children}</main>
+                        <Footer />
+                    </LoggerReactProvider>
                 </WalletConnectProvider>
             </body>
         </html>

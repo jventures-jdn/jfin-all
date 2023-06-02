@@ -8,7 +8,8 @@ module.exports = {
         './app/**/*.{js,ts,jsx,tsx}',
         './src/**/*.{js,ts,jsx,tsx}',
         './components/**/*.{js,ts,jsx,tsx}',
-        './node_modules/@libs/ui-kit/src/**/*.{js,ts,jsx,tsx}',
+        './node_modules/@libs/wallet-connect-react/src/**/*.{js,ts,jsx,tsx}',
+        '../../libs/logger-react/src/**/*.{js,ts,jsx,tsx}',
     ],
     theme: {
         fontFamily: {

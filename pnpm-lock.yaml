@@ -92,6 +92,9 @@ importers:
 
   apps/token-generator-web:
     dependencies:
+      '@libs/logger-react':
+        specifier: workspace:*
+        version: link:../../libs/logger-react
       '@libs/wallet-connect-react':
         specifier: workspace:*
         version: link:../../libs/wallet-connect-react
@@ -316,6 +319,43 @@ importers:
       '@types/react':
         specifier: 18.2.7
         version: 18.2.7
+      '@utils/package-command':
+        specifier: workspace:*
+        version: link:../../utils/package-command
+      typescript:
+        specifier: 5.0.4
+        version: 5.0.4
+
+  libs/logger-react:
+    dependencies:
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: 18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@config/postcss':
+        specifier: workspace:*
+        version: link:../../config/postcss
+      '@config/tailwind':
+        specifier: workspace:*
+        version: link:../../config/tailwind
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../config/typescript
+      '@types/node':
+        specifier: 20.2.5
+        version: 20.2.5
+      '@types/react':
+        specifier: 18.2.7
+        version: 18.2.7
+      '@types/react-dom':
+        specifier: 18.2.4
+        version: 18.2.4
+      '@utils/app-nextjs':
+        specifier: workspace:*
+        version: link:../../utils/app-nextjs
       '@utils/package-command':
         specifier: workspace:*
         version: link:../../utils/package-command
