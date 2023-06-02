@@ -17,15 +17,13 @@ export default function BlocksPage() {
     const isPreviousPageDisabled =
         blockNumber !== null && parseInt(blockNumber) < parseInt(itemCount)
 
-    let ws = null
-
     // Hook
     const blocks = useBlockscout().blocks()
     const get = blocks.getAll(blockNumber ? parseInt(blockNumber) : undefined)
 
     // Create Websocket Connection
     // close ws connection only when a block number is specified
-    ws = useBlockscout().webSocket({
+    const ws = useBlockscout().webSocket({
         newBlocks: true,
         closeConnection: blockNumber ? false : true,
     })
@@ -58,6 +56,7 @@ export default function BlocksPage() {
             <br />
             <div>Block Number : {blockNumber}</div>
             <div>Page Number : {pageNumber}</div>
+            <div>WebSocket : {ws.connectionStatus}</div>
             <div className="flex">
                 <Button
                     isDisabled={pageNumber === 1}
