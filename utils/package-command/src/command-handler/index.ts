@@ -83,8 +83,8 @@ switch (commandTemplate.globalConfig) {
 
 try {
     execSync(finalCommand, { stdio: 'inherit', cwd: `../../${invokerProjectPath}` })
-} catch (e) {
-    console.log('❗ Command Error', e)
+} catch (e: any) {
+    console.log(`🚨 \x1b[31m\`${sourceNodeScript}\` command error ❗\x1b[0m`, `"${e.message}"`)
 } finally {
     GlobalConfigDev.deleteConfigFile(tempConfigFile)
 }

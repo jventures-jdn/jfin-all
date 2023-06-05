@@ -1,7 +1,7 @@
 {
   "name": "@config/postcss",
   "main": "index.js",
-  "dependencies": {
+  "devDependencies": {
     "postcss": "^8.4.24"
   }
 }
