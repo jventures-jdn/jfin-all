@@ -1,38 +1,51 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
 
-let testData: any
+let resultAverageBlockTime: string
+let resultTotalAddresses: string
+let resultTotalBlocks: string
+let resultTotalTransactions: string
+
 export function StatsComponentDemo(props: { blockTotal: any; scrape?: boolean }) {
     const { blockTotal, scrape } = props
 
     // Get block data, this will auto fetch if data not exist
     const stats = useBlockscout().stats().get(blockTotal, { scrape }) // set true
     if (stats.isLoading) return <span>Loading...</span>
+
+    if (stats.data.total_addresses) {
+        resultTotalAddresses = stats.data.total_addresses
+    }
+    if (stats.data.total_transactions) {
+        resultTotalTransactions = stats.data.total_transactions
+    }
+    if (stats.data.average_block_time) {
+        resultAverageBlockTime = stats.data.average_block_time
+    }
+    if (stats.data.total_blocks) {
+        resultTotalBlocks = stats.data.total_blocks
+    }
+
     return <div>{JSON.stringify(stats.data)}</div>
 }
 
-export function StatsComponentDemoCount(props: { countTotal: any }) {
-    return (testData = props.countTotal)
-}
 export function StatsListComponentDemo(props: { count: number }) {
     // Look for current block number
-    const { cuerrentBlockTotal, cuerrentcountTotal } = useBlockscout().stats().meta()
+    const { cuerrentBlockTotal } = useBlockscout().stats().meta()
 
     return (
         <div>
-            {(cuerrentBlockTotal &&
-                Array.from(Array(props.count)).map((val, index) => (
-                    <div key={index}>
-                        <StatsComponentDemo blockTotal={cuerrentBlockTotal - index} scrape />
-                    </div>
-                ))) ||
-                (cuerrentcountTotal &&
+            <div>
+                {cuerrentBlockTotal &&
                     Array.from(Array(props.count)).map((val, index) => (
                         <div key={index}>
-                            <StatsComponentDemoCount countTotal={cuerrentcountTotal} />
+                            <StatsComponentDemo blockTotal={cuerrentBlockTotal - index} scrape />
                         </div>
-                    )))}
-
-            <div>{testData}</div>
+                    ))}
+            </div>
+            <div>Average block time:{resultAverageBlockTime}</div>
+            <div>Total transactions:{resultTotalTransactions}</div>
+            <div>Total blocks:{resultTotalBlocks}</div>
+            <div>Wallet addresses:{resultTotalAddresses}</div>
         </div>
     )
 }

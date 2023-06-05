@@ -7,6 +7,10 @@ import { useEffect } from 'react'
 
 const key = (blockTotal: any) => `stats/${blockTotal}`
 
+let totalTransactions: string
+let totalBlockTotal: string
+let statsData: Stats
+
 // Root hook
 export function useBlockscoutStats() {
     return {
@@ -19,7 +23,7 @@ export function useBlockscoutStats() {
 const _fullStatsFetcher = () => {
     return RESTFetcher.apiv2Get(
         `/stats`,
-        // convert blcok data to our format
+        // convert stats data to our format
         item => _formatFullData(item, 'fetch'),
     )
 }
@@ -38,29 +42,29 @@ function _statsStoreGet(blockTotal: any, options?: { scrape?: boolean }) {
         // clear cache so that full block data is auto fetched
         existing.mutate(undefined, { revalidate: true, populateCache: false })
     }
-
     return existing
 }
 
 // Internal to update latest stats numberhelper
 function _updateBlockMeta(blockTotal: any) {
-    mutate('stats-meta', { cuerrentBlockTotal: blockTotal })
+    mutate('stats-meta', {
+        cuerrentBlockTotal: blockTotal,
+    })
 }
 
 // Initial stats loading
 function _statsStoreInitial() {
-    //     // auto clear on unmount
+    // auto clear on unmount
     useEffect(() => {
         return statsStoreInitialClear
     }, [])
-
     // Fetch initial stats when mounted
     return useSWR('initial-stats', GlobalApis.stats, {
         onSuccess: response => {
             const items = response
+            totalTransactions = items.total_transactions
             const parsed = _formatFullData(items, 'init')
-            mutate(key(items), parsed, { revalidate: false })
-
+            mutate(key(items.total_blocks), parsed, { revalidate: false })
             _updateBlockMeta(items.total_blocks)
         },
     })
@@ -75,33 +79,39 @@ export function statsStoreInitialClear() {
 function _statsStoreMeta() {
     // Auto fetch initial transactions
     _statsStoreInitial()
-
-    // console.log('_blockStoreMeta : stats', _statsStoreInitial())
-    // console.log('_blockStoreMeta : stats', useSWR('stats-meta', null).data || {})
-
     return useSWR('stats-meta', null).data || {}
 }
 
-// Handle new scrape block data from web socket
 export function statsWebSocketRecord(data: any) {
-    const blockTotal = data[4].block_number
-    // console.log('blockNumber', stats)
-    const statsData = {
-        data_source: 'ws',
-        average_block_time: data[4].average_block_time,
-        total_blocks: data[4].block_number,
-        // สิ่งที่ขาด เอาไปเอาท่ี่ ws addresses:new_address
-        // Total transactions
-        // Wallet addresses
-    } as Stats
+    if (data[4].block_number) {
+        totalBlockTotal = data[4].block_number
 
-    mutate(key(blockTotal), statsData, {
+        statsData = {
+            data_source: 'ws',
+            average_block_time: data[4].average_block_time,
+            total_blocks: data[4].block_number,
+        } as Stats
+    } else if (data[4].transaction_hash) {
+        totalTransactions = String(Number(totalTransactions) + 1)
+
+        statsData = {
+            data_source: 'ws',
+            total_transactions: totalTransactions,
+        } as Stats
+    } else if (data[4].count) {
+        statsData = {
+            data_source: 'ws',
+            total_addresses: data[4].count,
+        } as Stats
+    }
+
+    mutate(key(totalBlockTotal), statsData, {
         // merge with existing data if exist
         populateCache: (data, current) => ({ ...current, ...data }),
         revalidate: false,
     })
 
-    _updateBlockMeta(blockTotal)
+    _updateBlockMeta(totalBlockTotal)
 }
 
 // Format data from api response (both init and fetch)
