@@ -4,6 +4,6 @@
     "@config/typescript": "workspace:*",
     "@types/node": "20.2.5",
     "@utils/js-utilities": "workspace:*",
-    "typescript": "5.0.4"
+    "typescript": "5.1.3"
   }
 }
