@@ -126,19 +126,25 @@ function _formatFullData(item: any, from: Block['data_source']) {
 
 // All blocks
 function _blocksStoreGet(blockNumber: any) {
+    // retrieve existing cache
+    const existing = useSWR(`blocks-${blockNumber}`)
+
     useEffect(() => {
-        mutate(`blocks${blockNumber}`, undefined)
-    }, [blockNumber])
+        if (existing.data && blockNumber) {
+            // set the current page block number
+            mutate('blocks-meta', { currentPageBlockNumber: existing.data.items[0].height })
+        }
+    }, [existing])
 
     // Fetch all blocks when mounted
-    return useSWR(`blocks${blockNumber}`, () => GlobalApis.blocks(blockNumber), {
+    return useSWR(`blocks-${blockNumber}`, () => GlobalApis.blocks(blockNumber), {
         onSuccess: response => {
             const items = response
             items.items.forEach((item: any, index: number) => {
                 const parsed = _formatFullData(item, 'fetch')
 
                 // write individual block data to cache
-                mutate(key(item.height), parsed, { revalidate: false })
+                mutate(key(item.height), parsed, { revalidate: true })
             })
             mutate('blocks-meta', { currentPageBlockNumber: items.items[0].height })
         },
