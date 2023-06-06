@@ -1,8 +1,10 @@
 {
-  "extends": "@config/typescript/nextjs-app.json",
-  "include": ["next-env.d.ts", "hardhat.config.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "extends": "@config/typescript/nextjs-hardhat.json",
+  "include": ["next-env.d.ts", "src/**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"],
+  "files": ["hardhat.config.ts"],
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "module": "commonjs"
   }
 }

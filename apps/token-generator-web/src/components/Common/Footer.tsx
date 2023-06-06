@@ -1,4 +1,5 @@
-import packageJson from '../../package.json'
+import packageJson from '../../../package.json'
+import React from 'react'
 
 export default function Footer() {
     return (

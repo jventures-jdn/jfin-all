@@ -1,8 +1,7 @@
+import { HardhatUserConfig } from 'hardhat/config'
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-etherscan'
 import '@nomiclabs/hardhat-ethers'
-import 'hardhat-deploy'
-import { HardhatUserConfig } from 'hardhat/types'
 
 // !Use global config to get chains
 // const { GlobalConfig } = require('@utils/global-config')
@@ -63,24 +62,24 @@ const chains = [
 
 const config: HardhatUserConfig = {
     solidity: '0.8.17',
-    // etherscan: {
-    //     apiKey: chains.reduce((result: any, item: any) => {
-    //         return { ...result, [item.id]: item?.apiKey || '_' }
-    //     }, {}),
-    //     customChains: chains.map((c: any) => ({
-    //         network: c.id,
-    //         chainId: c.chainId,
-    //         urls: {
-    //             apiURL: c.apiEndpoint,
-    //             browserURL: c.explorerEndpoint,
-    //         },
-    //     })),
-    // },
+    etherscan: {
+        apiKey: chains.reduce((result: any, item: any) => {
+            return { ...result, [item.id]: item?.apiKey || '_' }
+        }, {}),
+        customChains: chains.map((c: any) => ({
+            network: c.id,
+            chainId: c.chainId,
+            urls: {
+                apiURL: c.apiEndpoint,
+                browserURL: c.explorerEndpoint,
+            },
+        })),
+    },
     networks: chains.reduce((result: any, item: any) => {
         return { ...result, [item.id]: { url: item.rpcEndpoint } }
     }, {}),
     typechain: {
-        outDir: 'src/@types/typechain',
+        outDir: 'src/typechain',
         target: 'ethers-v5',
         alwaysGenerateOverloads: false, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
         externalArtifacts: [], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)

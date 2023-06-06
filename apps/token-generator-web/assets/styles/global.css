@@ -4,10 +4,6 @@
 @import './layout';
 @import './custom';
 
-* {
-    font-family: var(--font-plex-sans);
-}
-
 body {
     background-image: url('/page-bg.png');
     background-size: 100%;

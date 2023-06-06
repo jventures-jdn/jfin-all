@@ -16,26 +16,20 @@ export default function Navbar() {
                     </Link>
                     <div className="w-full text-sm hidden lg:block">
                         <Link
-                            href="/contract/ERC20"
-                            className={`${
-                                ['/contract/ERC20'].includes(pathname) ? 'text-white' : ''
-                            } pl-10`}
+                            href="/ERC20"
+                            className={`${['/ERC20'].includes(pathname) ? 'text-white' : ''} pl-10`}
                         >
                             ERC20
                         </Link>
                         <Link
-                            href="/contract/ERC721"
-                            className={`${
-                                pathname === '/contract/ERC721' ? 'text-white' : ''
-                            } pl-10`}
+                            href="/ERC721"
+                            className={`${pathname === '/ERC721' ? 'text-white' : ''} pl-10`}
                         >
                             ERC721
                         </Link>
                         <Link
-                            href="/contract/ERC1155"
-                            className={`${
-                                pathname === '/contract/ERC1155' ? 'text-white' : ''
-                            } pl-10`}
+                            href="/ERC1155"
+                            className={`${pathname === '/ERC1155' ? 'text-white' : ''} pl-10`}
                         >
                             ERC1155
                         </Link>

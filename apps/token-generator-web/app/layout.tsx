@@ -1,8 +1,9 @@
 'use client'
 
+import React from 'react'
 import { IBM_Plex_Sans_Thai } from 'next/font/google'
-import Navbar from 'components/Common/Navbar'
-import Footer from 'components/Common/Footer'
+import Navbar from '../src/components/Common/Navbar'
+import Footer from '../src/components/Common/Footer'
 import '../assets/styles/global.css'
 import { WalletConnectProvider } from '@libs/wallet-connect-react'
 import { LoggerReactProvider } from '@libs/logger-react'
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     /* ---------------------------------- Doms ---------------------------------- */
 
     return (
-        <html lang="en" className={`${plexSans.variable}`}>
+        <html lang="en" className={`${plexSans.className}`}>
             <body>
                 <WalletConnectProvider>
                     <LoggerReactProvider>

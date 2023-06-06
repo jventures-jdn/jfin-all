@@ -1,0 +1,140 @@
+import { CommonComponentProps } from '@utils/app-nextjs'
+import { SetStateAction } from 'react'
+import { HiInformationCircle } from 'react-icons/hi'
+
+export const ERC20TextInput = <T extends Object>(
+    props: CommonComponentProps & {
+        options: {
+            key: string
+            title: string
+            tooltip?: string
+            value: string
+            setter: (value: SetStateAction<T>) => void
+        }
+    },
+) => (
+    <div
+        className={`form-control w-full ${props.className || ''}`}
+        style={props.style}
+        id={props.id}
+    >
+        <label className="label">
+            <span className="label-text flex items-center">
+                <span>{props.options.title}</span>
+                {props.options.tooltip && (
+                    <div
+                        className="tooltip tooltip-secondary ml-1"
+                        data-tip={props.options.tooltip}
+                    >
+                        <div>
+                            <HiInformationCircle />
+                        </div>
+                    </div>
+                )}
+            </span>
+        </label>
+        <input
+            type="text"
+            placeholder={props.options.title}
+            onChange={e =>
+                props.options.setter(form => ({
+                    ...form,
+                    [props.options.key]: e.target.value,
+                }))
+            }
+            value={props.options.value}
+            required
+            className="input input-sm lg:input-md input-bordered w-full"
+        />
+    </div>
+)
+
+export const ERC20RangeInput = <T extends Object>(
+    props: CommonComponentProps & {
+        options: {
+            key: string
+            title: string
+            tooltip?: string
+            value: number
+            setter: (value: SetStateAction<T>) => void
+            supplyMin?: number
+            supplyMax?: number
+            supplyStep?: number
+        }
+    },
+) => (
+    <div
+        className={`form-control w-full ${props.className || ''}`}
+        style={props.style}
+        id={props.id}
+    >
+        <span className="label-text flex items-center">
+            <span>
+                {props.options.title} <b>{props.options.value.toLocaleString()}</b>
+            </span>
+            {props.options.tooltip && (
+                <div className="tooltip tooltip-secondary ml-1" data-tip={props.options.tooltip}>
+                    <div>
+                        <HiInformationCircle />
+                    </div>
+                </div>
+            )}
+        </span>
+        <input
+            type="range"
+            min={props.options.supplyMin || 100000}
+            max={props.options.supplyMax || 1000000}
+            value={props.options.value}
+            step={props.options.supplyStep || 100000}
+            className="range range-sm lg:range:md mt-2"
+            onChange={e =>
+                props.options.setter(form => ({
+                    ...form,
+                    [props.options.key]: +e.target.value,
+                }))
+            }
+        />
+    </div>
+)
+
+export const ERC20CheckboxInput = <T extends Object>(
+    props: CommonComponentProps & {
+        options: {
+            key: string
+            title: string
+            tooltip?: string
+            value: boolean
+            setter: (value: SetStateAction<T>) => void
+        }
+    },
+) => (
+    <div
+        className={`form-control w-full ${props.className || ''}`}
+        style={props.style}
+        id={props.id}
+    >
+        <label className="label">
+            <span className="label-text flex items-center">
+                <span>{props.options.title}</span>
+                {props.options.tooltip && (
+                    <div
+                        className="tooltip tooltip-secondary ml-1"
+                        data-tip={props.options.tooltip}
+                    >
+                        <div>
+                            <HiInformationCircle />
+                        </div>
+                    </div>
+                )}
+            </span>
+        </label>
+        <input
+            type="checkbox"
+            className="toggle"
+            checked={props.options.value}
+            onChange={e =>
+                props.options.setter(form => ({ ...form, [props.options.key]: e.target.checked }))
+            }
+        />
+    </div>
+)
