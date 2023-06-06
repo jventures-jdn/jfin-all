@@ -30,3 +30,9 @@ out
 
 ### gitignore specifics ###
 .config**.yaml
+
+# Hardhat
+artifacts
+cache
+typechain
+cache

@@ -8,6 +8,12 @@ module.exports = {
     theme: {
         fontFamily: {
             notosans: ['var(--font-plex-sans)', ...fontFamily.sans],
+            mono: [
+                'ui-monospace',
+                'var(--font-space-mono)',
+                'var(--font-plex-sans)',
+                ...fontFamily.sans,
+            ],
         },
         ...config.theme,
     },

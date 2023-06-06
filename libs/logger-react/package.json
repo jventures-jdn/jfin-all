@@ -1,19 +1,20 @@
 {
   "name": "@libs/logger-react",
   "dependencies": {
+    "@next/font": "^13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "main": "index.ts",
   "devDependencies": {
-    "@utils/app-nextjs": "workspace:*",
-    "@config/typescript": "workspace:*",
-    "@utils/package-command": "workspace:*",
-    "@config/tailwind": "workspace:*",
     "@config/postcss": "workspace:*",
+    "@config/tailwind": "workspace:*",
+    "@config/typescript": "workspace:*",
     "@types/node": "20.2.5",
-    "typescript": "5.0.4",
     "@types/react": "18.2.7",
-    "@types/react-dom": "18.2.4"
+    "@types/react-dom": "18.2.4",
+    "@utils/app-nextjs": "workspace:*",
+    "@utils/package-command": "workspace:*",
+    "typescript": "5.0.4"
   }
 }
