@@ -25,6 +25,7 @@ export function BlocksListComponentDemo(props: { count: number; blockNumber?: nu
             {currentBlockNumber &&
                 Array.from({ length: props.count }).map((val, index) => {
                     const calculatedBlockNumber = currentBlockNumber - index
+                    // prevent negative blocks
                     if (calculatedBlockNumber > 0) {
                         return (
                             <div key={index}>
