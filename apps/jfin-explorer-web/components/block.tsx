@@ -5,11 +5,11 @@ export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolea
     const { blockNumber, scrape } = props
     // Get block data, this will auto fetch if data not exist
     const block = useBlockscout().blocks().get(blockNumber, { scrape })
-    if (block?.isLoading) return <span>Loading...</span>
+    if (block.isLoading) return <span>Loading...</span>
     return (
         <div>
             <Link href={`/block/${blockNumber}`} prefetch={false}>
-                📦 {JSON.stringify(block?.data)}
+                📦 {JSON.stringify(block.data)}
             </Link>
         </div>
     )
