@@ -1,5 +1,5 @@
 compile*:
-  command: hardhat compile
+  command: pnpm hardhat compile
 test*:
   globalConfig: dev
   command: pnpm compile & pnpm exec hardhat test --typecheck
@@ -10,7 +10,7 @@ test*:
     LOG_LEVEL: 'debug'
 dev*:
   globalConfig: dev
-  command: pnpm compile & bun next dev
+  command: pnpm compile && next dev
   env:
     PORT: '{{port}}'
     TARGET: '{{target}}'

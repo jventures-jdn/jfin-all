@@ -50,10 +50,10 @@ export class PackageAnalyzer {
      */
     static deriveAppType(packageJson: any) {
         if (packageJson.devDependencies?.['@nestjs/cli']) return 'nestjs'
+        else if (packageJson.dependencies?.['hardhat'] && packageJson.dependencies?.['next']) return 'nextjs-hardhat'
         else if (packageJson.dependencies?.['next']) return 'nextjs'
         else if (packageJson.dependencies?.['@docusaurus/core']) return 'docusaurus'
         else if (packageJson.devDependencies?.['react-styleguidist']) return 'styleguidist'
-        else if (packageJson.dependencies?.['hardhat']) return 'hardhat'
         else return 'lib'
     }
 

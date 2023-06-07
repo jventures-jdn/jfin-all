@@ -28,11 +28,11 @@ export const CHAIN_ID: { [key in InternalChain]: number } = {
 }
 
 export const CHAIN_NAME: { [key in InternalChain]: string } = {
-    JFIN: 'JFIN',
+    JFIN: 'JFIN Mainnet',
     JFINT: 'JFIN Testnet',
 }
 
-export const CHAIN_SYMBOL: { [key in InternalChain]: string } = {
+export const CHAIN_SYMBOL: { [key in InternalChain]: InternalChain } = {
     JFIN: 'JFIN',
     JFINT: 'JFINT',
 }
@@ -60,14 +60,14 @@ export enum VALIDATOR_STATUS_ENUM {
     'JAILED' = 3,
 }
 
-export const jfin = {
+export const jfin: Chain = {
     id: CHAIN_ID.JFIN,
     name: CHAIN_NAME.JFIN,
-    network: CHAIN_NAME.JFIN,
+    network: CHAIN_SYMBOL.JFIN as InternalChain,
     nativeCurrency: {
         decimals: CHAIN_DECIMAL_UNIT,
         name: CHAIN_NAME.JFIN,
-        symbol: CHAIN_NAME.JFIN,
+        symbol: CHAIN_SYMBOL.JFIN,
     },
     rpcUrls: {
         public: { http: [CHAIN_RPC.JFIN] },
@@ -83,11 +83,11 @@ export const jfin = {
 export const jfint: Chain = {
     id: CHAIN_ID.JFINT,
     name: CHAIN_NAME.JFINT,
-    network: CHAIN_NAME.JFINT,
+    network: CHAIN_SYMBOL.JFINT as InternalChain,
     nativeCurrency: {
         decimals: CHAIN_DECIMAL_UNIT,
         name: CHAIN_NAME.JFINT,
-        symbol: CHAIN_NAME.JFINT,
+        symbol: CHAIN_SYMBOL.JFINT,
     },
     rpcUrls: {
         public: { http: [CHAIN_RPC.JFINT] },

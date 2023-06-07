@@ -1,6 +1,7 @@
 import { LoggerReactContextType } from '@libs/logger-react'
 import { getWalletClient, getPublicClient, getNetwork } from 'wagmi/actions'
 import { TransactionReceipt } from 'viem'
+import { InternalChain, getChain } from '@libs/wallet-connect-react'
 
 export const logDeployData = async (
     data: Record<string, any>,
@@ -31,6 +32,8 @@ export const deployContract = async ({
     const walletClient = await getWalletClient({ chainId: chain?.id })
     const publicClient = await getPublicClient({ chainId: chain?.id })
 
+    if (!chain) return
+
     // deploy contract
     logger.setLoading('📝 Sign transaction...')
     const hash = await walletClient
@@ -46,7 +49,6 @@ export const deployContract = async ({
             logger.setLoading(undefined)
             return Promise.reject()
         })
-    if (!hash) return Promise.reject()
 
     // wait deploy contract
     logger.setLoading(`💫 Deploying...`)
@@ -57,7 +59,9 @@ export const deployContract = async ({
 
         logger.addMessage(
             <a
-                href={`https://exp.testnet.jfinchain.com/tx/${transaction.transactionHash}`}
+                href={`${getChain(chain.network as InternalChain).chainExplorer.homePage}/tx/${
+                    transaction.transactionHash
+                }`}
                 target="_blank"
             >
                 Hash: [{transaction.transactionHash.slice(0, 7)}...
@@ -67,7 +71,9 @@ export const deployContract = async ({
         )
         logger.addMessage(
             <a
-                href={`https://exp.testnet.jfinchain.com/address/${transaction.contractAddress}`}
+                href={`${getChain(chain.network as InternalChain).chainExplorer.homePage}/address/${
+                    transaction.contractAddress
+                }`}
                 target="_blank"
             >
                 Address: [{transaction.contractAddress?.slice(0, 7)}...

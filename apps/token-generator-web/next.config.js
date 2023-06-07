@@ -18,10 +18,11 @@ module.exports = phase =>
                 appDir: true,
             },
             env: {},
-            output: 'export',
+            transpilePackages: ['@libs/*', '@utils/*', 'hardhat'],
         },
         config => {
             // TODO: remove this hack
             config.resolve.alias['handlebars'] = 'handlebars/dist/handlebars.js'
+            config.module.rules.push({ test: /\.node$/, loader: 'node-loader' }) // verify contract
         },
     )

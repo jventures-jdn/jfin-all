@@ -11,6 +11,7 @@ import { ERC20Generator__factory } from '../../src/typechain/factories/contracts
 import { useNetwork } from 'wagmi'
 import { deployContract, logDeployData } from '../../src/utils/deployContract'
 import { verifyContract } from '../../src/utils/verifyContract'
+import { CHAIN_DECIMAL } from '@libs/wallet-connect-react'
 
 interface ERC20Form {
     symbol: string
@@ -44,7 +45,6 @@ export default function ERC20Page() {
         logger.addMessage(`🗳️ Deploy : ERC20 [${chain?.name}]`)
 
         logDeployData(form, { logger })
-
         const transaction = await deployContract({
             logger,
             abi: ERC20Generator__factory.abi,
@@ -53,8 +53,8 @@ export default function ERC20Page() {
                 {
                     symbol: form.symbol,
                     name: form.name,
-                    initialSupply: BigInt(form.initialSupply),
-                    supplyCap: BigInt(form.supplyCap),
+                    initialSupply: BigInt(form.initialSupply) * CHAIN_DECIMAL,
+                    supplyCap: BigInt(form.supplyCap) * CHAIN_DECIMAL,
                     mintable: form.mintable,
                     burnable: form.burnable,
                     pausable: form.pausable,
@@ -72,8 +72,8 @@ export default function ERC20Page() {
                 {
                     symbol: form.symbol,
                     name: form.name,
-                    initialSupply: form.initialSupply,
-                    supplyCap: form.supplyCap,
+                    initialSupply: (BigInt(form.initialSupply) * CHAIN_DECIMAL).toString(),
+                    supplyCap: (BigInt(form.supplyCap) * CHAIN_DECIMAL).toString(),
                     mintable: form.mintable,
                     burnable: form.burnable,
                     pausable: form.pausable,

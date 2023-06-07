@@ -1,6 +1,8 @@
 import { LoggerReactContextType } from '@libs/logger-react'
+import { InternalChain, getChain } from '@libs/wallet-connect-react'
 import { Address } from 'wagmi'
 import { getNetwork } from 'wagmi/actions'
+import JSON from 'json-bigint'
 
 export const verifyContract = async ({
     logger,
@@ -14,12 +16,12 @@ export const verifyContract = async ({
     args: unknown[]
 }) => {
     const { chain } = getNetwork()
+    if (!chain) return
 
-    console.log(args)
     // verify contract
     logger.setLoading('📝 Verify contract...')
     const verifyResult = await fetch(
-        `/api/verify?chainId=${chain?.id}&address=${address}&contract=${contractName}`,
+        `/api/verify?chainName=${chain?.nativeCurrency.symbol}&address=${address}&contractName=${contractName}`,
         {
             method: 'POST',
             headers: {
@@ -28,7 +30,47 @@ export const verifyContract = async ({
             },
             body: JSON.stringify(args),
         },
-    ).then(res => res.json())
+    )
+        .then(res => res.json())
+        .catch(e => {
+            logger.addNewline()
+            logger.addMessage(e?.details || e?.message || 'Unknown', 'error')
+            logger.addNewline()
+            logger.setLoading(undefined)
+            return Promise.reject()
+        })
 
+    // Fail
+    if (!verifyResult.success) {
+        logger.addMessage('🚫 Contract Verify Failed')
+        logger.addMessage(
+            verifyResult.error?.details ||
+                verifyResult.error?.message ||
+                JSON.stringify(verifyResult.error),
+            'error',
+        )
+        logger.addNewline()
+        logger.setLoading(undefined)
+        return Promise.reject()
+    }
+
+    // Success
     logger.addMessage(`🎉 Contract Verified`)
+    logger.addMessage(
+        <a
+            href={`${getChain(chain.network as InternalChain).chainExplorer.homePage}/address/${
+                verifyResult.contractAddress
+            }`}
+            target="_blank"
+        >
+            <span>
+                {getChain(chain.network as InternalChain).chainExplorer.homePage}/address/
+                {verifyResult.contractAddress}
+            </span>
+        </a>,
+        'success',
+    )
+    logger.addNewline()
+    logger.setLoading(undefined)
+    return Promise.resolve(verifyResult.contractAddress)
 }
