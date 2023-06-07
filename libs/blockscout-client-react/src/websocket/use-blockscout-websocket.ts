@@ -10,8 +10,6 @@ type BlockscoutWebSocketOptions = {
     /** Receive new transaction messages */
     newTransactions?: any
     onMessageReceived?: (data: any, rawMessage: MessageEvent) => void
-    /** Flag for closing ws connection */
-    closeConnection?: boolean
 }
 
 const defaultOptions = {
@@ -31,7 +29,6 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
             reconnectAttempts: 10,
             reconnectInterval: attemptNumber => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
         },
-        options?.closeConnection
     )
 
     // Handle when new message received
