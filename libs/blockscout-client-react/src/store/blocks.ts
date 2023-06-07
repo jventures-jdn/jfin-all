@@ -141,24 +141,24 @@ function _blockStoreList() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const pathname = usePathname()
-    const page = searchParams.get('page') || '1'
+    const pageParam = searchParams.get('page') || '1'
     const blockNumberParam = searchParams.get('block_number')
-    const itemCountParam = searchParams.get('items_count') || '50'
-    const [pageIndex, setPageIndex] = useState<number>(parseInt(page))
+
+    const itemCount = 50
     const blockNumber = blockNumberParam ? parseInt(blockNumberParam) : undefined
-    const itemCount = parseInt(itemCountParam)
+
+    const [pageIndex, setPageIndex] = useState<number>(parseInt(pageParam))
     const isLastPage = blockNumber && blockNumber < itemCount
-    const isFirstPage = page === '1'
+    const isFirstPage = pageParam === '1'
 
     // retrieve current block number
     const { data } = useSWR(`blocks-list-meta`)
     const currentBlockNumber = data?.currentBlockNumber
 
-
     useEffect(() => {
         if (pageIndex && data?.currentBlockNumber) {
-            const addition = pageIndex > parseInt(page) ? -1 : 1
-            const newBlockNumber = (blockNumber ? blockNumber : currentBlockNumber) + addition * 50
+            const magnitude = pageIndex > parseInt(pageParam) ? -1 : 1
+            const newBlockNumber = (blockNumber || currentBlockNumber) + magnitude * 50
             router.push(
                 `${pathname}${
                 // if the user returns to the first page, do not include the block number parameter
@@ -173,10 +173,14 @@ function _blockStoreList() {
     // retrieve existing cache
     const existing = useSWR(`blocks-${blockNumber}`)
 
-    if (existing.data && blockNumber) {
-        // set the current page block number
-        mutate('blocks-list-meta', { currentBlockNumber: existing.data.items[0].height })
-    }
+    // TODO: refactor useEffect
+    // Cannot update a component (`BlocksPage`) while rendering a different component (`BlocksPage`)
+    useEffect(() => {
+        if (existing.data && blockNumber) {
+            // set the current page block number
+            mutate('blocks-list-meta', { currentBlockNumber: existing.data.items[0].height })
+        }
+    }, [existing])
 
     // fetch block list when mounted
     const list = useSWR(`blocks-${blockNumber}`, () => GlobalApis.blocks(blockNumber), {
@@ -195,9 +199,9 @@ function _blockStoreList() {
     }
     )
 
-    // updating page index
+    // update page index
     const nextPage = () => setPageIndex(pageIndex - 1)
     const previousPage = () => setPageIndex(pageIndex + 1)
 
-    return { list, nextPage, previousPage, isFirstPage, isLastPage, currentBlockNumber, itemCount }
+    return { list, nextPage, previousPage, isFirstPage, isLastPage, blockNumber, currentBlockNumber, itemCount }
 }

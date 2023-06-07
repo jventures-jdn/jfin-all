@@ -5,14 +5,22 @@ import { BlocksListComponentDemo } from '../../components/block'
 import { Button } from '@chakra-ui/react'
 
 export default function BlocksPage() {
-    const { list, currentBlockNumber, itemCount, isFirstPage, isLastPage, nextPage, previousPage } =
-        useBlockscout().blocks().list()
+    const {
+        list,
+        blockNumber,
+        currentBlockNumber,
+        itemCount,
+        isFirstPage,
+        isLastPage,
+        nextPage,
+        previousPage,
+    } = useBlockscout().blocks().list()
 
     return (
         <>
             <br />
-            <div>Block Number : {currentBlockNumber}</div>
-            {isFirstPage && <WebSocket />}
+            <div>Block Number : {blockNumber}</div>
+            {isFirstPage && !blockNumber && <WebSocket />}
             <div className="flex">
                 <Button
                     isDisabled={isFirstPage || list?.isLoading}
