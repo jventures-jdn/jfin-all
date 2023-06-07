@@ -195,6 +195,9 @@ importers:
       '@utils/js-utilities':
         specifier: workspace:*
         version: link:../../utils/js-utilities
+      next:
+        specifier: 13.4.4
+        version: 13.4.4(react-dom@18.2.0)(react@18.2.0)
       react-use-websocket:
         specifier: ^4.3.1
         version: 4.3.1
