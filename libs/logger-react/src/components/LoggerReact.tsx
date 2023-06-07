@@ -40,12 +40,14 @@ export function LoggerReact(
 
     const LoggerReactBody = (
         <div
-            className="logger-react-body p-5 overflow-y-auto h-[calc(100vh_-_208px)]"
+            className="logger-react-body p-5 overflow-y-auto overflow-x-clip h-[calc(100vh_-_208px)]"
             style={mono.style}
         >
             <div className="text-sm text-gray-300">
                 {logs.map((log, index) => (
-                    <div key={`${index}`}>{log}</div>
+                    <div key={`${index}-${new Date().toISOString()}`} className="break-all">
+                        {log}
+                    </div>
                 ))}
             </div>
             {!loading ? (
