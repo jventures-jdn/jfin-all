@@ -19,7 +19,7 @@ export default function HomePage() {
         <>
             <div>WebSocket : {ws.connectionStatus}</div>
             <br />
-            stats: <StatsListComponentDemo count={1} />
+            stats: <StatsListComponentDemo />
             <br />
             Blocks : <BlocksListComponentDemo count={4} />
             <br />
