@@ -19,7 +19,7 @@ export const verifyContract = async ({
     if (!chain) return
 
     // verify contract
-    logger.setLoading('📝 Verify contract...')
+    logger.setLoading('📝 Verifying Contract...')
     const verifyResult = await fetch(
         `/api/verify?chainName=${chain?.nativeCurrency.symbol}&address=${address}&contractName=${contractName}`,
         {

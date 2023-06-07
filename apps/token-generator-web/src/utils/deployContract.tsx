@@ -35,7 +35,7 @@ export const deployContract = async ({
     if (!chain) return
 
     // deploy contract
-    logger.setLoading('📝 Sign transaction...')
+    logger.setLoading('📝 Signing transaction...')
     const hash = await walletClient
         ?.deployContract({
             abi,
