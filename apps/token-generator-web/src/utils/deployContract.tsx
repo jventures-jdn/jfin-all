@@ -1,7 +1,7 @@
 import { LoggerReactContextType } from '@libs/logger-react'
 import { getWalletClient, getPublicClient, getNetwork } from 'wagmi/actions'
-import { TransactionReceipt } from 'viem'
-import { InternalChain, getChain } from '@libs/wallet-connect-react'
+import { CHAIN_DECIMAL, InternalChain, getChain } from '@libs/wallet-connect-react'
+import { TransactionReceipt } from 'viem' // must be import for avoid `deployContract` return type error
 
 export const logDeployData = async (
     data: Record<string, any>,
@@ -31,8 +31,15 @@ export const deployContract = async ({
     const { chain } = getNetwork()
     const walletClient = await getWalletClient({ chainId: chain?.id })
     const publicClient = await getPublicClient({ chainId: chain?.id })
+    const gasPrice = await publicClient.getGasPrice()
+    const transactionFeeDecimal = 10 ** 7
 
-    if (!chain) return
+    if (!chain) {
+        logger.addNewline()
+        logger.addMessage('Chain not found')
+        logger.addNewline()
+        return Promise.reject()
+    }
 
     // deploy contract
     logger.setLoading('📝 Signing transaction...')
@@ -64,8 +71,7 @@ export const deployContract = async ({
                 }`}
                 target="_blank"
             >
-                Hash: [{transaction.transactionHash.slice(0, 7)}...
-                {transaction.transactionHash.slice(-7)}]
+                Transaction Hash: <span className="underline">[{transaction.transactionHash}]</span>
             </a>,
             'success',
         )
@@ -73,16 +79,28 @@ export const deployContract = async ({
             <a
                 href={`${getChain(chain.network as InternalChain).chainExplorer.homePage}/address/${
                     transaction.contractAddress
-                }`}
+                }//read-contract`}
                 target="_blank"
             >
-                Address: [{transaction.contractAddress?.slice(0, 7)}...
-                {transaction.contractAddress?.slice(-7)}]
+                Contract Address: <span className="underline">[{transaction.contractAddress}]</span>
             </a>,
             'success',
         )
         logger.addMessage(`Type: ${transaction.type}`, 'success')
-        logger.addMessage(`Gas Used: ${transaction.gasUsed.toLocaleString()}`, 'success')
+        logger.addMessage(
+            `Transaction Fee: ${(
+                Number(
+                    (transaction.gasUsed * gasPrice * BigInt(transactionFeeDecimal)) /
+                        CHAIN_DECIMAL,
+                ) / transactionFeeDecimal
+            ).toLocaleString(undefined, { minimumFractionDigits: 7 })} ${
+                chain.nativeCurrency.symbol
+            }`,
+            'success',
+        )
+
+        console.log(transaction.gasUsed * gasPrice, CHAIN_DECIMAL)
+        console.log(transaction)
 
         return transaction
     } catch (e: any) {

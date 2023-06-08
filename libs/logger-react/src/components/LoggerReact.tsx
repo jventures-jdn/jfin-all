@@ -45,7 +45,11 @@ export function LoggerReact(
         >
             <div className="text-sm text-gray-300">
                 {logs.map((log, index) => (
-                    <div key={`${index}-${new Date().toISOString()}`} className="break-all">
+                    <div
+                        id={`${index}-${new Date().toISOString()}`}
+                        key={`${index}-${new Date().toISOString()}`}
+                        className="break-all"
+                    >
                         {log}
                     </div>
                 ))}

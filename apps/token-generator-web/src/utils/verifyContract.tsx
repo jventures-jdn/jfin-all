@@ -60,10 +60,10 @@ export const verifyContract = async ({
         <a
             href={`${getChain(chain.network as InternalChain).chainExplorer.homePage}/address/${
                 verifyResult.contractAddress
-            }`}
+            }/read-contract`}
             target="_blank"
         >
-            <span>
+            <span className="underline">
                 {getChain(chain.network as InternalChain).chainExplorer.homePage}/address/
                 {verifyResult.contractAddress}
             </span>
