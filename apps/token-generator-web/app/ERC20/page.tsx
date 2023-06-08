@@ -40,6 +40,7 @@ export default function ERC20Page() {
     const { chain } = useNetwork()
     const [form, setForm] = useState(ERC20FormDefaultState)
     const { open, setDefaultChain } = useWeb3Modal()
+    const [connected, setConnected] = useState(false)
 
     /* --------------------------------- Methods -------------------------------- */
     const handleDeploy = async (e: FormEvent<HTMLFormElement>) => {
@@ -91,6 +92,10 @@ export default function ERC20Page() {
         setDefaultChain(chain)
     }, [chain])
 
+    useEffect(() => {
+        setConnected(isConnected)
+    }, [isConnected])
+
     /* ---------------------------------- Doms ---------------------------------- */
     const ERC20Form = (
         <form className="p-5" onSubmit={handleDeploy}>
@@ -104,7 +109,6 @@ export default function ERC20Page() {
                     disabled: !!logger.loading,
                 }}
             />
-
             <ERC20TextInput
                 options={{
                     key: 'name',
@@ -115,7 +119,6 @@ export default function ERC20Page() {
                     disabled: !!logger.loading,
                 }}
             />
-
             {/* Supply */}
             <div className=" border border-gray-400/25 p-3 pb-5 rounded-lg mt-5">
                 <ERC20RangeInput
@@ -140,7 +143,6 @@ export default function ERC20Page() {
                     }}
                 />
             </div>
-
             {/* Switch Case */}
             <div className="border border-gray-400/25 p-3 pb-5 rounded-lg mt-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
                 <ERC20CheckboxInput
@@ -179,24 +181,15 @@ export default function ERC20Page() {
                 />
             </div>
 
-            {isConnected ? (
-                <button
-                    type="submit"
-                    className="btn btn-primary  w-full mt-10 disabled:bg-primary/25"
-                    disabled={!!logger.loading}
-                >
-                    Deploy
-                </button>
-            ) : (
-                <button
-                    type="button"
-                    className="btn btn-primary  w-full mt-10 disabled:bg-primary/25"
-                    disabled={!!logger.loading}
-                    onClick={() => open()}
-                >
-                    Deploy
-                </button>
-            )}
+            <button
+                key="1"
+                type={connected ? 'submit' : 'button'}
+                className="btn btn-primary  w-full mt-10 disabled:bg-primary/25"
+                disabled={!!logger.loading}
+                onClick={() => !connected && open()}
+            >
+                Deploy
+            </button>
         </form>
     )
 
