@@ -1,48 +1,39 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
-
-let resultAverageBlockTime: string
-let resultTotalAddresses: string
-let resultTotalBlocks: string
-let resultTotalTransactions: string
-
-export function StatsComponentDemo(props: { blockTotal: any; scrape?: boolean }) {
-    const { blockTotal, scrape } = props
-
-    // Get block data, this will auto fetch if data not exist
-    const stats = useBlockscout().stats().get(blockTotal, { scrape }) // set true
-    if (stats.isLoading) return <span>Loading...</span>
-
-    if (stats.data?.total_addresses) {
-        resultTotalAddresses = stats.data.total_addresses
-    }
-    if (stats.data?.total_transactions) {
-        resultTotalTransactions = stats.data.total_transactions
-    }
-    if (stats.data?.average_block_time) {
-        resultAverageBlockTime = stats.data.average_block_time
-    }
-    if (stats.data?.total_blocks) {
-        resultTotalBlocks = stats.data.total_blocks
-    }
-
-    // return <div>{JSON.stringify(stats.data)}</div>
-    return (
-        <div>
-            <div>Average block time:{resultAverageBlockTime}</div>
-            <div>Total transactions:{resultTotalTransactions}</div>
-            <div>Total blocks:{resultTotalBlocks}</div>
-            <div>Wallet addresses:{resultTotalAddresses}</div>
-        </div>
-    )
-}
+import { useState, useEffect } from 'react'
 
 export function StatsListComponentDemo() {
+    const [statsInfo, setStatsInfo] = useState({
+        totalAddresses: undefined,
+        totalBlocks: undefined,
+        totalTransactions: undefined,
+        averageBlockTime: undefined,
+    })
+
     // Look for current block number
     const { cuerrentBlockTotal } = useBlockscout().stats().meta()
 
+    // Get block data, this will auto fetch if data not exist
+    const stats = useBlockscout().stats().get(cuerrentBlockTotal, { scrape: true })
+
+    useEffect(() => {
+        setStatsInfo(statsInfo => {
+            return {
+                totalAddresses: stats.data?.total_addresses || statsInfo.totalAddresses,
+                totalTransactions: stats.data?.total_transactions || statsInfo.totalTransactions,
+                averageBlockTime: stats.data?.average_block_time || statsInfo.averageBlockTime,
+                totalBlocks: stats.data?.total_blocks || statsInfo.totalBlocks,
+            }
+        })
+    }, [stats.data])
+
+    if (stats.isLoading) return <span>Loading...</span>
+
     return (
         <div>
-            <div>{<StatsComponentDemo blockTotal={cuerrentBlockTotal} scrape />}</div>
+            <div>Average block time:{statsInfo.averageBlockTime}</div>
+            <div>Total transactions:{statsInfo.totalTransactions}</div>
+            <div>Total blocks:{statsInfo.totalBlocks}</div>
+            <div>Wallet addresses:{statsInfo.totalAddresses}</div>
         </div>
     )
 }
