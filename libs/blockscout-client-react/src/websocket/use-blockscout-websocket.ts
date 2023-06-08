@@ -51,13 +51,14 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
         } else if (readyState === ReadyState.OPEN) {
             // Auto send message on open
             if (options?.newBlocks)
-                sendMessage(JSON.stringify(['30', '30', 'blocks:new_block', 'phx_join', {}]))
+                sendMessage(JSON.stringify(['15', '15', 'blocks:new_block', 'phx_join', {}]))
             if (options?.newTransactions)
                 sendMessage(
                     JSON.stringify(['18', '18', 'transactions:new_transaction', 'phx_join', {}]),
                 )
             if (options?.newStats)
                 sendMessage(JSON.stringify(['12', '12', 'addresses:new_address', 'phx_join', {}]))
+            // sendMessage(JSON.stringify(['18', '18', 'addresses:new_address', 'phx_join', {}]))
         }
     }, [readyState])
 

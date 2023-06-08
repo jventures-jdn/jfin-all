@@ -6,9 +6,6 @@ import { Stats } from '../types'
 import { useEffect } from 'react'
 
 const key = (blockTotal: any) => `stats/${blockTotal}`
-
-let totalTransactions: string
-let totalBlockTotal: string
 let statsData: Stats
 
 // Root hook
@@ -31,7 +28,6 @@ const _fullStatsFetcher = () => {
 // Individual stats state
 function _statsStoreGet(blockTotal: any, options?: { scrape?: boolean }) {
     const existing = useSWR(key(blockTotal), () => _fullStatsFetcher())
-
     // force fetch if full data is required and not yet presented
     if (
         !options?.scrape &&
@@ -62,7 +58,6 @@ function _statsStoreInitial() {
     return useSWR('initial-stats', GlobalApis.stats, {
         onSuccess: response => {
             const items = response
-            totalTransactions = items.total_transactions
             const parsed = _formatFullData(items, 'init')
             mutate(key(items.total_blocks), parsed, { revalidate: false })
             _updateBlockMeta(items.total_blocks)
@@ -84,19 +79,10 @@ function _statsStoreMeta() {
 
 export function statsWebSocketRecord(data: any) {
     if (data[4].block_number) {
-        totalBlockTotal = data[4].block_number
-
         statsData = {
             data_source: 'ws',
             average_block_time: data[4].average_block_time,
             total_blocks: data[4].block_number,
-        } as Stats
-    } else if (data[4].transaction_hash) {
-        totalTransactions = String(Number(totalTransactions) + 1)
-
-        statsData = {
-            data_source: 'ws',
-            total_transactions: totalTransactions,
         } as Stats
     } else if (data[4].count) {
         statsData = {
@@ -105,13 +91,13 @@ export function statsWebSocketRecord(data: any) {
         } as Stats
     }
 
-    mutate(key(totalBlockTotal), statsData, {
+    mutate(key(data[4].block_number), statsData, {
         // merge with existing data if exist
         populateCache: (data, current) => ({ ...current, ...data }),
         revalidate: false,
     })
 
-    _updateBlockMeta(totalBlockTotal)
+    _updateBlockMeta(data[4].block_number)
 }
 
 // Format data from api response (both init and fetch)

@@ -9,7 +9,6 @@ export function blockScoutWebSocketRecord(data: any) {
         statsWebSocketRecord(data)
     } else if (data[2] === 'transactions:new_transaction' && data[3] === 'transaction') {
         transactionWebSocketRecord(data)
-        statsWebSocketRecord(data)
     } else if (data[2] === 'addresses:new_address' && data[3] === 'count') {
         console.log(`blockScoutWebSocketRecord ${data}`)
         statsWebSocketRecord(data)
