@@ -151,13 +151,13 @@ function _blockStoreList() {
     const [pageIndex, setPageIndex] = useState<number>(pageIndexValidated)
     const isLastPage = blockNumber && blockNumber <= itemCount
     const isFirstPage = pageIndexValidated === 1
-    const isValidBlock = blockNumber || blockNumber === 0 ? blockNumber > 0 : true
-    const isWs = isFirstPage && !blockNumber && blockNumber !== 0
-    let currentBlockNumber: any
+    const isBlockQueryZero = blockNumber === 0
+    const isValidBlock = blockNumber || isBlockQueryZero ? blockNumber > 0 : true
+    const isWs = isFirstPage && !blockNumber && !isBlockQueryZero
 
     // retrieve current block number
     const { data } = useSWR(`blocks-list-meta`)
-    currentBlockNumber = data?.currentBlockNumber
+    const currentBlockNumber = data?.currentBlockNumber
 
     // update page index when the browser's pop state event occurs
     useEffect(() => {
