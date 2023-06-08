@@ -12,6 +12,7 @@ export default function BlocksPage() {
         itemCount,
         isFirstPage,
         isLastPage,
+        isBlockExists,
         nextPage,
         previousPage,
     } = useBlockscout().blocks().list()
@@ -41,8 +42,9 @@ export default function BlocksPage() {
                     Previous
                 </Button>
             </div>
-            {list?.isLoading && <>Loading...</>}
-            {!list?.isLoading && (
+            {!isBlockExists && <div>There are no blocks. </div>}
+            {list?.isLoading && isBlockExists && <>Loading...</>}
+            {!list?.isLoading && isBlockExists && (
                 <>
                     Blocks :
                     <BlocksListComponentDemo count={itemCount} blockNumber={currentBlockNumber} />

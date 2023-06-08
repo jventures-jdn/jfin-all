@@ -16,17 +16,18 @@ export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolea
 }
 
 export function BlocksListComponentDemo(props: { count: number; blockNumber?: number }) {
-    const { currentBlockNumber } = props.blockNumber
-        ? useBlockscout().blocks().listMeta()
-        : useBlockscout().blocks().meta()
+    const { currentBlockNumber } =
+        props.blockNumber || props.blockNumber === 0
+            ? useBlockscout().blocks().listMeta()
+            : useBlockscout().blocks().meta()
 
     return (
         <div>
-            {currentBlockNumber &&
+            {(currentBlockNumber || currentBlockNumber === 0) &&
                 Array.from({ length: props.count }).map((val, index) => {
                     const calculatedBlockNumber = currentBlockNumber - index
                     // prevent negative blocks
-                    if (calculatedBlockNumber > 0) {
+                    if (calculatedBlockNumber >= 0) {
                         return (
                             <div key={index}>
                                 <BlockComponentDemo blockNumber={calculatedBlockNumber} scrape />

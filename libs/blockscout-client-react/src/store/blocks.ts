@@ -13,8 +13,8 @@ const key = (blockNumber: number) => `blocks/${blockNumber}`
 export function useBlockscoutBlocks() {
     return {
         get: _blockStoreGet,
-        list: _blockStoreList,
         meta: _blockStoreMeta,
+        list: _blockStoreList,
         listMeta: _blockStoreListMeta,
     }
 }
@@ -147,18 +147,36 @@ function _blockStoreList() {
     const itemCount = 50
     const blockNumber = blockNumberParam ? parseInt(blockNumberParam) : undefined
 
-    const [pageIndex, setPageIndex] = useState<number>(parseInt(pageParam))
-    const isLastPage = blockNumber && blockNumber < itemCount
-    const isFirstPage = pageParam === '1'
+    const pageIndexValidated = parseInt(pageParam) > 0 ? parseInt(pageParam) : 1
+    const [pageIndex, setPageIndex] = useState<number>(pageIndexValidated)
+    const isLastPage = blockNumber && blockNumber <= itemCount
+    const isFirstPage = pageIndexValidated === 1
+    const isBlockExisted = blockNumber || blockNumber === 0 ? blockNumber > 0 : true
+    let currentBlockNumber: any
 
     // retrieve current block number
-    const { data } = useSWR(`blocks-list-meta`)
-    const currentBlockNumber = data?.currentBlockNumber
+    if (isBlockExisted) {
+        const { data } = useSWR(`blocks-list-meta`)
+        currentBlockNumber = data?.currentBlockNumber
+    }
+
+    // update page index when the browser's pop state event occurs
+    useEffect(() => {
+        const handlePopstate = () => {
+            const pageParam = new URL(window.location.href).searchParams.get('page') || '1'
+            setPageIndex(parseInt(pageParam))
+        }
+
+        window.addEventListener('popstate', handlePopstate)
+        return () => {
+            window.removeEventListener('popstate', handlePopstate)
+        }
+    }, [])
 
     useEffect(() => {
-        if (pageIndex && data?.currentBlockNumber) {
+        if (pageIndex && currentBlockNumber) {
             const magnitude = pageIndex > parseInt(pageParam) ? -1 : 1
-            const newBlockNumber = (blockNumber || currentBlockNumber) + magnitude * 50
+            const newBlockNumber = (blockNumber || currentBlockNumber) + magnitude * itemCount
             router.push(
                 `${pathname}${
                 // if the user returns to the first page, do not include the block number parameter
@@ -174,25 +192,23 @@ function _blockStoreList() {
     const existing = useSWR(`blocks-${blockNumber}`)
 
     // TODO: refactor useEffect
-    // Cannot update a component (`BlocksPage`) while rendering a different component (`BlocksPage`)
+    // cannot update a component (`BlocksPage`) while rendering a different component (`BlocksPage`)
     useEffect(() => {
-        if (existing.data && blockNumber) {
+        if (existing.data && isBlockExisted) {
             // set the current page block number
             mutate('blocks-list-meta', { currentBlockNumber: existing.data.items[0].height })
         }
-    }, [existing])
+    }, [existing.data])
 
     // fetch block list when mounted
-    const list = useSWR(`blocks-${blockNumber}`, () => GlobalApis.blocks(blockNumber), {
+    const list = useSWR(`blocks-${blockNumber}`, () => isBlockExisted ? GlobalApis.blocks(blockNumber) : null, {
         onSuccess: response => {
             const items = response
             items.items.forEach((item: any, index: number) => {
-                if (item.height > 0) {
-                    const parsed = _formatFullData(item, 'fetch')
+                const parsed = _formatFullData(item, 'fetch')
 
-                    // write individual block data to cache
-                    mutate(key(item.height), parsed, { revalidate: true })
-                }
+                // write individual block data to cache
+                mutate(key(item.height), parsed, { revalidate: true })
             })
             mutate('blocks-list-meta', { currentBlockNumber: items.items[0].height })
         },
@@ -203,5 +219,5 @@ function _blockStoreList() {
     const nextPage = () => setPageIndex(pageIndex - 1)
     const previousPage = () => setPageIndex(pageIndex + 1)
 
-    return { list, nextPage, previousPage, isFirstPage, isLastPage, blockNumber, currentBlockNumber, itemCount }
+    return { list, nextPage, previousPage, isFirstPage, isLastPage, isBlockExisted, blockNumber, currentBlockNumber, itemCount }
 }
