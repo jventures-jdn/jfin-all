@@ -15,11 +15,10 @@ export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolea
     )
 }
 
-export function BlocksListComponentDemo(props: { count: number; blockNumber?: number }) {
-    const { currentBlockNumber } =
-        props.blockNumber || props.blockNumber === 0
-            ? useBlockscout().blocks().listMeta()
-            : useBlockscout().blocks().meta()
+export function BlocksListComponentDemo(props: { count: number; useListMeta?: boolean }) {
+    const { currentBlockNumber } = props.useListMeta
+        ? useBlockscout().blocks().listMeta()
+        : useBlockscout().blocks().meta()
 
     return (
         <div>

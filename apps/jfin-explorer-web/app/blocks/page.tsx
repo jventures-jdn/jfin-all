@@ -8,10 +8,10 @@ export default function BlocksPage() {
     const {
         list,
         blockNumber,
-        currentBlockNumber,
         itemCount,
         isFirstPage,
         isLastPage,
+        isWs,
         isBlockExists,
         nextPage,
         previousPage,
@@ -21,7 +21,7 @@ export default function BlocksPage() {
         <>
             <br />
             <div>Block Number : {blockNumber}</div>
-            {isFirstPage && !blockNumber && <WebSocket />}
+            {isWs && <WebSocket />}
             <div className="flex">
                 <Button
                     isDisabled={isFirstPage || list?.isLoading}
@@ -47,7 +47,7 @@ export default function BlocksPage() {
             {!list?.isLoading && isBlockExists && (
                 <>
                     Blocks :
-                    <BlocksListComponentDemo count={itemCount} blockNumber={currentBlockNumber} />
+                    <BlocksListComponentDemo count={itemCount} useListMeta={true} />
                 </>
             )}
             <br />

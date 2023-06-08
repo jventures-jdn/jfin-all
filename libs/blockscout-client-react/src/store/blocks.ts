@@ -151,11 +151,12 @@ function _blockStoreList() {
     const [pageIndex, setPageIndex] = useState<number>(pageIndexValidated)
     const isLastPage = blockNumber && blockNumber <= itemCount
     const isFirstPage = pageIndexValidated === 1
-    const isBlockExisted = blockNumber || blockNumber === 0 ? blockNumber > 0 : true
+    const isBlockExists = blockNumber || blockNumber === 0 ? blockNumber > 0 : true
+    const isWs = isFirstPage && !blockNumber && blockNumber !== 0
     let currentBlockNumber: any
 
     // retrieve current block number
-    if (isBlockExisted) {
+    if (isBlockExists) {
         const { data } = useSWR(`blocks-list-meta`)
         currentBlockNumber = data?.currentBlockNumber
     }
@@ -194,14 +195,14 @@ function _blockStoreList() {
     // TODO: refactor useEffect
     // cannot update a component (`BlocksPage`) while rendering a different component (`BlocksPage`)
     useEffect(() => {
-        if (existing.data && isBlockExisted) {
+        if (existing.data && isBlockExists) {
             // set the current page block number
             mutate('blocks-list-meta', { currentBlockNumber: existing.data.items[0].height })
         }
     }, [existing.data])
 
     // fetch block list when mounted
-    const list = useSWR(`blocks-${blockNumber}`, () => isBlockExisted ? GlobalApis.blocks(blockNumber) : null, {
+    const list = useSWR(`blocks-${blockNumber}`, () => isBlockExists ? GlobalApis.blocks(blockNumber) : null, {
         onSuccess: response => {
             const items = response
             items.items.forEach((item: any, index: number) => {
@@ -219,5 +220,5 @@ function _blockStoreList() {
     const nextPage = () => setPageIndex(pageIndex - 1)
     const previousPage = () => setPageIndex(pageIndex + 1)
 
-    return { list, nextPage, previousPage, isFirstPage, isLastPage, isBlockExisted, blockNumber, currentBlockNumber, itemCount }
+    return { list, nextPage, previousPage, isFirstPage, isLastPage, isWs, isBlockExists, blockNumber, itemCount }
 }
