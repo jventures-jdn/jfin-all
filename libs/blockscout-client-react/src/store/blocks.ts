@@ -151,15 +151,13 @@ function _blockStoreList() {
     const [pageIndex, setPageIndex] = useState<number>(pageIndexValidated)
     const isLastPage = blockNumber && blockNumber <= itemCount
     const isFirstPage = pageIndexValidated === 1
-    const isBlockExists = blockNumber || blockNumber === 0 ? blockNumber > 0 : true
+    const isValidBlock = blockNumber || blockNumber === 0 ? blockNumber > 0 : true
     const isWs = isFirstPage && !blockNumber && blockNumber !== 0
     let currentBlockNumber: any
 
     // retrieve current block number
-    if (isBlockExists) {
-        const { data } = useSWR(`blocks-list-meta`)
-        currentBlockNumber = data?.currentBlockNumber
-    }
+    const { data } = useSWR(`blocks-list-meta`)
+    currentBlockNumber = data?.currentBlockNumber
 
     // update page index when the browser's pop state event occurs
     useEffect(() => {
@@ -195,14 +193,14 @@ function _blockStoreList() {
     // TODO: refactor useEffect
     // cannot update a component (`BlocksPage`) while rendering a different component (`BlocksPage`)
     useEffect(() => {
-        if (existing.data && isBlockExists) {
+        if (existing.data && isValidBlock) {
             // set the current page block number
             mutate('blocks-list-meta', { currentBlockNumber: existing.data.items[0].height })
         }
     }, [existing.data])
 
     // fetch block list when mounted
-    const list = useSWR(`blocks-${blockNumber}`, () => isBlockExists ? GlobalApis.blocks(blockNumber) : null, {
+    const list = useSWR(`blocks-${blockNumber}`, () => isValidBlock ? GlobalApis.blocks(blockNumber) : null, {
         onSuccess: response => {
             const items = response
             items.items.forEach((item: any, index: number) => {
@@ -220,5 +218,5 @@ function _blockStoreList() {
     const nextPage = () => setPageIndex(pageIndex - 1)
     const previousPage = () => setPageIndex(pageIndex + 1)
 
-    return { list, nextPage, previousPage, isFirstPage, isLastPage, isWs, isBlockExists, blockNumber, itemCount }
+    return { list, nextPage, previousPage, isFirstPage, isLastPage, isWs, isValidBlock, blockNumber, itemCount }
 }
