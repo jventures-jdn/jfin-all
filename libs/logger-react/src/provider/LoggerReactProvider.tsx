@@ -1,3 +1,4 @@
+import React from 'react'
 import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useState } from 'react'
 
 /* -------------------------------------------------------------------------- */
@@ -75,7 +76,11 @@ export function LoggerReactProvider({ children }: { children: ReactNode }) {
             ...logs,
             Array(line)
                 .fill(0)
-                .map(() => <br />),
+                .map(index => (
+                    <React.Fragment key={index}>
+                        <br />
+                    </React.Fragment>
+                )),
         ])
         handleMessage && handleMessage('newline', <br />)
     }

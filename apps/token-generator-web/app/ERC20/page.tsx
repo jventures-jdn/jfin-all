@@ -13,6 +13,7 @@ import { deployContract, logDeployData } from '../../src/utils/deployContract'
 import { verifyContract } from '../../src/utils/verifyContract'
 import { CHAIN_DECIMAL } from '@libs/wallet-connect-react'
 import { useWeb3Modal } from '@web3modal/react'
+import { HiInformationCircle } from 'react-icons/hi'
 
 interface ERC20Form {
     symbol: string
@@ -41,6 +42,9 @@ export default function ERC20Page() {
     const [form, setForm] = useState(ERC20FormDefaultState)
     const { open, setDefaultChain } = useWeb3Modal()
     const [connected, setConnected] = useState(false)
+    const minSupply = 0
+    const maxSupply = 1000000
+    const stepSupply = 10000
 
     /* --------------------------------- Methods -------------------------------- */
     const handleDeploy = async (e: FormEvent<HTMLFormElement>) => {
@@ -121,27 +125,133 @@ export default function ERC20Page() {
             />
             {/* Supply */}
             <div className=" border border-gray-400/25 p-3 pb-5 rounded-lg mt-5">
-                <ERC20RangeInput
-                    options={{
-                        key: 'initialSupply',
-                        title: 'Initial Supply',
-                        tooltip: 'Intial token that will be mint for the owner',
-                        value: form.initialSupply,
-                        setter: setForm,
-                        disabled: !!logger.loading,
-                    }}
-                />
-                <ERC20RangeInput
-                    className="pt-3"
-                    options={{
-                        key: 'supplyCap',
-                        title: 'Supply Cap',
-                        tooltip: 'Maximum amount of tokens in system',
-                        value: form.supplyCap,
-                        setter: setForm,
-                        disabled: !!logger.loading,
-                    }}
-                />
+                <div className={`form-control w-full pt-3`}>
+                    <span className="label-text flex items-center">
+                        <span>
+                            Initial Supply
+                            <input
+                                type="number"
+                                min={minSupply}
+                                max={maxSupply}
+                                onChange={e => {
+                                    const value = +e.target.value
+                                    if (value > maxSupply || value < minSupply) return
+                                    if (value > form.supplyCap)
+                                        setForm(form => ({
+                                            ...form,
+                                            supplyCap: value,
+                                        }))
+
+                                    setForm(form => ({
+                                        ...form,
+                                        initialSupply: value,
+                                    }))
+                                }}
+                                value={form.initialSupply}
+                                required
+                                disabled={!!logger.loading}
+                                className="ml-2 input input-xs input-bordered disabled:bg-base-300/0 disabled:border-gray-400/25"
+                            />
+                        </span>
+                        {
+                            <div
+                                className="tooltip tooltip-secondary ml-1"
+                                data-tip="Intial token that will be mint for the owner"
+                            >
+                                <div>
+                                    <HiInformationCircle />
+                                </div>
+                            </div>
+                        }
+                    </span>
+                    <input
+                        type="range"
+                        min={minSupply}
+                        max={maxSupply}
+                        value={form.initialSupply}
+                        step={stepSupply}
+                        className="range range-sm lg:range:md mt-2 disabled:opacity-10 disabled:cursor-not-allowed"
+                        disabled={!!logger.loading}
+                        onChange={e => {
+                            const value = +e.target.value
+
+                            if (value > form.supplyCap)
+                                return setForm(form => ({
+                                    ...form,
+                                    supplyCap: value,
+                                }))
+
+                            setForm(form => ({
+                                ...form,
+                                initialSupply: value,
+                            }))
+                        }}
+                    />
+                </div>
+                <div className={`form-control w-full pt-3`}>
+                    <span className="label-text flex items-center">
+                        <span>
+                            Supply Cap
+                            <input
+                                type="number"
+                                min={minSupply}
+                                max={maxSupply}
+                                onChange={e => {
+                                    const value = +e.target.value
+                                    if (value > maxSupply || value < minSupply) return
+                                    if (value < form.initialSupply)
+                                        setForm(form => ({
+                                            ...form,
+                                            initialSupply: value,
+                                        }))
+
+                                    setForm(form => ({
+                                        ...form,
+                                        supplyCap: value,
+                                    }))
+                                }}
+                                value={form.supplyCap}
+                                required
+                                disabled={!!logger.loading}
+                                className="ml-2 input input-xs input-bordered disabled:bg-base-300/0 disabled:border-gray-400/25"
+                            />
+                        </span>
+                        {
+                            <div
+                                className="tooltip tooltip-secondary ml-1"
+                                data-tip="Maximum amount of tokens in system"
+                            >
+                                <div>
+                                    <HiInformationCircle />
+                                </div>
+                            </div>
+                        }
+                    </span>
+                    <input
+                        type="range"
+                        min={minSupply}
+                        max={maxSupply}
+                        value={form.supplyCap}
+                        step={stepSupply}
+                        className="range range-sm lg:range:md mt-2 disabled:opacity-10 disabled:cursor-not-allowed"
+                        disabled={!!logger.loading}
+                        onChange={e => {
+                            const value = +e.target.value
+
+                            if (value < form.initialSupply) {
+                                return setForm(form => ({
+                                    ...form,
+                                    initialSupply: value,
+                                }))
+                            }
+
+                            setForm(form => ({
+                                ...form,
+                                supplyCap: value,
+                            }))
+                        }}
+                    />
+                </div>
             </div>
             {/* Switch Case */}
             <div className="border border-gray-400/25 p-3 pb-5 rounded-lg mt-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
@@ -150,7 +260,7 @@ export default function ERC20Page() {
                     options={{
                         key: 'mintable',
                         title: 'Mintable',
-                        tooltip: 'Can owner mint tokens?',
+                        tooltip: '"Contract Owner" can mint more tokens (max at supply cap)',
                         value: form.mintable,
                         setter: setForm,
                         disabled: !!logger.loading,
@@ -162,7 +272,7 @@ export default function ERC20Page() {
                     options={{
                         key: 'burnable',
                         title: 'Burnable',
-                        tooltip: 'Can owner burn tokens?',
+                        tooltip: '"Token Holder" can burn their own tokens',
                         value: form.burnable,
                         setter: setForm,
                         disabled: !!logger.loading,
@@ -173,7 +283,7 @@ export default function ERC20Page() {
                     options={{
                         key: 'pausable',
                         title: 'Pausable',
-                        tooltip: 'Can owner pause mint or burn tokens?',
+                        tooltip: '"Contract Owner" can pause all activities on this token',
                         value: form.pausable,
                         setter: setForm,
                         disabled: !!logger.loading,

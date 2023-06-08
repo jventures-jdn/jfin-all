@@ -70,7 +70,7 @@ export const verifyContract = async ({
         </a>,
         'success',
     )
-    logger.addNewline()
+    logger.addNewline(2)
     logger.setLoading(undefined)
     return Promise.resolve(verifyResult.contractAddress)
 }

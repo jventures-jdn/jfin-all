@@ -2,6 +2,7 @@ import { CommonComponentProps } from '@utils/app-nextjs'
 import { useLoggerReact } from '../provider/LoggerReactProvider'
 import { useEffect, useRef } from 'react'
 import { Space_Mono } from '@next/font/google'
+import React from 'react'
 
 export const mono = Space_Mono({
     subsets: ['latin'],
@@ -43,15 +44,9 @@ export function LoggerReact(
             className="logger-react-body p-5 overflow-y-auto overflow-x-clip h-[calc(100vh_-_208px)]"
             style={mono.style}
         >
-            <div className="text-sm text-gray-300">
+            <div className="text-sm text-gray-300 break-all">
                 {logs.map((log, index) => (
-                    <div
-                        id={`${index}-${new Date().toISOString()}`}
-                        key={`${index}-${new Date().toISOString()}`}
-                        className="break-all"
-                    >
-                        {log}
-                    </div>
+                    <React.Fragment key={index}>{log}</React.Fragment>
                 ))}
             </div>
             {!loading ? (
