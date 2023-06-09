@@ -19,7 +19,7 @@ export default function BlocksPage() {
     } = useBlockscout().blocks().list()
 
     return (
-        <>
+        <div id="blocks-page">
             <br />
             <div>Page Index : {pageIndex}</div>
             <div>Block Number : {blockNumber}</div>
@@ -47,13 +47,13 @@ export default function BlocksPage() {
             {!isValidBlock && <div>There are no blocks. </div>}
             {list?.isLoading && isValidBlock && <>Loading...</>}
             {!list?.isLoading && isValidBlock && (
-                <div id="blocks-page-list">
+                <div>
                     Blocks :
                     <BlocksPageListComponentDemo count={itemCount} />
                 </div>
             )}
             <br />
-        </>
+        </div>
     )
 }
 
