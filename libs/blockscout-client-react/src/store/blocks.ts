@@ -147,7 +147,7 @@ function _blockStoreList() {
     const isBlockQueryZero = blockNumber === 0
     const isValidBlock = blockNumber || isBlockQueryZero ? blockNumber > 0 : true
     const isWs = isFirstPage && !blockNumber && !isBlockQueryZero
-    const blockListKey = blockNumber ? `blocks-${blockNumber}` : 'blocks-lastest'
+    const blockListKey = blockNumber ? `blocks-${blockNumber}` : 'blocks-latest'
 
     // retrieve current block number
     const { data } = useSWR(`blocks-meta`)
