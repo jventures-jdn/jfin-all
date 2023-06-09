@@ -49,7 +49,7 @@ function _transactionStoreGet(
 
 // Handle new  scrape transaction data from web socket
 export function transactionWebSocketRecord(data: any) {
-    const txHash = data[4].transaction_hash
+    const txHash = data?.transaction_hash
     const transactionData = {
         data_source: 'ws',
         hash: txHash,

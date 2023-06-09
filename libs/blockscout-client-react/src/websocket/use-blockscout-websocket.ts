@@ -6,9 +6,9 @@ import { GlobalConfig } from '@utils/global-config'
 type BlockscoutWebSocketOptions = {
     socketUrl?: string
     /** Receive new block messages */
-    newBlocks?: any
+    newBlocks?: boolean
     /** Receive new transaction messages */
-    newTransactions?: any
+    newTransactions?: boolean
     onMessageReceived?: (data: any, rawMessage: MessageEvent) => void
 }
 
@@ -49,7 +49,7 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
         } else if (readyState === ReadyState.OPEN) {
             // Auto send message on open
             if (options?.newBlocks)
-                sendMessage(JSON.stringify(['12', '12', 'blocks:new_block', 'phx_join', {}]))
+                sendMessage(JSON.stringify(['15', '15', 'blocks:new_block', 'phx_join', {}]))
             if (options?.newTransactions)
                 sendMessage(
                     JSON.stringify(['18', '18', 'transactions:new_transaction', 'phx_join', {}]),

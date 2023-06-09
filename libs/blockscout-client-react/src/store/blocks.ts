@@ -92,11 +92,12 @@ function _blockStoreMeta() {
 
 // Handle new scrape block data from web socket
 export function blockWebSocketRecord(data: any) {
-    const blockNumber = data[4].block_number
+    console.log('helper___ blockWebSocketRecord', data)
+    const blockNumber = data?.block_number
     const blockData = {
         data_source: 'ws',
-        block_number: data[4].block_number,
-        miner: data[4].block_miner_hash,
+        block_number: data.block_number,
+        miner: data.block_miner_hash,
     } as Block
 
     mutate(key(blockNumber), blockData, {
