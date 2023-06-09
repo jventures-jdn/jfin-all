@@ -5,7 +5,6 @@ import { Block } from '../types'
 import { GlobalApis } from '../apis/global-apis'
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-// import { calculateNewBlockNumber } from '../helpers/blocks'
 
 const key = (blockNumber: number) => `blocks/${blockNumber}`
 
@@ -13,9 +12,8 @@ const key = (blockNumber: number) => `blocks/${blockNumber}`
 export function useBlockscoutBlocks() {
     return {
         get: _blockStoreGet,
-        meta: _blockStoreMeta,
+        meta: (options?: { initialFetch?: boolean }) => _blockStoreMeta(options),
         list: _blockStoreList,
-        listMeta: _blockStoreListMeta,
     }
 }
 
@@ -52,12 +50,12 @@ function _blockStoreGet(
 }
 
 // Internal helper to update latest block number
-function _updateBlockMeta(blockNumber: number) {
-    mutate('blocks-meta', { currentBlockNumber: blockNumber })
-}
-
-function _updateBlockListMeta(blockNumber: number) {
-    mutate('blocks-list-meta', { currentBlockNumber: blockNumber })
+function _updateBlockMeta(currentBlockData: { currentBlockNumber?: number, currentPageBlockNumber?: number }) {
+    mutate('blocks-meta', currentBlockData, {
+        // merge with existing data if exist
+        populateCache: (data, current) => ({ ...current, ...data }),
+        revalidate: false,
+    })
 }
 
 // Initial blocks loading
@@ -81,7 +79,7 @@ function _blockStoreInitial() {
             })
 
             // update meta e.g. current block number
-            _updateBlockMeta(items[0].height)
+            _updateBlockMeta({ currentBlockNumber: items[0].height })
         },
     })
 }
@@ -92,14 +90,10 @@ export function blockStoreInitialClear() {
 }
 
 // Global blocks state
-function _blockStoreMeta() {
+function _blockStoreMeta(options?: { initialFetch?: boolean }) {
     // Auto fetch initial blocks
-    _blockStoreInitial()
+    options?.initialFetch ? _blockStoreInitial() : null
     return useSWR('blocks-meta', null).data || {}
-}
-
-function _blockStoreListMeta() {
-    return useSWR('blocks-list-meta', null).data || {}
 }
 
 // Handle new scrape block data from web socket
@@ -117,8 +111,7 @@ export function blockWebSocketRecord(data: any) {
         revalidate: false,
     })
 
-    _updateBlockMeta(blockNumber)
-    _updateBlockListMeta(blockNumber)
+    _updateBlockMeta({ currentBlockNumber: blockNumber, currentPageBlockNumber: blockNumber })
 }
 
 // Format data from api response (both init and fetch)
@@ -154,10 +147,11 @@ function _blockStoreList() {
     const isBlockQueryZero = blockNumber === 0
     const isValidBlock = blockNumber || isBlockQueryZero ? blockNumber > 0 : true
     const isWs = isFirstPage && !blockNumber && !isBlockQueryZero
+    const blockListKey = blockNumber ? `blocks-${blockNumber}` : 'blocks-lastest'
 
     // retrieve current block number
-    const { data } = useSWR(`blocks-list-meta`)
-    const currentBlockNumber = data?.currentBlockNumber
+    const { data } = useSWR(`blocks-meta`)
+    const currentPageBlockNumber = data?.currentPageBlockNumber
 
     // update page index when the browser's pop state event occurs
     useEffect(() => {
@@ -173,9 +167,9 @@ function _blockStoreList() {
     }, [])
 
     useEffect(() => {
-        if (pageIndex && currentBlockNumber) {
+        if (pageIndex && currentPageBlockNumber) {
             const magnitude = pageIndex > parseInt(pageParam) ? -1 : 1
-            const newBlockNumber = (blockNumber || currentBlockNumber) + magnitude * itemCount
+            const newBlockNumber = (blockNumber || currentPageBlockNumber) + magnitude * itemCount
             router.push(
                 `${pathname}${
                 // if the user returns to the first page, do not include the block number parameter
@@ -188,19 +182,19 @@ function _blockStoreList() {
     }, [pageIndex])
 
     // retrieve existing cache
-    const existing = useSWR(`blocks-${blockNumber}`)
+    const existing = useSWR(blockListKey)
 
     // TODO: refactor useEffect
     // cannot update a component (`BlocksPage`) while rendering a different component (`BlocksPage`)
     useEffect(() => {
         if (existing.data && isValidBlock) {
             // set the current page block number
-            mutate('blocks-list-meta', { currentBlockNumber: existing.data.items[0].height })
+            _updateBlockMeta({ currentPageBlockNumber: existing.data.items[0].height })
         }
     }, [existing.data])
 
     // fetch block list when mounted
-    const list = useSWR(`blocks-${blockNumber}`, () => isValidBlock ? GlobalApis.blocks(blockNumber) : null, {
+    const list = useSWR(blockListKey, () => isValidBlock ? GlobalApis.blocks(blockNumber) : null, {
         onSuccess: response => {
             const items = response
             items.items.forEach((item: any, index: number) => {
@@ -209,7 +203,7 @@ function _blockStoreList() {
                 // write individual block data to cache
                 mutate(key(item.height), parsed, { revalidate: true })
             })
-            mutate('blocks-list-meta', { currentBlockNumber: items.items[0].height })
+            _updateBlockMeta({ currentPageBlockNumber: items.items[0].height })
         },
     }
     )
@@ -218,5 +212,5 @@ function _blockStoreList() {
     const nextPage = () => setPageIndex(pageIndex - 1)
     const previousPage = () => setPageIndex(pageIndex + 1)
 
-    return { list, nextPage, previousPage, isFirstPage, isLastPage, isWs, isValidBlock, blockNumber, itemCount }
+    return { list, nextPage, previousPage, isFirstPage, isLastPage, isWs, isValidBlock, blockNumber, itemCount, pageIndex }
 }

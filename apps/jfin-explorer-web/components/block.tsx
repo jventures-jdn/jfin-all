@@ -15,16 +15,29 @@ export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolea
     )
 }
 
-export function BlocksListComponentDemo(props: { count: number; useListMeta?: boolean }) {
-    const { currentBlockNumber } = props.useListMeta
-        ? useBlockscout().blocks().listMeta()
-        : useBlockscout().blocks().meta()
+export function BlocksListComponentDemo(props: { count: number }) {
+    // Look for current block number
+    const { currentBlockNumber } = useBlockscout().blocks().meta({ initialFetch: true })
+    return (
+        <div>
+            {currentBlockNumber &&
+                Array.from(Array(props.count)).map((val, index) => (
+                    <div key={index}>
+                        <BlockComponentDemo blockNumber={currentBlockNumber - index} scrape />
+                    </div>
+                ))}
+        </div>
+    )
+}
+
+export function BlocksPageListComponentDemo(props: { count: number }) {
+    const { currentPageBlockNumber } = useBlockscout().blocks().meta()
 
     return (
         <div>
-            {(currentBlockNumber || currentBlockNumber === 0) &&
+            {(currentPageBlockNumber || currentPageBlockNumber === 0) &&
                 Array.from({ length: props.count }).map((val, index) => {
-                    const calculatedBlockNumber = currentBlockNumber - index
+                    const calculatedBlockNumber = currentPageBlockNumber - index
                     // prevent negative blocks
                     if (calculatedBlockNumber >= 0) {
                         return (

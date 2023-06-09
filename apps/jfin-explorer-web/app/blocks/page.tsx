@@ -1,7 +1,7 @@
 'use client'
 
 import { useBlockscout } from '@libs/blockscout-client-react'
-import { BlocksListComponentDemo } from '../../components/block'
+import { BlocksPageListComponentDemo } from '../../components/block'
 import { Button } from '@chakra-ui/react'
 
 export default function BlocksPage() {
@@ -9,6 +9,7 @@ export default function BlocksPage() {
         list,
         blockNumber,
         itemCount,
+        pageIndex,
         isFirstPage,
         isLastPage,
         isWs,
@@ -20,6 +21,7 @@ export default function BlocksPage() {
     return (
         <>
             <br />
+            <div>Page Index : {pageIndex}</div>
             <div>Block Number : {blockNumber}</div>
             {isWs && <WebSocket />}
             <div className="flex">
@@ -45,10 +47,10 @@ export default function BlocksPage() {
             {!isValidBlock && <div>There are no blocks. </div>}
             {list?.isLoading && isValidBlock && <>Loading...</>}
             {!list?.isLoading && isValidBlock && (
-                <>
+                <div id="blocks-page-list">
                     Blocks :
-                    <BlocksListComponentDemo count={itemCount} useListMeta={true} />
-                </>
+                    <BlocksPageListComponentDemo count={itemCount} />
+                </div>
             )}
             <br />
         </>
