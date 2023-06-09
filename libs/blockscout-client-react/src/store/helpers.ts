@@ -5,13 +5,6 @@ type eventNewType = 'blocks:new_block' | 'transactions:new_transaction' | 'addre
 type eventType = 'new_block' | 'transaction' | 'count'
 
 // Handle new data from web socket
-// export function blockScoutWebSocketRecord(data: any) {
-//     if (data[2] === 'blocks:new_block' && data[3] === 'new_block') {
-//         blockWebSocketRecord(data)
-//     } else if (data[2] === 'transactions:new_transaction' && data[3] === 'transaction') {
-//         transactionWebSocketRecord(data)
-//     }
-// }
 
 export function blockScoutWebSocketRecord([, , eventNewType, newDataWebSocket, dataObject]: [
     string | null,
