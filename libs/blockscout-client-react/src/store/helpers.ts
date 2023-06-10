@@ -1,20 +1,15 @@
 import { blockStoreInitialClear, blockWebSocketRecord } from './blocks'
 import { transactionStoreInitialClear, transactionWebSocketRecord } from './transactions'
-
-type eventNewType = 'blocks:new_block' | 'transactions:new_transaction' | 'addresses:new_address'
-type eventType = 'new_block' | 'transaction' | 'count'
+import { Helper } from '../types'
 
 // Handle new data from web socket
-
 export function blockScoutWebSocketRecord([, , eventNewType, newDataWebSocket, dataObject]: [
     string | null,
     string | null,
-    eventNewType,
-    eventType,
+    Helper['eventNewType'],
+    Helper['eventType'],
     Object,
 ]) {
-    console.log('helper___ blockScoutWebSocketRecord', Object)
-
     if (eventNewType === 'blocks:new_block' && newDataWebSocket === 'new_block') {
         blockWebSocketRecord(dataObject)
     } else if (
