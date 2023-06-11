@@ -2,34 +2,71 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { yaml, minimatch, handlebars } from '@utils/js-utilities'
 
+type Instruction = {
+    commandTemplate: {
+        command: string
+        defaultArgs?: string
+        globalConfig?: 'dev' | 'docker' | 'deploy'
+    }
+    envMap: Record<string, string>
+    fullEnvString: string
+}
+
 export class CommandTemplates {
     /**
      * Load command template
      */
-    static load(packageType: string | 'common', targetScript: string, props: any): any {
+    static load(packageType: string, targetScript: string, props: any): Instruction[] | null {
         // Load `[packageType].yaml` template
         const templatePath = path.join(process.cwd(), `templates/${packageType}.yaml`)
         const yamlContent = fs.existsSync(templatePath) && fs.readFileSync(templatePath).toString()
         const template = yamlContent && (yaml.load(yamlContent) as any)
-        const matchedTemplateKey = Object.keys(template).find(key =>
-            minimatch.minimatch(targetScript, key),
-        )
-        const commandTemplate = matchedTemplateKey && template[matchedTemplateKey]
 
-        // Try fallback to `common.yaml`
-        if (packageType !== 'common' && !commandTemplate)
-            return this.load('common', targetScript, props)
+        const matchedTemplateKey = Object.keys(template).find(key => minimatch(targetScript, key))
+        let instructions = matchedTemplateKey && template[matchedTemplateKey]
 
+        if (!instructions) {
+            // Try fallback to `common.yaml` template
+            if (packageType !== 'common') return this.load('common', targetScript, props)
+            else return null
+        }
+
+        // support invidual or array
+        if (!Array.isArray(instructions)) instructions = [instructions]
+        const result: Instruction[] = []
+        instructions.forEach((instruction: any) => {
+            result.push(this.parse(instruction, packageType, targetScript, props))
+        })
+        return result
+    }
+
+    private static parse(
+        instruction: any,
+        packageType: string | 'common',
+        targetScript: string,
+        props: any,
+    ): Instruction {
         // Command not found
-        if (!commandTemplate) return {}
+        if (!instruction.command) {
+            console.warn(`'${targetScript}' command for '${packageType}' is empty`)
+        }
 
         // Substitute variables in command using handlebars
-        commandTemplate.command = handlebars.compile(commandTemplate.command)(props)
+        const commandTemplate: Instruction['commandTemplate'] = {
+            command: handlebars.compile(instruction.command)(props),
+        }
+
+        if (instruction.defaultArgs)
+            commandTemplate.defaultArgs = handlebars.compile(instruction.defaultArgs)(props)
+        if (instruction.globalConfig)
+            commandTemplate.globalConfig = handlebars.compile(instruction.globalConfig)(
+                props,
+            ) as any
 
         // Generate env maps from template
         const envMap =
-            commandTemplate.env &&
-            Object.entries(commandTemplate.env).reduce((result, [envName, envValue]) => {
+            instruction.env &&
+            Object.entries(instruction.env).reduce((result, [envName, envValue]) => {
                 return {
                     ...result,
                     // Substitute variables in env value using handlebars
@@ -44,6 +81,7 @@ export class CommandTemplates {
                 .filter(([, value]) => !!value)
                 .map(([key, value]) => `${key}=${value}`)
                 .join(' ')
+
         return { commandTemplate, envMap, fullEnvString }
     }
 }
