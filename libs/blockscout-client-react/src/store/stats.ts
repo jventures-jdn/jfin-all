@@ -5,7 +5,8 @@ import { GlobalApis } from '../apis/global-apis'
 import { Stats } from '../types'
 import { useEffect } from 'react'
 
-const key = (blockTotal: any) => `stats/${blockTotal}`
+const key = (totalBlock: any) => `stats/${totalBlock}`
+
 let statsData: Stats
 
 // Root hook
@@ -17,18 +18,20 @@ export function useBlockscoutStats() {
 }
 
 // Fetch stats data from api
-const _fullStatsFetcher = () => {
+const _fullStatsFetcher = (totalBlock: number) => {
     return RESTFetcher.apiv2Get(
-        `/stats`,
+        `/stats/${totalBlock}`,
         // convert stats data to our format
         item => _formatFullData(item, 'fetch'),
     )
 }
 
 // Individual stats state
-function _statsStoreGet(blockTotal: any, options?: { scrape?: boolean }) {
-    const existing = useSWR(key(blockTotal), () => _fullStatsFetcher())
-
+function _statsStoreGet(totalBlock: number, options?: { scrape?: boolean }) {
+    const existing = useSWR(key(totalBlock), () => {
+        if (!totalBlock) return null
+        return _fullStatsFetcher(totalBlock)
+    })
     // force fetch if full data is required and not yet presented
     if (
         !options?.scrape &&
@@ -44,9 +47,9 @@ function _statsStoreGet(blockTotal: any, options?: { scrape?: boolean }) {
 }
 
 // Internal to update latest stats numberhelper
-function _updateBlockMeta(blockTotal: any) {
+function _updateBlockMeta(totalBlock: number) {
     mutate('stats-meta', {
-        cuerrentBlockTotal: blockTotal,
+        cuerrentTotalBlock: totalBlock,
     })
 }
 
@@ -66,8 +69,8 @@ function _statsStoreInitial() {
             } as Stats
 
             const parsed = _formatFullData(items, 'init')
-            mutate(key(items.total_blocks), parsed, { revalidate: false })
-            _updateBlockMeta(items.total_blocks)
+            mutate(key(Number(items.total_blocks)), parsed, { revalidate: false })
+            _updateBlockMeta(Number(items.total_blocks))
         },
     })
 }
@@ -81,6 +84,7 @@ export function statsStoreInitialClear() {
 function _statsStoreMeta() {
     // Auto fetch initial transactions
     _statsStoreInitial()
+
     return useSWR('stats-meta', null).data || {}
 }
 
@@ -94,13 +98,13 @@ export function statsWebSocketRecord(data: any) {
             total_transactions: statsData?.total_transactions,
         } as Stats
 
-        mutate(key(data[4].block_number), statsData, {
+        mutate(key(data[4].block_number as number), statsData, {
             // merge with existing data if exist
             populateCache: (data, current) => ({ ...current, ...data }),
             revalidate: false,
         })
 
-        _updateBlockMeta(data[4].block_number)
+        _updateBlockMeta(data[4].block_number as number)
     } else if (data[4].count) {
         statsData = {
             data_source: 'ws',
