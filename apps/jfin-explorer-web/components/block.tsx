@@ -30,7 +30,7 @@ export function BlocksListComponentDemo(props: { count: number }) {
     )
 }
 
-export function BlocksPageListComponentDemo(props: { count: number }) {
+export function BlocksPageListComponent(props: { count: number }) {
     const { currentPageBlockNumber } = useBlockscout().blocks().meta()
 
     return (

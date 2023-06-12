@@ -142,12 +142,12 @@ function _blockStoreList() {
 
     const pageIndexValidated = parseInt(pageParam) > 0 ? parseInt(pageParam) : 1
     const [pageIndex, setPageIndex] = useState<number>(pageIndexValidated)
+    const blockListKey = blockNumber ? `blocks-list-${blockNumber}` : 'blocks-list-latest'
     const isLastPage = blockNumber && blockNumber <= itemCount
     const isFirstPage = pageIndexValidated === 1
     const isBlockQueryZero = blockNumber === 0
     const isValidBlock = blockNumber || isBlockQueryZero ? blockNumber > 0 : true
     const isWs = isFirstPage && !blockNumber && !isBlockQueryZero
-    const blockListKey = blockNumber ? `blocks-${blockNumber}` : 'blocks-latest'
 
     // retrieve current block number
     const { data } = useSWR(`blocks-meta`)
@@ -204,6 +204,8 @@ function _blockStoreList() {
                 mutate(key(item.height), parsed, { revalidate: true })
             })
             _updateBlockMeta({ currentPageBlockNumber: items.items[0].height })
+            // avoid keeping cache on the latest block
+            mutate('blocks-list-latest', undefined)
         },
     }
     )

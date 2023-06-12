@@ -1,7 +1,7 @@
 'use client'
 
 import { useBlockscout } from '@libs/blockscout-client-react'
-import { BlocksPageListComponentDemo } from '../../components/block'
+import { BlocksPageListComponent } from '../../components/block'
 import { Button } from '@chakra-ui/react'
 
 export default function BlocksPage() {
@@ -49,7 +49,7 @@ export default function BlocksPage() {
             {!list?.isLoading && isValidBlock && (
                 <div>
                     Blocks :
-                    <BlocksPageListComponentDemo count={itemCount} />
+                    <BlocksPageListComponent count={itemCount} />
                 </div>
             )}
             <br />
