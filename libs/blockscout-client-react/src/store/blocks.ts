@@ -142,13 +142,13 @@ function _blockStoreList() {
     const pageIndexValidated = parseInt(pageParam) > 0 ? parseInt(pageParam) : 1
     const [pageIndex, setPageIndex] = useState<number>(pageIndexValidated)
     const prevPageIndexRef = useRef(pageIndex)
+    const hasPageIndexChanged = prevPageIndexRef.current !== pageIndex
     const blockListKey = blockNumber ? `blocks-list-${blockNumber}` : 'blocks-list-latest'
     const isLastPage = blockNumber && blockNumber <= itemCount
     const isFirstPage = pageIndexValidated === 1
     const isBlockQueryZero = blockNumber === 0
     const isValidBlock = blockNumber || isBlockQueryZero ? blockNumber > 0 : true
     const isWs = isFirstPage && !blockNumber && !isBlockQueryZero
-    const hasPageIndexChanged = prevPageIndexRef.current !== pageIndex
 
     // retrieve current block number
     const { data } = useSWR(`blocks-meta`)
