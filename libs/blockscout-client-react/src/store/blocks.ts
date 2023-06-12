@@ -3,7 +3,7 @@ import useSWR from 'swr/immutable'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { Block } from '../types'
 import { GlobalApis } from '../apis/global-apis'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 
 const key = (blockNumber: number) => `blocks/${blockNumber}`
@@ -141,6 +141,7 @@ function _blockStoreList() {
 
     const pageIndexValidated = parseInt(pageParam) > 0 ? parseInt(pageParam) : 1
     const [pageIndex, setPageIndex] = useState<number>(pageIndexValidated)
+    const prevPageIndexRef = useRef(pageIndex)
     const blockListKey = blockNumber ? `blocks-list-${blockNumber}` : 'blocks-list-latest'
     const isLastPage = blockNumber && blockNumber <= itemCount
     const isFirstPage = pageIndexValidated === 1
@@ -157,6 +158,7 @@ function _blockStoreList() {
         const handlePopstate = () => {
             const pageParam = new URL(window.location.href).searchParams.get('page') || '1'
             setPageIndex(parseInt(pageParam))
+            prevPageIndexRef.current = parseInt(pageParam)
         }
 
         window.addEventListener('popstate', handlePopstate)
@@ -166,7 +168,7 @@ function _blockStoreList() {
     }, [])
 
     useEffect(() => {
-        if (pageIndex && currentPageBlockNumber) {
+        if (pageIndex && currentPageBlockNumber && prevPageIndexRef.current !== pageIndex) {
             const magnitude = pageIndex > parseInt(pageParam) ? -1 : 1
             const newBlockNumber = (blockNumber || currentPageBlockNumber) + magnitude * itemCount
             router.push(
@@ -177,6 +179,7 @@ function _blockStoreList() {
                     : '?page=1'
                 }`,
             )
+            prevPageIndexRef.current = pageIndex
         }
     }, [pageIndex])
 
