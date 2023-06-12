@@ -44,47 +44,45 @@ console.log(
 )
 
 // Get command template from yaml
-let { commandTemplate, fullEnvString } = CommandTemplates.load(
-    analyzedPackage.type,
-    sourceNodeScript,
-    variables,
-)
-if (!commandTemplate)
+let instructions = CommandTemplates.load(analyzedPackage.type, sourceNodeScript, variables)
+if (!instructions)
     // Command template not found
     throw Error(
         `\x1b[31m⛔ Unknown command '${sourceNodeScript}' \x1b[0m(${analyzedPackage.json.name})`,
     )
 
-// Finalize the command and execute it under the invoker project location
-const finalCommand = [
-    fullEnvString && 'cross-env',
-    fullEnvString,
-    commandTemplate.command,
-    appendArgs === '_' ? commandTemplate.defaultArgs : appendArgs.split(',').join(' '),
-]
-    .filter(i => !!i)
-    .join(' ')
+instructions.forEach(({ fullEnvString, commandTemplate }) => {
+    // Finalize the command and execute it under the invoker project location
+    const finalCommand = [
+        fullEnvString && 'cross-env',
+        fullEnvString,
+        commandTemplate.command,
+        appendArgs === '_' ? commandTemplate.defaultArgs : appendArgs.split(',').join(' '),
+    ]
+        .filter(i => !!i)
+        .join(' ')
 
-console.log('🚥\x1b[33m', finalCommand, '\x1b[0m')
+    console.log('🚥\x1b[33m', finalCommand, '\x1b[0m')
 
-const tempConfigFile = `config_target_${variables.target}`
-switch (commandTemplate.globalConfig) {
-    case 'dev':
-        // because we use `build` command in docker, so sync(ignoreDefault) to only sync system info
-        GlobalConfigDev.sync(isDocker())
-        break
-    case 'docker':
-        GlobalConfigDev.copyLocalConfigFileTo(tempConfigFile)
-        break
-    case 'deploy':
-        GlobalConfigDev.createDefaultConfigFile(variables.target, tempConfigFile)
-        break
-}
+    const tempConfigFile = `config_target_${variables.target}`
+    switch (commandTemplate.globalConfig) {
+        case 'dev':
+            // because we use `build` command in docker, so sync(ignoreDefault) to only sync system info
+            GlobalConfigDev.sync(isDocker())
+            break
+        case 'docker':
+            GlobalConfigDev.copyLocalConfigFileTo(tempConfigFile)
+            break
+        case 'deploy':
+            GlobalConfigDev.createDefaultConfigFile(variables.target, tempConfigFile)
+            break
+    }
 
-try {
-    execSync(finalCommand, { stdio: 'inherit', cwd: `../../${invokerProjectPath}` })
-} catch (e: any) {
-    console.log(`🚨 \x1b[31m\`${sourceNodeScript}\` command error ❗\x1b[0m`, `"${e.message}"`)
-} finally {
-    GlobalConfigDev.deleteConfigFile(tempConfigFile)
-}
+    try {
+        execSync(finalCommand, { stdio: 'inherit', cwd: `../../${invokerProjectPath}` })
+    } catch (e: any) {
+        console.log(`🚨 \x1b[31m\`${sourceNodeScript}\` command error ❗\x1b[0m`, `"${e.message}"`)
+    } finally {
+        GlobalConfigDev.deleteConfigFile(tempConfigFile)
+    }
+})
