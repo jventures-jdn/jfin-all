@@ -148,6 +148,7 @@ function _blockStoreList() {
     const isBlockQueryZero = blockNumber === 0
     const isValidBlock = blockNumber || isBlockQueryZero ? blockNumber > 0 : true
     const isWs = isFirstPage && !blockNumber && !isBlockQueryZero
+    const hasPageIndexChanged = prevPageIndexRef.current !== pageIndex
 
     // retrieve current block number
     const { data } = useSWR(`blocks-meta`)
@@ -168,7 +169,7 @@ function _blockStoreList() {
     }, [])
 
     useEffect(() => {
-        if (pageIndex && currentPageBlockNumber && prevPageIndexRef.current !== pageIndex) {
+        if (pageIndex && currentPageBlockNumber && hasPageIndexChanged) {
             const magnitude = pageIndex > parseInt(pageParam) ? -1 : 1
             const newBlockNumber = (blockNumber || currentPageBlockNumber) + magnitude * itemCount
             prevPageIndexRef.current = pageIndex
