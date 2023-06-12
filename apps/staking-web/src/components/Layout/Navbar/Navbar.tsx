@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom'
-import './Navbar.css'
 import logo from '../../../assets/images/logo.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { CloseOutlined, MenuOutlined, WarningOutlined } from '@ant-design/icons'
@@ -9,8 +8,9 @@ import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../../stores'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
 import { Progress } from 'antd'
-import { EXPECT_CHAIN } from '@utils/chain/src/chain'
-import { switchChain } from '@utils/chain/src/utils/wallet'
+import { switchChain } from '@utils/staking-contract'
+import { EXPECT_CHAIN } from '@utils/chain-config'
+import './Navbar.css'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */

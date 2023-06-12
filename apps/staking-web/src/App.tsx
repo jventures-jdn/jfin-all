@@ -10,8 +10,7 @@ import {
   useChainAccount,
   useChainConfig,
   useChainStaking,
-} from '@utils/chain/src/contract'
-import { getProvider } from 'wagmi/actions'
+} from '@utils/staking-contract'
 import { useAccount, useNetwork } from 'wagmi'
 import Footer from './components/Layout/Footer/Footer'
 
@@ -28,7 +27,7 @@ const App = observer(() => {
   const chainConfig = useChainConfig()
   const chainStaking = useChainStaking()
   const chainAccount = useChainAccount()
-  const provider = getProvider()
+  // const provider = getProvider()
   const { chain } = useNetwork()
   const { address } = useAccount()
 
@@ -41,7 +40,7 @@ const App = observer(() => {
   }
 
   const initialChainStaking = async () => {
-    chainStaking.setProvider(provider)
+    // chainStaking.setProvider(provider)
     await chainStaking.fetchValidators()
   }
 
@@ -51,7 +50,7 @@ const App = observer(() => {
   }
 
   const initialChainGovernance = async () => {
-    chainGovernance.setProvider(provider)
+    // chainGovernance.setProvider(provider)
   }
 
   /* --------------------------------- Watches -------------------------------- */
@@ -66,7 +65,7 @@ const App = observer(() => {
   useMemo(() => {
     initialChainAccount()
     if (!chainStaking.validators?.length) return
-    chainStaking.setProvider(provider)
+    // chainStaking.setProvider(provider)
     chainStaking.updateValidators()
   }, [address, chain?.id])
 

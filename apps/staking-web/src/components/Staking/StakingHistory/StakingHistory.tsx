@@ -4,9 +4,9 @@ import { ColumnProps } from 'antd/lib/table'
 import { observer } from 'mobx-react'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { getCurrentEnv } from '../../../stores'
-import { chainConfig, chainStaking } from '@utils/chain/src/contract'
+import { chainConfig, chainStaking } from '@utils/staking-contract'
 import { Event } from 'ethers'
-import { CHAIN_DECIMAL } from '@utils/chain/src/chain'
+import { CHAIN_DECIMAL } from '@utils/chain-config'
 import CountUpMemo from '../../Countup'
 import BigNumber from 'bignumber.js'
 import prettyTime from 'pretty-time'
@@ -56,12 +56,13 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
       title: 'Amount',
       key: 'amount',
       render: (validator: Event) => {
-        const args = chainStaking.getValidatorEventArgs(validator.args)
-        if (!args) return 0
-        const amount = new BigNumber(args.amount.toString()).div(CHAIN_DECIMAL)
+        // const args = chainStaking.getValidatorEventArgs(validator.args)
+        // if (!args) return 0
+        // const amount = new BigNumber(args.amount.toString()).div(CHAIN_DECIMAL)
         return (
           <CountUpMemo
-            end={amount.toNumber()}
+            // end={amount.toNumber()}
+            end={0}
             duration={1}
             decimals={5}
             enableScrollSpy

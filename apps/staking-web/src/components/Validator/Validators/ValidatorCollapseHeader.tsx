@@ -10,8 +10,8 @@ import {
   SafetyCertificateOutlined,
 } from '@ant-design/icons'
 import { VALIDATOR_WALLETS } from '../../../utils/const'
-import { Validator, chainStaking } from '@utils/chain/src/contract'
-import { getValidatorStatus } from '@utils/chain/src/chain'
+import { Validator, chainStaking } from '@utils/staking-contract'
+import { getValidatorStatus } from '@utils/chain-config'
 import BigNumber from 'bignumber.js'
 import CountUpMemo from '../../Countup'
 

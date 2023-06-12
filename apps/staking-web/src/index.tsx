@@ -3,16 +3,12 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
-import { Web3Modal } from '@web3modal/react'
-import { WagmiConfig } from 'wagmi'
-import { useWallectConnect } from './stores'
 import GlobalModal from './components/Modal/GlobalModal'
 import * as Sentry from '@sentry/react'
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  RouterProvider,
 } from 'react-router-dom'
 
 // TODO #59
@@ -24,6 +20,7 @@ import './assets/css/pagination.css'
 import './assets/css/modal.css'
 
 import { BrowserRouter } from 'react-router-dom'
+import { WalletConnectProvider } from '@libs/wallet-connect-react'
 
 export const isProd =
   process.env.PROD_MODE === '1' || process.env.PROD_MODE === 'true' || false
@@ -55,45 +52,15 @@ const router = createBrowserRouter(
 )
 
 const Main = () => {
-  /* --------------------------------- States --------------------------------- */
-  const { projectId, ethereumClient, wagmiClient } = useWallectConnect()
-
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <React.StrictMode>
       <BrowserRouter>
         <Provider>
-          <WagmiConfig client={wagmiClient}>
+          <WalletConnectProvider>
             <GlobalModal />
             <App />
-          </WagmiConfig>
-          <Web3Modal
-            projectId={projectId}
-            ethereumClient={ethereumClient}
-            themeVariables={{
-              '--w3m-accent-color': '#ed0000',
-              '--w3m-accent-fill-color': '#fff',
-              '--w3m-background-color': ' #0b0d0f',
-            }}
-            chainImages={{ 3501: '/jfin-light.png', 3502: 'jfin-light.png' }}
-            tokenImages={{
-              JFIN: '/jfin-light.png',
-              'JFIN Testnet': 'jfin-light.png',
-            }}
-            walletImages={{ join: '/jfin-light.png' }}
-            mobileWallets={[
-              {
-                id: 'join',
-                name: 'Join',
-                links: {
-                  native: '',
-                  universal: isProd
-                    ? 'https://jfinwallet.page.link'
-                    : 'https://joinwalletdev.page.link',
-                },
-              },
-            ]}
-          />
+          </WalletConnectProvider>
         </Provider>
       </BrowserRouter>
     </React.StrictMode>

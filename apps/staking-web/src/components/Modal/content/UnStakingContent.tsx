@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { getCurrentEnv, useModalStore } from '../../../stores'
 import { message } from 'antd'
 import JfinCoin from '../../JfinCoin/JfinCoin'
-import { Validator, chainStaking } from '@utils/chain/src/contract'
+import { Validator, chainStaking } from '@utils/staking-contract'
 
 interface IUnStakingContent {
   forceActionButtonsEnabled?: boolean

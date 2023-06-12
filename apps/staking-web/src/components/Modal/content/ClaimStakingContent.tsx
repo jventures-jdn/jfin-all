@@ -7,10 +7,10 @@ import { observer } from 'mobx-react'
 import { FormEvent, useEffect, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
 import { useModalStore } from '../../../stores'
-import { Validator, chainStaking } from '@utils/chain/src/contract'
+import { Validator, chainStaking } from '@utils/staking-contract'
 import BigNumber from 'bignumber.js'
 import { message } from 'antd'
-import { GAS_LIMIT_CLAIM } from '@utils/chain/src/gas'
+import { CHAIN_GAS_LIMIT_CUSTOM, EXPECT_CHAIN } from '@utils/chain-config'
 
 interface IClaimStakingContent {
   isStaking?: boolean
@@ -83,7 +83,8 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
             <WarningOutlined />
             If reward you received does not match the reward that the system has
             indicated, This may happen from the gas limit. Please increase the
-            gas limit in wallet (up to {GAS_LIMIT_CLAIM}).
+            gas limit in wallet (up to{' '}
+            {CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork]?.claim}).
           </div>
         )}
 
