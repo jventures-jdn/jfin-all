@@ -157,8 +157,8 @@ function _blockStoreList() {
     useEffect(() => {
         const handlePopstate = () => {
             const pageParam = new URL(window.location.href).searchParams.get('page') || '1'
-            setPageIndex(parseInt(pageParam))
             prevPageIndexRef.current = parseInt(pageParam)
+            setPageIndex(parseInt(pageParam))
         }
 
         window.addEventListener('popstate', handlePopstate)
@@ -171,6 +171,7 @@ function _blockStoreList() {
         if (pageIndex && currentPageBlockNumber && prevPageIndexRef.current !== pageIndex) {
             const magnitude = pageIndex > parseInt(pageParam) ? -1 : 1
             const newBlockNumber = (blockNumber || currentPageBlockNumber) + magnitude * itemCount
+            prevPageIndexRef.current = pageIndex
             router.push(
                 `${pathname}${
                 // if the user returns to the first page, do not include the block number parameter
@@ -179,7 +180,6 @@ function _blockStoreList() {
                     : '?page=1'
                 }`,
             )
-            prevPageIndexRef.current = pageIndex
         }
     }, [pageIndex])
 
