@@ -8,12 +8,21 @@ import { WagmiConfig } from 'wagmi'
 import { useWallectConnect } from './stores'
 import GlobalModal from './components/Modal/GlobalModal'
 import * as Sentry from '@sentry/react'
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from 'react-router-dom'
+
+// TODO #59
 import './assets/css/index.css'
 import './assets/css/button.css'
 import './assets/css/helper.css'
 import './assets/css/input.css'
 import './assets/css/pagination.css'
 import './assets/css/modal.css'
+
 import { BrowserRouter } from 'react-router-dom'
 
 export const isProd =
@@ -35,6 +44,15 @@ Sentry.init({
   }`,
   attachStacktrace: true,
 })
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Root />}>
+      <Route path="dashboard" element={<Dashboard />} />
+      {/* ... etc. */}
+    </Route>,
+  ),
+)
 
 const Main = () => {
   /* --------------------------------- States --------------------------------- */
