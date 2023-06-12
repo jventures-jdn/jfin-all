@@ -28,6 +28,7 @@ const _fullStatsFetcher = () => {
 // Individual stats state
 function _statsStoreGet(blockTotal: any, options?: { scrape?: boolean }) {
     const existing = useSWR(key(blockTotal), () => _fullStatsFetcher())
+
     // force fetch if full data is required and not yet presented
     if (
         !options?.scrape &&
@@ -38,6 +39,7 @@ function _statsStoreGet(blockTotal: any, options?: { scrape?: boolean }) {
         // clear cache so that full block data is auto fetched
         existing.mutate(undefined, { revalidate: true, populateCache: false })
     }
+
     return existing
 }
 
@@ -58,6 +60,11 @@ function _statsStoreInitial() {
     return useSWR('initial-stats', GlobalApis.stats, {
         onSuccess: response => {
             const items = response
+
+            statsData = {
+                total_transactions: items.total_transactions,
+            } as Stats
+
             const parsed = _formatFullData(items, 'init')
             mutate(key(items.total_blocks), parsed, { revalidate: false })
             _updateBlockMeta(items.total_blocks)
@@ -81,23 +88,26 @@ export function statsWebSocketRecord(data: any) {
     if (data[4].block_number) {
         statsData = {
             data_source: 'ws',
-            average_block_time: data[4].average_block_time,
-            total_blocks: data[4].block_number,
+            average_block_time: data[4]?.average_block_time,
+            total_blocks: data[4]?.block_number,
+            total_addresses: statsData?.total_addresses,
+            total_transactions: statsData?.total_transactions,
         } as Stats
+
+        mutate(key(data[4].block_number), statsData, {
+            // merge with existing data if exist
+            populateCache: (data, current) => ({ ...current, ...data }),
+            revalidate: false,
+        })
+
+        _updateBlockMeta(data[4].block_number)
     } else if (data[4].count) {
         statsData = {
             data_source: 'ws',
-            total_addresses: data[4].count,
+            total_addresses: data[4]?.count,
+            total_transactions: statsData?.total_transactions,
         } as Stats
     }
-
-    mutate(key(data[4].block_number), statsData, {
-        // merge with existing data if exist
-        populateCache: (data, current) => ({ ...current, ...data }),
-        revalidate: false,
-    })
-
-    _updateBlockMeta(data[4].block_number)
 }
 
 // Format data from api response (both init and fetch)
