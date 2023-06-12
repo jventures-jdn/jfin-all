@@ -86,7 +86,6 @@ function _blockStoreInitial() {
 
 export function blockStoreInitialClear() {
     mutate('initial-blocks', undefined)
-    mutate('blocks-meta', undefined)
 }
 
 // Global blocks state
