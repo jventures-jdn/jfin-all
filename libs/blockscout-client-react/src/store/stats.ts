@@ -48,6 +48,7 @@ function _statsStoreGet(totalBlock: number, options?: { scrape?: boolean }) {
 
 // Internal to update latest stats numberhelper
 function _updateBlockMeta(totalBlock: number) {
+    // const parsed = _formatFullData(items, 'ws')
     mutate('stats-meta', {
         cuerrentTotalBlock: totalBlock,
     })
@@ -69,10 +70,31 @@ function _statsStoreInitial() {
             } as Stats
 
             const parsed = _formatFullData(items, 'init')
-            mutate(key(Number(items.total_blocks)), parsed, { revalidate: false })
+            mutate(
+                key(Number(items.total_blocks)),
+                {
+                    ...parsed,
+                    average_block_time: _resolveAverageฺฺBlockTime(parsed.average_block_time),
+                    total_addresses: _resolveTotalAddresses(parsed.total_addresses),
+                },
+                { revalidate: false },
+            )
             _updateBlockMeta(Number(items.total_blocks))
         },
     })
+}
+
+function _resolveAverageฺฺBlockTime(averageBlockTime: any) {
+    //TODO : refactor function
+    if (averageBlockTime === 3000) {
+        return `3 seconds`
+    }
+    return averageBlockTime
+}
+
+function _resolveTotalAddresses(totalAddresses: any) {
+    //TODO : refactor function
+    return Intl.NumberFormat('th', { currency: 'THB' }).format(totalAddresses)
 }
 
 export function statsStoreInitialClear() {
