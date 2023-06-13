@@ -8,7 +8,7 @@ import {
   Validator,
   chainStaking,
   useChainAccount,
-} from '@utils/chain/src/contract'
+} from '@utils/staking-contract'
 
 interface IAddStakingContent {
   validator: Validator

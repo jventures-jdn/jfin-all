@@ -5,13 +5,6 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import GlobalModal from './components/Modal/GlobalModal'
 import * as Sentry from '@sentry/react'
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-} from 'react-router-dom'
-
-// TODO #59
 import './assets/css/index.css'
 import './assets/css/button.css'
 import './assets/css/helper.css'
@@ -21,6 +14,7 @@ import './assets/css/modal.css'
 
 import { BrowserRouter } from 'react-router-dom'
 import { WalletConnectProvider } from '@libs/wallet-connect-react'
+import { createRoot } from 'react-dom/client'
 
 export const isProd =
   process.env.PROD_MODE === '1' || process.env.PROD_MODE === 'true' || false
@@ -42,31 +36,25 @@ Sentry.init({
   attachStacktrace: true,
 })
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<Root />}>
-      <Route path="dashboard" element={<Dashboard />} />
-      {/* ... etc. */}
-    </Route>,
-  ),
-)
-
 const Main = () => {
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <React.StrictMode>
       <BrowserRouter>
-        <Provider>
-          <WalletConnectProvider>
+        <WalletConnectProvider>
+          <Provider>
             <GlobalModal />
             <App />
-          </WalletConnectProvider>
-        </Provider>
+          </Provider>
+        </WalletConnectProvider>
       </BrowserRouter>
     </React.StrictMode>
   )
 }
-ReactDOM.render(<Main />, document.getElementById('root'))
+
+const root = createRoot(document.getElementById('root') as HTMLElement).render(
+  <Main />,
+)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

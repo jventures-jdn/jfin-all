@@ -77,14 +77,14 @@ export const deployerProxyObject = {
  * https://docs.ethers.org/v5/api/contract/contract/#Contract--metaclass
  */
 
-export const stakingContract = getContract(stakingObject)
-export const slashingIndicatorContract = getContract(slashingIndicatorObject)
-export const systemRewardContract = getContract(systemRewardObject)
-export const stakingPoolContract = getContract(stakingPoolObject)
-export const governanceContract = getContract(governanceObject)
-export const chainConfigContract = getContract(chainConfigObject)
-export const runtimeUpgradeContract = getContract(runtimeUpgradeObject)
-export const deployerProxyContract = getContract(deployerProxyObject)
+// export const stakingContract = getContract(stakingObject)
+// export const slashingIndicatorContract = getContract(slashingIndicatorObject)
+// export const systemRewardContract = getContract(systemRewardObject)
+// export const stakingPoolContract = getContract(stakingPoolObject)
+// export const governanceContract = getContract(governanceObject)
+// export const chainConfigContract = getContract(chainConfigObject)
+// export const runtimeUpgradeContract = getContract(runtimeUpgradeObject)
+// export const deployerProxyContract = getContract(deployerProxyObject)
 
 export const chainConfig = new Config()
 export const chainStaking = new Staking()

@@ -9,7 +9,7 @@ import AddStakingContent from '../../Modal/content/AddStakingContent'
 import ClaimStakingContent from '../../Modal/content/ClaimStakingContent'
 import UnStakingContent from '../../Modal/content/UnStakingContent'
 import './ValidatorCollapseContent.css'
-import { Validator, chainStaking } from '@utils/chain/src/contract'
+import { Validator, chainStaking } from '@utils/staking-contract'
 import CountUpMemo from '../../Countup'
 import { useAccount } from 'wagmi'
 

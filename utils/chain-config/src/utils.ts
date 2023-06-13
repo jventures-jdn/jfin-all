@@ -82,5 +82,10 @@ export const getValidatorStatus = (status: VALIDATOR_STATUS_ENUM) => {
     }
 }
 
+export const bigIntDivideDecimal = (a: bigint, b: bigint, decimal = 3) => {
+    const decimalUnit = 10 ** decimal
+    return Number((a * BigInt(decimalUnit)) / b) / decimalUnit
+}
+
 export const EXPECT_CHAIN =
     process.env.REACT_APP_ENVIRONMENT === 'jfintest' ? getChain('JFINT') : getChain('JFIN')

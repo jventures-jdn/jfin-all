@@ -3,7 +3,7 @@ import { Col, Row } from 'antd'
 import { observer } from 'mobx-react'
 import './ValidatorInfo.css'
 import CountUpMemo from '../../Countup'
-import { useChainStaking } from '@utils/chain/src/contract'
+import { useChainStaking } from '@utils/staking-contract'
 
 const ValidatorInfo = observer(() => {
   /* -------------------------------------------------------------------------- */

@@ -1,34 +1,37 @@
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { Validator, chainAccount, stakingContract } from '.'
+import { Validator, chainAccount, stakingObject } from '.'
 import { BigNumber as $BigNumber, Event, Signer } from 'ethers'
 import { Address } from 'abitype'
-import { CHAIN_DECIMAL, EXPECT_CHAIN, VALIDATOR_STATUS_ENUM } from '../chain'
+import {
+    CHAIN_DECIMAL,
+    EXPECT_CHAIN,
+    VALIDATOR_STATUS_ENUM,
+    CHAIN_GAS_PRICE,
+    CHAIN_GAS_LIMIT_CUSTOM,
+    bigIntDivideDecimal,
+    VALIDATOR_STATUS_MAPPING,
+} from '@utils/chain-config'
 import { BigNumber } from 'bignumber.js'
-import { getWalletClient, getPublicClient } from 'wagmi/actions'
+import { getWalletClient, getPublicClient, getContract } from 'wagmi/actions'
 import { chainConfig } from '.'
-import { GAS_PRICE } from '../gas'
-import { GAS_LIMIT_CLAIM } from '../gas'
-import { Result } from 'ethers/lib/utils.js'
-import { switchChainWhenIncorrectChain } from '../web3/wallet'
+import { switchChainWhenIncorrectChain } from '../utils/wallet'
 
 export class Staking {
     constructor() {
         makeObservable(this, {
-            provider: observable,
-            contract: observable,
             validators: observable,
             isFetchingValidators: observable,
-            myStakingHistoryEvents: observable,
-            stakeEvents: observable,
-            unStakeEvents: observable,
-            claimEvents: observable,
+            myStakingHistoryLogs: observable,
+            stakeLogs: observable,
+            unStakeLogs: observable,
+            claimLogs: observable,
+            getValidatorLogs: action,
+            getMyStakingHistoryLogs: action,
             myTotalReward: observable,
             myTotalStake: observable,
             myValidators: observable,
-            getAllValidatorEvents: action,
             fetchValidators: action,
             updateValidators: action,
-            fetchMyStakingHistory: action,
             activeValidator: computed,
             jailedValidator: computed,
             pendingValidator: computed,
@@ -37,51 +40,38 @@ export class Staking {
     }
     /* ------------------------------- Properties ------------------------------- */
     public isFetchingValidators: boolean
-    public provider: Provider
-    public contract: typeof stakingContract = stakingContract
     public validators: Validator[]
     public myValidators: Validator[] = []
     public myTotalReward: { validator: Address; amount: BigNumber }[] = []
     public myTotalStake: { validator: Address; amount: BigNumber }[] = []
-    public myStakingHistoryEvents: Event[]
-    public stakeEvents: Event[]
-    public unStakeEvents: Event[]
-    public claimEvents: Event[]
-    private validatorEvents: Event[]
+    public myStakingHistoryLogs: Awaited<ReturnType<typeof this.getMyStakingHistoryLogs>>
+    public stakeLogs: Awaited<ReturnType<typeof this.getStakeLogs>>
+    public unStakeLogs: Awaited<ReturnType<typeof this.getUnStakeLogs>>
+    public claimLogs: Awaited<ReturnType<typeof this.getClaimLogs>>
+    private validatorLogs: Awaited<ReturnType<typeof this.getValidatorLogs>>
 
     /* --------------------------------- Methods -------------------------------- */
     /* -------------------------------------------------------------------------- */
     /*                                   Helper                                   */
     /* -------------------------------------------------------------------------- */
-    public getValidatorEventArgs(args?: Result) {
-        if (!args) return
-        const [validator, staker, amount, epoch] = args as [
-            validator: Address,
-            staker: Address,
-            amount: $BigNumber,
-            epoch: $BigNumber,
-        ]
-        return {
-            validator,
-            staker,
-            amount: new BigNumber(amount.toString()),
-            epoch: new BigNumber(epoch.toString()),
-        }
-    }
-
-    private isProviderValid() {
-        if (!this.provider)
-            throw new Error(
-                'No wagmi provider found. Ensure you have set up a provider with `setProvider()`',
-            )
-    }
-
-    public setProvider(provider: Provider) {
-        this.provider = provider
-    }
+    // public getValidatorEventArgs(args?: Result) {
+    //     if (!args) return
+    //     const [validator, staker, amount, epoch] = args as [
+    //         validator: Address,
+    //         staker: Address,
+    //         amount: $BigNumber,
+    //         epoch: $BigNumber,
+    //     ]
+    //     return {
+    //         validator,
+    //         staker,
+    //         amount: new BigNumber(amount.toString()),
+    //         epoch: new BigNumber(epoch.toString()),
+    //     }
+    // }
 
     /* -------------------------------------------------------------------------- */
-    /*                                   Fetcher                                  */
+    /*                                    Read                                    */
     /* -------------------------------------------------------------------------- */
     /**
      * Use for fetch "stake" events from giving wallet or validator address then update result to `stakeEvents`
@@ -92,16 +82,19 @@ export class Staking {
      * @param {address} validator - The validator address
      * @returns Stake events of giving wallet or validator
      */
-    private async fetchStakeEvents(wallet?: Address, validator?: Address) {
-        this.isProviderValid()
+    private async getStakeLogs(staker?: Address, validator?: Address) {
+        const client = getPublicClient()
+        const contract = getContract(stakingObject)
+        const filter = await contract.createEventFilter.Delegated(
+            { validator, staker },
+            { fromBlock: 'earliest', toBlock: 'latest' },
+        )
 
-        const staking = this.contract(this.provider)
-        const filter = staking.filters.Delegated(validator || null, wallet || null, null, null)
-
-        // query event
-        const query = await staking.queryFilter(filter, 'earliest', 'latest')
-        this.stakeEvents = query
-        return query
+        const logs = await client.getFilterLogs({ filter })
+        runInAction(() => {
+            this.stakeLogs = logs
+        })
+        return logs
     }
 
     /**
@@ -113,16 +106,19 @@ export class Staking {
      * @param {address} validator - The validator address
      * @returns Un-stake events of giving wallet or validator
      */
-    private async fetchUnStakeEvents(wallet?: Address, validator?: Address) {
-        this.isProviderValid()
-
-        const staking = this.contract.connect(this.provider)
-        const filter = staking.filters.Undelegated(validator || null, wallet || null, null, null)
-
-        // query event
-        const query = await staking.queryFilter(filter, 'earliest', 'latest')
-        this.unStakeEvents = query
-        return query
+    private async getUnStakeLogs(staker?: Address, validator?: Address) {
+        const client = getPublicClient()
+        const contract = getContract(stakingObject)
+        const cont = getContract(stakingObject)
+        const filter = await contract.createEventFilter.Undelegated(
+            { validator, staker },
+            { fromBlock: 'earliest', toBlock: 'latest' },
+        )
+        const logs = await client.getFilterLogs({ filter })
+        runInAction(() => {
+            this.unStakeLogs = logs
+        })
+        return logs
     }
 
     /**
@@ -134,16 +130,89 @@ export class Staking {
      * @param {address} validator - The validator address
      * @returns Claim events of giving wallet or validator
      */
-    private async fetchClaimEvents(wallet?: Address, validator?: Address) {
-        this.isProviderValid()
+    private async getClaimLogs(staker?: Address, validator?: Address) {
+        const client = getPublicClient()
+        const contract = getContract(stakingObject)
+        const cont = getContract(stakingObject)
+        const filter = await contract.createEventFilter.Claimed(
+            { validator, staker },
+            { fromBlock: 'earliest', toBlock: 'latest' },
+        )
+        const logs = await client.getFilterLogs({ filter })
+        runInAction(() => {
+            this.claimLogs = logs
+        })
+        return logs
+    }
 
-        const staking = this.contract.connect(this.provider)
-        const filter = staking.filters.Claimed(validator || null, wallet || null, null, null)
+    /**
+     * Get `added` events of validators
+     * @returns  `added` events of validators
+     */
+    private async getAddedValidatorLogs() {
+        const client = getPublicClient()
+        const contract = getContract(stakingObject)
 
-        // query event
-        const query = await staking.queryFilter(filter, 'earliest', 'latest')
-        this.claimEvents = query
-        return query
+        const filter = await contract.createEventFilter.ValidatorAdded(
+            {},
+            { fromBlock: 'earliest', toBlock: 'latest' },
+        )
+
+        contract.createEventFilter
+        // contract.createEventFilter
+
+        // contract.
+        // client.getLogs({ args: filter.args, event: filter.eventName })
+        const logs = await client.getFilterLogs({ filter })
+        return logs
+    }
+
+    /**
+     * Get `removed` events of validators
+     * @returns  `removed` events of validators
+     */
+    private async getRemovedValidatorLogs() {
+        const client = getPublicClient()
+        const contract = getContract(stakingObject)
+        const filter = await contract.createEventFilter.ValidatorRemoved(
+            {},
+            { fromBlock: 'earliest', toBlock: 'latest' },
+        )
+        const logs = await client.getFilterLogs({ filter })
+        return logs
+    }
+
+    /**
+     * Get `jailed` events of validators
+     * @returns  `jailed` events of validators
+     */
+    private async getJailedValidatorLogs() {
+        const client = getPublicClient()
+        const contract = getContract(stakingObject)
+        const filter = await contract.createEventFilter.ValidatorJailed(
+            {},
+            { fromBlock: 'earliest', toBlock: 'latest' },
+        )
+        const logs = await client.getFilterLogs({ filter })
+        return logs
+    }
+
+    /**
+     * Get `added` `removed` `jailed` events of validators then update result to `validatorEvents`
+     * @returns  `added` `removed` `jailed` events of validators
+     */
+    public async getValidatorLogs() {
+        const [addedValidators, removedValidators] = await Promise.all([
+            this.getAddedValidatorLogs(),
+            this.getRemovedValidatorLogs(),
+        ])
+
+        const availableValidators = addedValidators.filter(
+            i => !removedValidators.find(r => r.args.validator === r.args.validator),
+        )
+
+        this.validatorLogs = availableValidators
+        return availableValidators
     }
 
     /**
@@ -152,46 +221,73 @@ export class Staking {
      * - If `myStakingHistoryEvents` is empty this function will fetch `fetchStakeEvents()` `fetchUnStakeEvents()` `fetchClaimEvents()`
      * @returns Events from `stake` `unstake` `claim` included sort event with blocknumber
      */
-    public async fetchMyStakingHistory() {
+    public async getMyStakingHistoryLogs() {
         const address = chainAccount.account.address
         runInAction(() => {
-            this.myStakingHistoryEvents = [] // clear events
+            this.myStakingHistoryLogs = [] // clear events
         })
         if (!address) return
 
         const [stake, unstake, claim] = await Promise.all([
-            this.fetchStakeEvents(address),
-            this.fetchUnStakeEvents(address),
-            this.fetchClaimEvents(address),
+            this.getStakeLogs(address),
+            this.getUnStakeLogs(address),
+            this.getClaimLogs(address),
         ])
 
         // sort considered events
-        const sortedEvents = [...stake, ...unstake, ...claim].sort(
-            (prev, curr) => curr.blockNumber - prev.blockNumber,
+        const sortedLogs = [...stake, ...unstake, ...claim].sort(
+            (prev, curr) => Number(curr.blockNumber) - Number(prev.blockNumber),
         )
 
         runInAction(() => {
-            this.myStakingHistoryEvents = sortedEvents
+            this.myStakingHistoryLogs = sortedLogs
         })
-        return sortedEvents
+        return sortedLogs
     }
 
     /**
      * Use for fetch validator information from giving validator address and epoch
      * @returns Validator information
      */
-    public async fetchValidator(validatorEvent: Event, epoch: $BigNumber) {
-        const provider = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
-        const staking = this.contract.connect(provider)
-        const validator = await staking.getValidatorStatusAtEpoch(
-            validatorEvent?.args?.[0] as Address,
-            epoch,
-        )
+    public async fetchValidator(validatorLog: (typeof this.validatorLogs)[0], epoch: number) {
+        if (!validatorLog.args.validator)
+            throw new Error('`fetchValidator: validatorLog.args.validator cannot be null`')
+
+        const contract = getContract(stakingObject)
+        const validator = await contract.read.getValidatorStatusAtEpoch([
+            validatorLog.args.validator,
+            BigInt(epoch),
+        ])
+
+        const [
+            address,
+            status,
+            totalDelegated,
+            slashesCount,
+            changedAt,
+            jailedBefore,
+            claimedAt,
+            commissionRate,
+            totalRewards,
+        ] = validator
 
         return {
-            ...validator,
-            validatorEvent: validatorEvent,
-            totalDelegated: BigNumber(validator.totalDelegated.toString()).div(CHAIN_DECIMAL),
+            address,
+            status: VALIDATOR_STATUS_MAPPING[status as keyof typeof VALIDATOR_STATUS_MAPPING],
+            totalDelegated: bigIntDivideDecimal(
+                totalDelegated,
+                CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+            ),
+            slashesCount,
+            changedAt,
+            jailedBefore,
+            claimedAt,
+            commissionRate,
+            totalRewards: bigIntDivideDecimal(
+                totalRewards,
+                CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+            ),
+            validatorLog: validatorLog,
         }
     }
 
@@ -201,36 +297,36 @@ export class Staking {
      * @returns All validator information
      */
     public async fetchValidators() {
-        this.isProviderValid()
         runInAction(() => {
             this.isFetchingValidators = true
         })
+
         // get chain config if epoch is not valid
-        if (!chainConfig.epoch) {
-            await chainConfig.fetchChainConfig()
-        }
+        if (!chainConfig.epoch) await chainConfig.fetchChainConfig()
 
-        const epoch = $BigNumber.from(chainConfig.epoch)
-        const validatorEvents = await this.getAllValidatorEvents()
-        const validators = await Promise.all(
-            validatorEvents.map(validatorEvent => this.fetchValidator(validatorEvent, epoch)),
-        )
+        const epoch = chainConfig.epoch
+        const validatorLogs = await this.getValidatorLogs()
 
-        // sort validator base on blockNumber
-        const sortValidators = validators.sort(
-            (prev, curr) => prev.validatorEvent.blockNumber - curr.validatorEvent.blockNumber,
-        )
+        // const validators = await Promise.all(
+        //     validatorLogs.map(validatorLog => this.fetchValidator(validatorLog, epoch)),
+        // )
 
-        runInAction(() => {
-            this.validators = sortValidators
-            this.isFetchingValidators = false
-        })
+        // // sort validator base on blockNumber
+        // const sortValidators = validators.sort(
+        //     (prev, curr) =>
+        //         Number(prev.validatorLog.blockNumber) - Number(curr.validatorLog.blockNumber),
+        // )
 
-        return sortValidators
+        // runInAction(() => {
+        //     this.validators = sortValidators
+        //     this.isFetchingValidators = false
+        // })
+
+        // return sortValidators
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                                   Action                                   */
+    /*                                    Write                                   */
     /* -------------------------------------------------------------------------- */
     /**
      * Use for `claim` reward from giving validator address
@@ -242,22 +338,22 @@ export class Staking {
      * @returns contract receipt
      */
     public async claimValidatorReward(validatorAddress: Address) {
-        this.isProviderValid()
-        const signer = await getWalletClient()
-        const staking = this.contract.connect(signer as Signer)
-        const transaction = await staking.claimDelegatorFee(validatorAddress, {
-            gasPrice: $BigNumber.from(GAS_PRICE),
-            gasLimit: $BigNumber.from(GAS_LIMIT_CLAIM),
+        const client = await getWalletClient()
+        const contract = getContract(stakingObject)
+        const { request } = await contract.simulate.claimDelegatorFee([validatorAddress], {
+            gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
+            gasLimit: CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork].claim,
         })
-        const receip = await transaction.wait()
+        const transactionHash = await client?.writeContract(request)
 
+        // update balance, validators, staking history
         await Promise.all([
             chainAccount.fetchBalance(),
-            this.updateValidators(), // update validators
-            this.fetchMyStakingHistory(), // update history
+            this.updateValidators(),
+            this.getMyStakingHistoryLogs(),
         ])
 
-        return receip
+        return transactionHash
     }
 
     /**
@@ -270,26 +366,25 @@ export class Staking {
      * @param amount amount of token to stake
      * @returns contract receipt
      */
-    public async stakeToValidator(validatorAddress: Address, amount: number) {
-        this.isProviderValid()
+    public async stakeToValidator(validatorAddress: Address, amount: bigint) {
         await switchChainWhenIncorrectChain()
-
-        const signer = await getWalletClient()
-        const staking = this.contract.connect(signer as Signer)
-
-        const transaction = await staking.delegate(validatorAddress, {
-            gasPrice: $BigNumber.from(GAS_PRICE),
-            value: $BigNumber.from(new BigNumber(amount).multipliedBy(CHAIN_DECIMAL).toString(10)),
+        const client = await getWalletClient()
+        const contract = getContract(stakingObject)
+        const { request } = await contract.simulate.delegate([validatorAddress], {
+            gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
+            value: amount * CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
         })
-        const receip = await transaction.wait()
 
+        const transactionHash = await client?.writeContract(request)
+
+        // update balance, validators, staking history
         await Promise.all([
             chainAccount.fetchBalance(),
-            this.updateValidators(), // update validators
-            this.fetchMyStakingHistory(), // update history
+            this.updateValidators(),
+            this.getMyStakingHistoryLogs(),
         ])
 
-        return receip
+        return transactionHash
     }
 
     /**
@@ -302,28 +397,28 @@ export class Staking {
      * @param amount amount of token to un-stake
      * @returns contract receipt
      */
-    public async unstakeFromValidator(validatorAddress: Address, _amount: number) {
-        this.isProviderValid()
-        const signer = await getWalletClient()
-        const staking = this.contract.connect(signer as Signer)
-        const amount = $BigNumber.from(BigNumber(_amount).multipliedBy(CHAIN_DECIMAL).toString(10))
+    public async unstakeFromValidator(validatorAddress: Address, amount: bigint) {
+        await switchChainWhenIncorrectChain()
+        const client = await getWalletClient()
+        const contract = getContract(stakingObject)
+        const { request } = await contract.simulate.undelegate([
+            validatorAddress,
+            amount * CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+        ])
+        const transactionHash = await client?.writeContract(request)
 
-        const transaction = await staking.undelegate(validatorAddress, amount, {
-            gasPrice: $BigNumber.from(GAS_PRICE),
-        })
-        const receip = await transaction.wait()
-
+        // update balance, validators, staking history
         await Promise.all([
             chainAccount.fetchBalance(),
-            this.updateValidators(), // update validators
-            this.fetchMyStakingHistory(), // update history
+            this.updateValidators(),
+            this.getMyStakingHistoryLogs(),
         ])
 
-        return receip
+        return transactionHash
     }
 
     public async updateValidators() {
-        if (!this.validatorEvents.length) {
+        if (!this.validatorLogs.length) {
             throw new Error(
                 'No validatorEvents found. Ensure you have set fetch validator with `fetchValidators()`',
             )
@@ -336,15 +431,17 @@ export class Staking {
         if (!chainConfig.epoch) {
             await chainConfig.fetchChainConfig()
         }
-        const epoch = $BigNumber.from(chainConfig.epoch)
 
         const validators = await Promise.all(
-            this.validatorEvents.map(validatorEvent => this.fetchValidator(validatorEvent, epoch)),
+            this.validatorLogs.map(validatorLog =>
+                this.fetchValidator(validatorLog, chainConfig.epoch),
+            ),
         )
 
         // sort validator base on blockNumber
         const sortValidators = validators.sort(
-            (prev, curr) => prev.validatorEvent.blockNumber - curr.validatorEvent.blockNumber,
+            (prev, curr) =>
+                Number(prev.validatorLog.blockNumber) - Number(curr.validatorLog.blockNumber),
         )
 
         runInAction(() => {
@@ -369,18 +466,21 @@ export class Staking {
      */
     public calcValidatorApr(validatorAddress: Address) {
         const validator = this.validators.find(
-            validator => validator.ownerAddress === validatorAddress,
+            validator => validator.validatorLog.args.owner === validatorAddress,
         )
         if (!validator) return 0
 
         const blockReward = this.calcValidatorBlockReward(this.activeValidator.length)
-        const validatorTotalReward = BigNumber(validator.totalRewards.toString()).plus(blockReward)
-        const validatorTotalStake = BigNumber(validator.totalDelegated.toString())
+        const validatorTotalReward = validator.totalRewards + blockReward
+        const validatorTotalStake = validator.totalDelegated
 
         const apr =
             365 *
             (100 *
-                validatorTotalReward.dividedBy(validatorTotalStake).div(CHAIN_DECIMAL).toNumber())
+                bigIntDivideDecimal(
+                    BigInt(validatorTotalReward / validatorTotalStake),
+                    CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+                ))
 
         return apr
     }
@@ -392,69 +492,15 @@ export class Staking {
      * @returns number of blockreward
      */
     public calcValidatorBlockReward(validatorAmount: number) {
-        return new BigNumber((28800 * 0.6 * 0.603) / validatorAmount).multipliedBy(CHAIN_DECIMAL)
+        return bigIntDivideDecimal(
+            BigInt((28800 * 0.6 * 0.603) / validatorAmount),
+            CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+        )
     }
 
     /* -------------------------------------------------------------------------- */
     /*                                   Getters                                  */
     /* -------------------------------------------------------------------------- */
-    /**
-     * Get `added` events of validators
-     * @returns  `added` events of validators
-     */
-    private async getAddedValidatorEvents() {
-        const provider = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
-        const staking = this.contract.connect(provider)
-        // @ts-ignore
-        const filter = staking.filters.ValidatorAdded()
-        const query = await staking.queryFilter(filter, 'earliest', 'latest')
-        return query
-    }
-
-    /**
-     * Get `removed` events of validators
-     * @returns  `removed` events of validators
-     */
-    private async getRemovedValidatorEvents() {
-        const provider = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
-        const staking = this.contract.connect(provider)
-        // @ts-ignore
-        const filter = staking.filters.ValidatorRemoved()
-        const query = await staking.queryFilter(filter, 'earliest', 'latest')
-        return query
-    }
-
-    /**
-     * Get `jailed` events of validators
-     * @returns  `jailed` events of validators
-     */
-    private async getJailedValidatorEvents() {
-        const provider = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
-        const staking = this.contract.connect(provider)
-        // @ts-ignore
-        const filter = staking.filters.ValidatorJailed()
-        const query = await staking.queryFilter(filter, 'earliest', 'latest')
-        return query
-    }
-
-    /**
-     * Get `added` `removed` `jailed` events of validators then update result to `validatorEvents`
-     * @returns  `added` `removed` `jailed` events of validators
-     */
-    public async getAllValidatorEvents() {
-        this.isProviderValid()
-        const [addedValidators, removedValidators] = await Promise.all([
-            this.getAddedValidatorEvents(),
-            this.getRemovedValidatorEvents(),
-        ])
-
-        const availableValidators = addedValidators.filter(
-            i => !removedValidators.find(r => r.args?.[0] === i.args?.[0]),
-        )
-
-        this.validatorEvents = availableValidators
-        return availableValidators
-    }
 
     /**
      * Get user staking reward from giving validator address
@@ -464,6 +510,7 @@ export class Staking {
     public async getMyStakingRewards(validatorAddress: Address) {
         const delegator = chainAccount.account.address
         if (!delegator) return BigNumber(0)
+        const contract = getContract(stakingObject)
         const staking = this.contract.connect(this.provider)
 
         const reward = await staking

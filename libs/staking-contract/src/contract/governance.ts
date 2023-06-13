@@ -1,11 +1,12 @@
 import { action, makeObservable, observable, runInAction } from 'mobx'
-import { governanceContract } from '.'
 import { Event } from 'ethers'
 import { Bytes, Result } from 'ethers/lib/utils.js'
 import { Address } from 'abitype'
 import { BigNumber as $BigNumber } from 'ethers'
 import BigNumber from 'bignumber.js'
 import { EXPECT_CHAIN } from '@utils/chain-config'
+import { stakingObject } from '.'
+import { getContract } from 'wagmi/actions'
 
 export class Governance {
     constructor() {
@@ -16,7 +17,7 @@ export class Governance {
     }
 
     /* ------------------------------- Propperties ------------------------------ */
-    public governanceContract: typeof governanceContract = governanceContract
+    public governanceContract: any = {}
     public proposals: Awaited<ReturnType<typeof this.getProposals>>
 
     /* --------------------------------- Helper --------------------------------- */

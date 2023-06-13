@@ -3,14 +3,13 @@ import { action, makeObservable, observable, runInAction } from 'mobx'
 import { chainStaking } from '.'
 import { GetAccountResult, fetchBalance, getAccount } from 'wagmi/actions'
 import { PublicClient } from 'wagmi'
-import { CHAIN_DECIMAL, EXPECT_CHAIN } from '@utils/chain-config'
+import { CHAIN_DECIMAL, EXPECT_CHAIN, bigIntDivideDecimal } from '@utils/chain-config'
 
 export class Account {
     constructor() {
         makeObservable(this, {
             isFetchingAccount: observable,
             isReady: observable,
-            // provider: observable,
             account: observable,
             balance: observable,
             getAccount: action,
@@ -20,9 +19,8 @@ export class Account {
     /* ------------------------------- Properties ------------------------------- */
     public isFetchingAccount: boolean
     public isReady: boolean
-    // public provider: Provider
     public account: Awaited<ReturnType<typeof getAccount>>
-    public balance: BigInt
+    public balance: number
 
     /* --------------------------------- Methods -------------------------------- */
     /**
@@ -32,10 +30,13 @@ export class Account {
         this.isReady = false
         const account = await getAccount()
         runInAction(() => {
+            // clear staking state when account disconnected
             if (!account.address) {
                 chainStaking.myStakingHistoryEvents = []
                 chainStaking.myTotalReward = []
+                chainStaking.myTotalStake = []
             }
+
             this.account = account
             this.isReady = true
         })
@@ -46,8 +47,9 @@ export class Account {
      * fetch balance from user wallet
      */
     public async fetchBalance() {
+        // clear balance when account is disconnected
         if (!this.account.address) {
-            this.balance = BigInt(0)
+            this.balance = 0
             return this.balance
         }
 
@@ -56,7 +58,10 @@ export class Account {
         })
 
         runInAction(() => {
-            this.balance = balance.value / CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork]
+            this.balance = bigIntDivideDecimal(
+                balance.value,
+                CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+            )
         })
 
         return this.balance

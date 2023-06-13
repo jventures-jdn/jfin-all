@@ -4,7 +4,7 @@ import './Validators.css'
 import { LoadingOutlined } from '@ant-design/icons'
 import ValidatorCollapseHeader from './ValidatorCollapseHeader'
 import { getCurrentEnv } from '../../../stores'
-import { Validator, useChainStaking } from '@utils/chain/src/contract'
+import { Validator, useChainStaking } from '@utils/staking-contract'
 import ValidatorCollapseContent from './ValidatorCollapseContent'
 
 interface IValidatorsProps {

@@ -1,37 +1,39 @@
 import { observer } from 'mobx-react'
-import React, { Suspense, useEffect, useMemo } from 'react'
-import BlockInfo from './components/Layout/BlockInfo/BlockInfo'
+// import React, { useEffect } from 'react'
+// import BlockInfo from './components/Layout/BlockInfo/BlockInfo'
 import Conditions from './components/Conditions'
 import Navbar from './components/Layout/Navbar/Navbar'
-import { Route, Switch } from 'react-router-dom'
-import CookieConsent from 'react-cookie-consent'
 import {
-  chainGovernance,
+  Route,
+  RouterProvider,
+  Routes,
+  createBrowserRouter,
+} from 'react-router-dom'
+import CookieConsent from 'react-cookie-consent'
+import { useAccount, useNetwork } from 'wagmi'
+import Footer from './components/Layout/Footer/Footer'
+import {
   useChainAccount,
   useChainConfig,
   useChainStaking,
 } from '@utils/staking-contract'
-import { useAccount, useNetwork } from 'wagmi'
-import Footer from './components/Layout/Footer/Footer'
-
-const Staking = React.lazy(() => import('./pages/Staking/Staking'))
-const StakingRecovery = React.lazy(
-  () => import('./pages/StakingRecovery/StakingRecovery'),
-)
-const Governance = React.lazy(() => import('./pages/Governance/Governance'))
-const Assets = React.lazy(() => import('./pages/Assets/Assets'))
+import { useEffect } from 'react'
+import BlockInfo from './components/Layout/BlockInfo/BlockInfo'
+import Staking from './pages/Staking/Staking'
+import Governance from './pages/Governance/Governance'
+import Assets from './pages/Assets/Assets'
+import StakingRecovery from './pages/StakingRecovery/StakingRecovery'
 
 const App = observer(() => {
   /* --------------------------------- States --------------------------------- */
 
   const chainConfig = useChainConfig()
-  const chainStaking = useChainStaking()
   const chainAccount = useChainAccount()
-  // const provider = getProvider()
+  const chainStaking = useChainStaking()
   const { chain } = useNetwork()
   const { address } = useAccount()
 
-  /* --------------------------------- Methods -------------------------------- */
+  // /* --------------------------------- Methods -------------------------------- */
   const initialChainConfig = async () => {
     await chainConfig.fetchChainConfig()
     setInterval(() => {
@@ -40,7 +42,6 @@ const App = observer(() => {
   }
 
   const initialChainStaking = async () => {
-    // chainStaking.setProvider(provider)
     await chainStaking.fetchValidators()
   }
 
@@ -49,23 +50,17 @@ const App = observer(() => {
     await chainAccount.fetchBalance()
   }
 
-  const initialChainGovernance = async () => {
-    // chainGovernance.setProvider(provider)
-  }
-
-  /* --------------------------------- Watches -------------------------------- */
+  // /* --------------------------------- Watches -------------------------------- */
   useEffect(() => {
     initialChainConfig()
     initialChainStaking()
     initialChainAccount()
-    initialChainGovernance()
   }, [])
 
   // on connected or disconnected update validators & account
-  useMemo(() => {
+  useEffect(() => {
     initialChainAccount()
     if (!chainStaking.validators?.length) return
-    // chainStaking.setProvider(provider)
     chainStaking.updateValidators()
   }, [address, chain?.id])
 
@@ -75,25 +70,11 @@ const App = observer(() => {
       <Navbar />
       <div className="body">
         <BlockInfo />
-        <Switch>
-          <Suspense fallback={''}>
-            <Route key="staking" path={['/', '/staking']} exact>
-              <Staking />
-            </Route>
-            <Route key="governance" path="/governance">
-              <Governance />
-            </Route>
-            <Route key="assets" path="/assets">
-              <Assets />
-            </Route>
-            <Route
-              key="staking-recovery"
-              exact
-              component={StakingRecovery}
-              path="/staking-recovery"
-            />
-          </Suspense>
-        </Switch>
+        <Routes>
+          <Route path="/" element={<Staking />}>
+            <Route path="/staking" element={<Staking />} />
+          </Route>
+        </Routes>
       </div>
       <Footer />
 

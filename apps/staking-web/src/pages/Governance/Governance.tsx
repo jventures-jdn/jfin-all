@@ -1,6 +1,6 @@
 import ProposalTable from '@/components/Governance/ProposalTable'
 import { BankOutlined } from '@ant-design/icons'
-import { chainGovernance } from '@utils/chain/src/contract'
+import { chainGovernance } from '@utils/staking-contract'
 import { useEffect, useState } from 'react'
 
 const Governance = () => {

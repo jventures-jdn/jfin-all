@@ -1,8 +1,7 @@
 import { fetchBlockNumber, readContracts } from 'wagmi/actions'
-import { chainConfigObject } from '.'
-import { CHAIN_DECIMAL, EXPECT_CHAIN } from '@utils/chain-config'
-import { BigNumber } from 'bignumber.js'
+import { CHAIN_DECIMAL, EXPECT_CHAIN, bigIntDivideDecimal } from '@utils/chain-config'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
+import { chainConfigObject } from '.'
 
 // All config calculate base on javascript sdk
 export class Config {
@@ -51,7 +50,7 @@ export class Config {
 
     /* --------------------------------- Methods -------------------------------- */
     private calcStartBlock() {
-        return (Number(this.blockNumber) / this.epochBlockInterval) * this.epochBlockInterval
+        return ((Number(this.blockNumber) / this.epochBlockInterval) | 0) * this.epochBlockInterval
     }
 
     private calcEndBlock() {
@@ -78,18 +77,17 @@ export class Config {
     private calcValidatorJailIntervalSec() {
         return this.validatorJailEpochLength * this.epochBlockInterval * this.blockSec
     }
-
     /**
      * Read all chain config data via readContracts
      *
      * https://wagmi.sh/core/actions/readContracts
      */
-
     public async fetchChainConfig() {
         // prepare promises fetch
         const promiseFetchBlockNumber = fetchBlockNumber({
             chainId: EXPECT_CHAIN.chainId,
         })
+
         const promiseReadContracts = readContracts({
             contracts: [
                 {
@@ -159,12 +157,13 @@ export class Config {
             this.felonyThreshold = _felonyThreshold.result || 0
             this.validatorJailEpochLength = _validatorJailEpochLength.result || 0
             this.undelegatePeriod = _undelegatePeriod.result || 0
-            this.minValidatorStakeAmount = Number(
-                (_minValidatorStakeAmount.result || BigInt(0)) /
-                    CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+            this.minValidatorStakeAmount = bigIntDivideDecimal(
+                _minValidatorStakeAmount.result || BigInt(0),
+                CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
             )
-            this.minStakingAmount = Number(
-                (_minStakingAmount.result || BigInt(0)) / CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+            this.minStakingAmount = bigIntDivideDecimal(
+                _minStakingAmount.result || BigInt(0),
+                CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
             )
             this.startBlock = this.calcStartBlock()
             this.endBlock = this.calcEndBlock()
