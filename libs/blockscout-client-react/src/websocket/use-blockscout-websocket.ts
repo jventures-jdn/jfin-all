@@ -58,7 +58,6 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
                 )
             if (options?.newStats)
                 sendMessage(JSON.stringify(['12', '12', 'addresses:new_address', 'phx_join', {}]))
-            // sendMessage(JSON.stringify(['18', '18', 'addresses:new_address', 'phx_join', {}]))
         }
     }, [readyState])
 

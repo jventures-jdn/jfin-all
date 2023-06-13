@@ -77,7 +77,6 @@ function _statsStoreInitial() {
 
 export function statsStoreInitialClear() {
     mutate('initial-stats', undefined)
-    mutate('stats-meta', undefined)
 }
 
 // Global stats state
