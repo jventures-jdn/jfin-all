@@ -3,7 +3,8 @@ import { action, makeObservable, observable, runInAction } from 'mobx'
 import { chainStaking } from '.'
 import { GetAccountResult, fetchBalance, getAccount } from 'wagmi/actions'
 import { PublicClient } from 'wagmi'
-import { CHAIN_DECIMAL, EXPECT_CHAIN, bigIntDivideDecimal } from '@utils/chain-config'
+import { EXPECT_CHAIN } from '@utils/chain-config'
+import { formatEther } from 'viem'
 
 export class Account {
     constructor() {
@@ -32,7 +33,7 @@ export class Account {
         runInAction(() => {
             // clear staking state when account disconnected
             if (!account.address) {
-                chainStaking.myStakingHistoryEvents = []
+                chainStaking.myStakingHistoryLogs = []
                 chainStaking.myTotalReward = []
                 chainStaking.myTotalStake = []
             }
@@ -58,10 +59,7 @@ export class Account {
         })
 
         runInAction(() => {
-            this.balance = bigIntDivideDecimal(
-                balance.value,
-                CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
-            )
+            this.balance = Number(formatEther(balance.value))
         })
 
         return this.balance
