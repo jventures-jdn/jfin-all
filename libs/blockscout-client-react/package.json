@@ -6,6 +6,7 @@
   "dependencies": {
     "@utils/global-config": "workspace:*",
     "@utils/js-utilities": "workspace:*",
+    "next": "13.4.4",
     "react-use-websocket": "^4.3.1",
     "swr": "2.1.5",
     "zustand": "4.3.8"
