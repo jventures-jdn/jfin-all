@@ -4,6 +4,7 @@ import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { GlobalApis } from '../apis/global-apis'
 import { Stats } from '../types'
 import { useEffect } from 'react'
+import { numbers } from '@utils/js-utilities'
 
 const key = (totalBlock: any) => `stats/${totalBlock}`
 
@@ -62,24 +63,21 @@ function _statsStoreInitial() {
     // Fetch initial stats when mounted
     return useSWR('initial-stats', GlobalApis.stats, {
         onSuccess: response => {
-            const items = response
+            const items = response as Stats
 
             statsData = {
                 total_transactions: items.total_transactions,
             } as Stats
 
             const parsed = _formatFullData(items, 'init')
+
             mutate(
                 key(Number(items.total_blocks)),
                 {
                     ...parsed,
-                    average_block_time:
-                        parsed.average_block_time === 3000
-                            ? `3 seconds`
-                            : parsed.average_block_time,
-                    total_addresses: Intl.NumberFormat('th', { currency: 'THB' }).format(
-                        Number(parsed.total_addresses),
-                    ),
+                    average_block_time: Number.isFinite(parsed.average_block_time)
+                        ? `3 seconds`
+                        : parsed.average_block_time,
                 },
                 { revalidate: false },
             )
@@ -131,9 +129,9 @@ function _formatFullData(item: any, from: Stats['data_source']) {
     return {
         data_source: from,
         average_block_time: item.average_block_time,
-        total_addresses: item.total_addresses,
-        total_blocks: item.total_blocks,
-        total_transactions: item.total_transactions,
+        total_addresses: Intl.NumberFormat().format(item.total_addresses),
+        total_blocks: Intl.NumberFormat().format(item.total_blocks),
+        total_transactions: Intl.NumberFormat().format(item.total_transactions),
         is_full_data: true,
     } as Stats
 }
