@@ -5,9 +5,7 @@ import { GlobalApis } from '../apis/global-apis'
 import { Stats, StatsAddresses, StatsBlock } from '../types'
 import { useEffect } from 'react'
 
-const key = (totalBlock: number) => `stats/${totalBlock}`
-
-let statsData: Stats
+const key = () => `stats`
 
 // Root hook
 export function useBlockscoutStats() {
@@ -28,10 +26,11 @@ const _fullStatsFetcher = (totalBlock: number) => {
 
 // Individual stats state
 function _statsStoreGet(totalBlock: number, options?: { scrape?: boolean }) {
-    const existing = useSWR(key(totalBlock), () => {
+    const existing = useSWR(key(), () => {
         if (!totalBlock) return null
         return _fullStatsFetcher(totalBlock)
     })
+
     // force fetch if full data is required and not yet presented
     if (
         !options?.scrape &&
@@ -64,13 +63,9 @@ function _statsStoreInitial() {
         onSuccess: response => {
             const items = response as Stats
 
-            statsData = {
-                total_transactions: Intl.NumberFormat().format(Number(items.total_transactions)),
-            } as Stats
-
             const parsed = _formatFullData(items, 'init')
 
-            mutate(key(Number(items.total_blocks)), parsed, { revalidate: false })
+            mutate(key(), parsed, { revalidate: false })
             _updateBlockMeta(Number(items.total_blocks))
         },
     })
@@ -96,27 +91,34 @@ export function statsWebSocketRecord(
     }[],
 ) {
     if (data[4].block_number) {
-        statsData = {
-            data_source: 'ws',
-            average_block_time: data[4]?.average_block_time,
-            total_blocks: Intl.NumberFormat().format(Number(data[4]?.block_number)),
-            total_addresses: statsData?.total_addresses,
-            total_transactions: statsData?.total_transactions,
-        } as Stats
-
-        mutate(key(data[4].block_number as number), statsData, {
-            // merge with existing data if exist
-            populateCache: (data, current) => ({ ...current, ...data }),
-            revalidate: false,
-        })
-
+        mutate(
+            key(),
+            {
+                data_source: 'ws',
+                average_block_time: !isFinite(data[4]?.average_block_time)
+                    ? 3000
+                    : data[4]?.average_block_time,
+                total_blocks: data[4]?.block_number,
+            },
+            {
+                // merge with existing data if exist
+                populateCache: (data, current) => ({ ...current, ...data }),
+                revalidate: false,
+            },
+        )
         _updateBlockMeta(data[4].block_number as number)
     } else if (data[4].count) {
-        statsData = {
-            data_source: 'ws',
-            total_addresses: data[4]?.count,
-            total_transactions: statsData?.total_transactions,
-        } as Stats
+        mutate(
+            key(),
+            {
+                total_addresses: Number(data[4]?.count.replace(/,/g, '')),
+            },
+            {
+                populateCache: (data, current) => ({ ...current, ...data }),
+
+                revalidate: false,
+            },
+        )
     }
 }
 
@@ -124,12 +126,10 @@ export function statsWebSocketRecord(
 function _formatFullData(item: Stats, from: Stats['data_source']) {
     return {
         data_source: from,
-        average_block_time: Number.isFinite(item.average_block_time)
-            ? `3 seconds`
-            : item.average_block_time,
-        total_addresses: Intl.NumberFormat().format(Number(item.total_addresses)),
-        total_blocks: Intl.NumberFormat().format(Number(item.total_blocks)),
-        total_transactions: Intl.NumberFormat().format(Number(item.total_transactions)),
+        average_block_time: item.average_block_time,
+        total_addresses: Number(String(item.total_addresses).replace(/,/g, '')),
+        total_blocks: Number(item.total_blocks),
+        total_transactions: Number(item.total_transactions),
         is_full_data: true,
     } as Stats
 }
