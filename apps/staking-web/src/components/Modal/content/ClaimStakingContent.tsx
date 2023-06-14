@@ -8,14 +8,13 @@ import { FormEvent, useEffect, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
 import { useModalStore } from '../../../stores'
 import { Validator, chainStaking } from '@utils/staking-contract'
-import BigNumber from 'bignumber.js'
 import { message } from 'antd'
 import { CHAIN_GAS_LIMIT_CUSTOM, EXPECT_CHAIN } from '@utils/chain-config'
+import { Address } from 'wagmi'
 
 interface IClaimStakingContent {
-  isStaking?: boolean
   validator: Validator
-  amount?: BigNumber
+  amount: number
 }
 const ClaimStakingContent = observer((props: IClaimStakingContent) => {
   /* -------------------------------------------------------------------------- */
@@ -33,7 +32,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
 
     try {
       modalStore.setIsLoading(true)
-      await chainStaking.claimValidatorReward(props.validator.ownerAddress)
+      await chainStaking.claimValidatorReward(props.validator.owner as Address)
       modalStore.setVisible(false)
       message.success('Claim reward was done!')
     } catch (e: any) {
@@ -73,20 +72,13 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
           </div>
         </div>
 
-        {props?.isStaking ? (
-          <div className="alert-message">
-            <AlertOutlined />
-            Please claim all rewards before staking or un-staking
-          </div>
-        ) : (
-          <div className="warning-message">
-            <WarningOutlined />
-            If reward you received does not match the reward that the system has
-            indicated, This may happen from the gas limit. Please increase the
-            gas limit in wallet (up to{' '}
-            {CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork]?.claim}).
-          </div>
-        )}
+        <div className="warning-message">
+          <WarningOutlined />
+          When you have a large number of rewards claim rewards will requires a
+          lot of gas. This may result in you not receiving the full amount of
+          rewards, If you encounter any of these events, please try several
+          times until you have received all the rewards.
+        </div>
 
         <button
           className="button lg w-100 m-0 ghost mt-2"
