@@ -11,7 +11,8 @@ import UnStakingContent from '../../Modal/content/UnStakingContent'
 import './ValidatorCollapseContent.css'
 import { Validator, chainStaking } from '@utils/staking-contract'
 import CountUpMemo from '../../Countup'
-import { useAccount } from 'wagmi'
+import { Address, useAccount } from 'wagmi'
+import { formatEther } from 'viem'
 
 interface IValidatorCollapseContentProps {
   validator: Validator
@@ -29,37 +30,35 @@ const ValidatorCollapseContent = observer(
     const { isConnected } = useAccount()
     const modalStore = useModalStore()
     const [apr, setApr] = useState<number>(0)
-    const [myStakingReward, setMyStakingReward] = useState<BigNumber>(
-      BigNumber(0),
-    )
-    const [myStakingAmount, setMyStakingAmount] = useState<BigNumber>(
-      BigNumber(0),
-    )
+    const [myStakingReward, setMyStakingReward] = useState(0)
+    const [myStakingAmount, setMyStakingAmount] = useState(0)
+    const slashesCount = Number(formatEther(validator.slashesCount))
+    const commissionRate = Number(formatEther(validator.commissionRate))
+    const totalDelegated = Number(formatEther(validator.totalDelegated))
 
     /* -------------------------------------------------------------------------- */
     /*                                   Methods                                  */
     /* -------------------------------------------------------------------------- */
+
     const inital = async () => {
-      setMyStakingReward(
-        await chainStaking.getMyStakingRewards(validator.ownerAddress),
-      )
-      setMyStakingAmount(
-        await chainStaking.getMyStakingAmount(validator.ownerAddress),
-      )
-      setApr(chainStaking.calcValidatorApr(validator.ownerAddress))
+      const [_myStakingReward, _myStakingAmount, _apr] = await Promise.all([
+        chainStaking.getMyStakingRewards(validator.owner),
+        chainStaking.getMyStakingAmount(validator.owner),
+        chainStaking.calcValidatorApr(validator.owner),
+      ])
+
+      setMyStakingReward(Number(formatEther(_myStakingReward)))
+      setMyStakingAmount(Number(formatEther(_myStakingAmount)))
+      setApr(_apr)
     }
 
-    const handleClaim = async (isStaking = false) => {
+    const handleClaim = async () => {
       if (!validator) return
       modalStore.setVisible(true)
       modalStore.setIsLoading(true)
       modalStore.setTitle('Claim Reward')
       modalStore.setContent(
-        <ClaimStakingContent
-          amount={myStakingReward}
-          isStaking={isStaking}
-          validator={validator}
-        />,
+        <ClaimStakingContent amount={myStakingReward} validator={validator} />,
       )
       modalStore.setIsLoading(false)
     }
@@ -67,7 +66,7 @@ const ValidatorCollapseContent = observer(
     const handleClaimRecovery = async () => {
       if (!validator) return
       try {
-        await chainStaking.claimValidatorReward(validator.ownerAddress)
+        await chainStaking.claimValidatorReward(validator.owner as Address)
         message.success('Claim reward was done!')
       } catch (e: any) {
         message.error(`Something went wrong ${e?.message || ''}`)
@@ -104,12 +103,6 @@ const ValidatorCollapseContent = observer(
     /* -------------------------------------------------------------------------- */
     useEffect(() => {
       inital()
-
-      return () => {
-        setApr(0)
-        setMyStakingReward(BigNumber(0))
-        setMyStakingAmount(BigNumber(0))
-      }
     }, [])
 
     /* -------------------------------------------------------------------------- */
@@ -124,11 +117,7 @@ const ValidatorCollapseContent = observer(
                 <div style={{ width: '100%' }}>
                   <div>
                     <span>Slasher: </span>
-                    <CountUpMemo
-                      end={validator.slashesCount}
-                      decimals={2}
-                      duration={1}
-                    />
+                    <CountUpMemo end={slashesCount} decimals={2} duration={1} />
                   </div>
                   <div>
                     <span>APR: </span>
@@ -142,7 +131,7 @@ const ValidatorCollapseContent = observer(
                   <div>
                     <span>Comission Rate:</span>{' '}
                     <CountUpMemo
-                      end={validator.commissionRate}
+                      end={commissionRate}
                       decimals={2}
                       duration={1}
                     />
@@ -150,7 +139,7 @@ const ValidatorCollapseContent = observer(
                   <div>
                     <span>Total Stake: </span>
                     <CountUpMemo
-                      end={validator.totalDelegated.toNumber()}
+                      end={totalDelegated}
                       decimals={2}
                       duration={1}
                     />
@@ -160,7 +149,7 @@ const ValidatorCollapseContent = observer(
                       validator
                         ? `https://exp.${
                             getCurrentEnv() === 'jfin' ? '' : 'testnet.'
-                          }jfinchain.com/address/${validator.ownerAddress}`
+                          }jfinchain.com/address/${validator.owner}`
                         : '#'
                     }
                     rel="noreferrer"
@@ -181,7 +170,7 @@ const ValidatorCollapseContent = observer(
                 {!forceActionButtonsEnabled ? (
                   <div className="value">
                     <CountUpMemo
-                      end={myStakingReward.toNumber()}
+                      end={myStakingReward}
                       decimals={5}
                       duration={1}
                     />
@@ -194,7 +183,7 @@ const ValidatorCollapseContent = observer(
                 <button
                   className="button secondary lg"
                   disabled={
-                    (!isConnected || !myStakingReward.toNumber()) &&
+                    (!isConnected || !myStakingReward) &&
                     !forceActionButtonsEnabled
                   }
                   onClick={() =>
@@ -215,7 +204,7 @@ const ValidatorCollapseContent = observer(
               <div>
                 <div className="value">
                   <CountUpMemo
-                    end={myStakingAmount.toNumber()}
+                    end={myStakingAmount}
                     decimals={2}
                     duration={1}
                   />
@@ -227,7 +216,7 @@ const ValidatorCollapseContent = observer(
                       className="button secondary lg"
                       disabled={
                         !isConnected ||
-                        !!myStakingReward.toNumber() ||
+                        !!myStakingReward ||
                         forceActionButtonsEnabled
                       }
                       onClick={handleAdd}
@@ -238,10 +227,7 @@ const ValidatorCollapseContent = observer(
 
                     <button
                       className="button secondary lg"
-                      disabled={
-                        (!isConnected || !!myStakingReward.toNumber()) &&
-                        !forceActionButtonsEnabled
-                      }
+                      disabled={!isConnected && !forceActionButtonsEnabled}
                       onClick={handleUnStaking}
                       style={{ marginLeft: '10px' }}
                       type="button"
@@ -249,7 +235,7 @@ const ValidatorCollapseContent = observer(
                       <MinusOutlined />
                     </button>
                   </div>
-                  {myStakingReward.toNumber() ? (
+                  {myStakingReward ? (
                     <div
                       style={{
                         marginTop: '5px',

@@ -12,8 +12,9 @@ import {
 import { VALIDATOR_WALLETS } from '../../../utils/const'
 import { Validator, chainStaking } from '@utils/staking-contract'
 import { getValidatorStatus } from '@utils/chain-config'
-import BigNumber from 'bignumber.js'
 import CountUpMemo from '../../Countup'
+import { Address } from 'wagmi'
+import { formatEther } from 'viem'
 
 interface IValidatorCollapseHeader {
   validator: Validator
@@ -26,26 +27,27 @@ const ValidatorCollapseHeader = observer(
     /* -------------------------------------------------------------------------- */
     const [loading, setLoading] = useState(true)
     const [apr, setApr] = useState<number>(0)
-    const [myStakingReward, setMyStakingReward] = useState<BigNumber>(
-      BigNumber(0),
-    )
-    const [myStakingAmount, setMyStakingAmount] = useState<BigNumber>(
-      BigNumber(0),
-    )
+    const [myStakingReward, setMyStakingReward] = useState<number>(0)
+    const [myStakingAmount, setMyStakingAmount] = useState<number>(0)
 
     /* -------------------------------------------------------------------------- */
     /*                                   Methods                                  */
     /* -------------------------------------------------------------------------- */
+
     const inital = async () => {
       try {
         setLoading(true)
-        setMyStakingReward(
-          await chainStaking.getMyStakingRewards(validator.ownerAddress),
-        )
-        setMyStakingAmount(
-          await chainStaking.getMyStakingAmount(validator.ownerAddress),
-        )
-        setApr(chainStaking.calcValidatorApr(validator.ownerAddress))
+
+        // TODO: can refactor to be reused on other component, ex. ValidatorCollapseContent
+        const [_myStakingReward, _myStakingAmount, _apr] = await Promise.all([
+          chainStaking.getMyStakingRewards(validator.owner),
+          chainStaking.getMyStakingAmount(validator.owner),
+          chainStaking.calcValidatorApr(validator.owner),
+        ])
+
+        setMyStakingReward(Number(formatEther(_myStakingReward)))
+        setMyStakingAmount(Number(formatEther(_myStakingAmount)))
+        setApr(_apr)
       } finally {
         setLoading(false)
       }
@@ -56,41 +58,34 @@ const ValidatorCollapseHeader = observer(
     /* -------------------------------------------------------------------------- */
     useEffect(() => {
       inital()
-
-      return () => {
-        setLoading(false)
-        setApr(0)
-        setMyStakingAmount(BigNumber(0))
-        setMyStakingReward(BigNumber(0))
-      }
     }, [])
 
     /* -------------------------------------------------------------------------- */
     /*                                    DOMS                                    */
     /* -------------------------------------------------------------------------- */
     return (
-      <Row>
+      <Row className="validator-collapse-header">
         {/* brand */}
         <Col className="item-brand" lg={5} sm={7} xs={14}>
           {/* validator brand */}
           <img
             alt={`validator ${
-              VALIDATOR_WALLETS[validator.ownerAddress]?.name || 'validator'
+              VALIDATOR_WALLETS[validator.owner as Address]?.name || 'validator'
             }`}
             src={`${
-              VALIDATOR_WALLETS[validator.ownerAddress]?.image ||
+              VALIDATOR_WALLETS[validator.owner as Address]?.image ||
               defaultValidatorImg
             }`}
           />
 
           <b>
             {/* validator name or address */}
-            {VALIDATOR_WALLETS[validator.ownerAddress]?.name ||
+            {VALIDATOR_WALLETS[validator.owner as Address]?.name ||
               [
-                validator.ownerAddress.slice(0, 5),
-                validator.ownerAddress.slice(-4),
+                (validator.owner as Address).slice(0, 5),
+                (validator.owner as Address).slice(-4),
               ].join('...')}
-            <CopyToClipboard text={validator.ownerAddress}>
+            <CopyToClipboard text={validator.owner as Address}>
               <CopyOutlined
                 className="copy-clipboard"
                 style={{ marginLeft: '5px' }}
@@ -114,7 +109,7 @@ const ValidatorCollapseHeader = observer(
 
         {/* cert */}
         <Col className="item-cert" lg={3} sm={4} xs={8}>
-          {VALIDATOR_WALLETS[validator.ownerAddress]?.name && (
+          {VALIDATOR_WALLETS[validator.owner as Address]?.name && (
             <div>
               <SafetyCertificateOutlined /> <span>JFIN</span>
             </div>
@@ -130,7 +125,7 @@ const ValidatorCollapseHeader = observer(
                 <LoadingOutlined spin />
               ) : (
                 <CountUpMemo
-                  end={validator.totalDelegated.toNumber()}
+                  end={Number(formatEther(validator.totalDelegated))}
                   duration={1}
                   decimals={2}
                 />
@@ -167,14 +162,10 @@ const ValidatorCollapseHeader = observer(
             <div>
               {loading ? (
                 <LoadingOutlined spin />
-              ) : myStakingReward.isZero() ? (
+              ) : myStakingReward <= 0 ? (
                 '-'
               ) : (
-                <CountUpMemo
-                  end={myStakingReward.toNumber()}
-                  decimals={5}
-                  duration={1}
-                />
+                <CountUpMemo end={myStakingReward} decimals={5} duration={1} />
               )}
             </div>
           </div>
@@ -187,14 +178,10 @@ const ValidatorCollapseHeader = observer(
             <div>
               {loading ? (
                 <LoadingOutlined spin />
-              ) : myStakingAmount.isZero() ? (
+              ) : myStakingAmount <= 0 ? (
                 '-'
               ) : (
-                <CountUpMemo
-                  end={myStakingAmount.toNumber()}
-                  decimals={2}
-                  duration={1}
-                />
+                <CountUpMemo end={myStakingAmount} decimals={2} duration={1} />
               )}
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Col, Collapse, Row } from 'antd'
+import { Col, Collapse, CollapseProps, Row } from 'antd'
 import { observer } from 'mobx-react'
 import './Validators.css'
 import { LoadingOutlined } from '@ant-design/icons'
@@ -19,51 +19,50 @@ const Validators = observer((props: IValidatorsProps) => {
   const chainStaking = useChainStaking()
   const validators = props.validators || chainStaking.activeValidator
   const loading = chainStaking.isFetchingValidators
-  const { Panel } = Collapse
-  const loadingValidator = Array.from(
+
+  const ValidatorCollapseHeaderLoading = () => {
+    return (
+      <Row style={{ width: '100%' }}>
+        <Col className="item-brand" xs={24} sm={24} md={24} lg={24} xl={24}>
+          <div
+            className="items-center justify-center"
+            style={{ width: '100%', textAlign: 'center', height: '44px' }}
+          >
+            <LoadingOutlined spin />
+          </div>
+        </Col>
+      </Row>
+    )
+  }
+
+  const ValidatorLoading = Array.from(
     Array(getCurrentEnv() === 'jfin' ? 7 : 3).keys(),
-  ).map((v, i) => (
-    <Panel
-      key={`loading-validator-${i + 1}`}
-      className="validators-item"
-      header={
-        <Row style={{ width: '100%' }}>
-          <Col className="item-brand" xs={24} sm={24} md={24} lg={24} xl={24}>
-            <div
-              className="items-center justify-center"
-              style={{ width: '100%', textAlign: 'center', height: '44px' }}
-            >
-              <LoadingOutlined spin />
-            </div>
-          </Col>
-        </Row>
-      }
-    />
-  ))
+  ).map((_, index) => ({
+    key: `validator-${index + 1}`,
+    label: <ValidatorCollapseHeaderLoading />,
+  }))
+
+  const items: CollapseProps['items'] = loading
+    ? ValidatorLoading
+    : validators.map((validator, index) => ({
+        key: `validator-${index + 1}`,
+        label: (
+          <div className="validator-item">
+            <ValidatorCollapseHeader validator={validator} />
+          </div>
+        ),
+        children: (
+          <ValidatorCollapseContent
+            validator={validator}
+            forceActionButtonsEnabled={props.forceActionButtonsEnabled}
+          />
+        ),
+      }))
 
   return (
     <div className="validators-container">
       <div className="validators-wrapper">
-        <Collapse ghost bordered={false}>
-          {validators && !loading
-            ? validators.map((validator, index) => {
-                return (
-                  <Panel
-                    key={`validator-${index + 1}`}
-                    className="validators-item"
-                    header={<ValidatorCollapseHeader validator={validator} />}
-                  >
-                    <ValidatorCollapseContent
-                      validator={validator}
-                      forceActionButtonsEnabled={
-                        props.forceActionButtonsEnabled
-                      }
-                    />
-                  </Panel>
-                )
-              })
-            : loadingValidator}
-        </Collapse>
+        <Collapse items={items} ghost bordered={false}></Collapse>
       </div>
     </div>
   )

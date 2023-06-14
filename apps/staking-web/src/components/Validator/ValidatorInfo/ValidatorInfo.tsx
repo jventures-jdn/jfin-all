@@ -12,7 +12,7 @@ const ValidatorInfo = observer(() => {
   const chainStaking = useChainStaking()
   const loading = chainStaking.isFetchingValidators
   const activeValidators = chainStaking.activeValidator?.length || 0
-  const totalDelegated = chainStaking.totalStake.toNumber()
+  const totalDelegated = chainStaking.totalStake
   const totalValidators = chainStaking.activeValidator?.length || 0
 
   return (
