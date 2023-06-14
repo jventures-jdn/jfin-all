@@ -48,7 +48,6 @@ function _statsStoreGet(totalBlock: number, options?: { scrape?: boolean }) {
 
 // Internal to update latest stats numberhelper
 function _updateBlockMeta(totalBlock: number) {
-    // const parsed = _formatFullData(items, 'ws')
     mutate('stats-meta', {
         cuerrentTotalBlock: totalBlock,
     })
