@@ -9,6 +9,7 @@ import {
   chainStaking,
   useChainAccount,
 } from '@utils/staking-contract'
+import { Address } from 'wagmi'
 
 interface IAddStakingContent {
   validator: Validator
@@ -32,13 +33,13 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
     setError(undefined)
 
     if (stakingAmount < 1) return setError('Stake amount must be more 1')
-    if (stakingAmount > chainAccount.balance.toNumber())
+    if (stakingAmount > chainAccount.balance)
       return setError(`Insufficient Balance`)
 
     try {
       modalStore.setIsLoading(true)
       await chainStaking.stakeToValidator(
-        props.validator.ownerAddress,
+        props.validator.owner as Address,
         stakingAmount,
       )
       modalStore.setVisible(false)
