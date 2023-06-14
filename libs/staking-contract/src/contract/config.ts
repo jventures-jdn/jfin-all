@@ -1,7 +1,8 @@
 import { fetchBlockNumber, readContracts } from 'wagmi/actions'
-import { CHAIN_DECIMAL, EXPECT_CHAIN, bigIntDivideDecimal } from '@utils/chain-config'
+import { EXPECT_CHAIN } from '@utils/chain-config'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { chainConfigObject } from '.'
+import { formatEther } from 'viem'
 
 // All config calculate base on javascript sdk
 export class Config {
@@ -157,14 +158,10 @@ export class Config {
             this.felonyThreshold = _felonyThreshold.result || 0
             this.validatorJailEpochLength = _validatorJailEpochLength.result || 0
             this.undelegatePeriod = _undelegatePeriod.result || 0
-            this.minValidatorStakeAmount = bigIntDivideDecimal(
-                _minValidatorStakeAmount.result || BigInt(0),
-                CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
+            this.minValidatorStakeAmount = Number(
+                formatEther(_minValidatorStakeAmount.result || BigInt(0)),
             )
-            this.minStakingAmount = bigIntDivideDecimal(
-                _minStakingAmount.result || BigInt(0),
-                CHAIN_DECIMAL[EXPECT_CHAIN.chainNetwork],
-            )
+            this.minStakingAmount = Number(formatEther(_minStakingAmount.result || BigInt(0)))
             this.startBlock = this.calcStartBlock()
             this.endBlock = this.calcEndBlock()
             this.epoch = this.calcEpoch()
