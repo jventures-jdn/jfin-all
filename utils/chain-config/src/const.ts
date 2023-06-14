@@ -31,16 +31,6 @@ export const CHAIN_NETWORK: { [key in InternalChain]: InternalChain } = {
     JFINT: 'JFINT',
 }
 
-export const CHAIN_DECIMAL_UNIT: { [key in InternalChain]: number } = {
-    JFIN: 18,
-    JFINT: 18,
-}
-
-export const CHAIN_DECIMAL: { [key in InternalChain]: bigint } = {
-    JFIN: BigInt('10') ** BigInt(CHAIN_DECIMAL_UNIT['JFIN']),
-    JFINT: BigInt('10') ** BigInt(CHAIN_DECIMAL_UNIT['JFINT']),
-}
-
 export const CHAIN_GAS_PRICE: { [key in InternalChain]: bigint } = {
     JFIN: BigInt(23000000000),
     JFINT: BigInt(23000000000),
@@ -51,7 +41,7 @@ export const CHAIN_GAS_LIMIT: { [key in InternalChain]?: BigInt } = {
     JFINT: BigInt(7000000),
 }
 
-export const CHAIN_GAS_LIMIT_CUSTOM: { [key in InternalChain]?: any } = {
+export const CHAIN_GAS_LIMIT_CUSTOM: { [key in InternalChain]: { claim: bigint } } = {
     JFIN: { claim: BigInt(25000000) },
     JFINT: { claim: BigInt(7000000) },
 }

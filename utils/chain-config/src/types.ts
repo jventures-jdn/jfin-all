@@ -5,9 +5,10 @@ export enum VALIDATOR_STATUS_ENUM {
     'PENDING' = 2,
     'JAILED' = 3,
 }
-export const VALIDATOR_STATUS_MAPPING = {
-    0: 'NOT_FOUND',
-    1: 'ACTIVE',
-    2: 'PENDING',
-    3: 'JAILED',
-}
+export const VALIDATOR_STATUS_MAPPING: { 0: 'NOT_FOUND'; 1: 'ACTIVE'; 2: 'PENDING'; 3: 'JAILED' } =
+    {
+        0: 'NOT_FOUND',
+        1: 'ACTIVE',
+        2: 'PENDING',
+        3: 'JAILED',
+    }

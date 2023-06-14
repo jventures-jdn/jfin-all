@@ -1,4 +1,4 @@
-import { CHAIN_DECIMAL_UNIT, EXPECT_CHAIN, getChain } from '@utils/chain-config'
+import { EXPECT_CHAIN, getChain } from '@utils/chain-config'
 import { getNetwork } from 'wagmi/actions'
 import Web3 from 'web3'
 
@@ -47,7 +47,7 @@ export const addChain = async () => {
                 rpcUrls: [EXPECT_CHAIN.chainRpc],
                 chainName: EXPECT_CHAIN.chainName,
                 nativeCurrency: {
-                    decimals: CHAIN_DECIMAL_UNIT,
+                    decimals: 18,
                     name: EXPECT_CHAIN.chainName,
                     symbol: EXPECT_CHAIN.chainNetwork,
                 },
