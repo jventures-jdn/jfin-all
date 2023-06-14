@@ -2,11 +2,10 @@ import { mutate } from 'swr'
 import useSWR from 'swr/immutable'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { GlobalApis } from '../apis/global-apis'
-import { Stats } from '../types'
+import { Stats, StatsAddresses, StatsBlock } from '../types'
 import { useEffect } from 'react'
-import { numbers } from '@utils/js-utilities'
 
-const key = (totalBlock: any) => `stats/${totalBlock}`
+const key = (totalBlock: number) => `stats/${totalBlock}`
 
 let statsData: Stats
 
@@ -66,21 +65,12 @@ function _statsStoreInitial() {
             const items = response as Stats
 
             statsData = {
-                total_transactions: items.total_transactions,
+                total_transactions: Intl.NumberFormat().format(Number(items.total_transactions)),
             } as Stats
 
             const parsed = _formatFullData(items, 'init')
 
-            mutate(
-                key(Number(items.total_blocks)),
-                {
-                    ...parsed,
-                    average_block_time: Number.isFinite(parsed.average_block_time)
-                        ? `3 seconds`
-                        : parsed.average_block_time,
-                },
-                { revalidate: false },
-            )
+            mutate(key(Number(items.total_blocks)), parsed, { revalidate: false })
             _updateBlockMeta(Number(items.total_blocks))
         },
     })
@@ -98,12 +88,18 @@ function _statsStoreMeta() {
     return useSWR('stats-meta', null).data || {}
 }
 
-export function statsWebSocketRecord(data: any) {
+export function statsWebSocketRecord(
+    data: {
+        count: StatsAddresses['count']
+        block_number: StatsBlock['block_number']
+        average_block_time: StatsBlock['average_block_time']
+    }[],
+) {
     if (data[4].block_number) {
         statsData = {
             data_source: 'ws',
             average_block_time: data[4]?.average_block_time,
-            total_blocks: data[4]?.block_number,
+            total_blocks: Intl.NumberFormat().format(Number(data[4]?.block_number)),
             total_addresses: statsData?.total_addresses,
             total_transactions: statsData?.total_transactions,
         } as Stats
@@ -125,13 +121,15 @@ export function statsWebSocketRecord(data: any) {
 }
 
 // Format data from api response (both init and fetch)
-function _formatFullData(item: any, from: Stats['data_source']) {
+function _formatFullData(item: Stats, from: Stats['data_source']) {
     return {
         data_source: from,
-        average_block_time: item.average_block_time,
-        total_addresses: Intl.NumberFormat().format(item.total_addresses),
-        total_blocks: Intl.NumberFormat().format(item.total_blocks),
-        total_transactions: Intl.NumberFormat().format(item.total_transactions),
+        average_block_time: Number.isFinite(item.average_block_time)
+            ? `3 seconds`
+            : item.average_block_time,
+        total_addresses: Intl.NumberFormat().format(Number(item.total_addresses)),
+        total_blocks: Intl.NumberFormat().format(Number(item.total_blocks)),
+        total_transactions: Intl.NumberFormat().format(Number(item.total_transactions)),
         is_full_data: true,
     } as Stats
 }
