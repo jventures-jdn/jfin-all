@@ -1,11 +1,11 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
 
 export function StatsComponentDemo() {
-    // Look for current block number
-    const { cuerrentTotalBlock } = useBlockscout().stats().meta()
+    // Look for total_blocks number
+    const { data } = useBlockscout().stats().meta()
 
-    const stats = useBlockscout().stats().get(cuerrentTotalBlock, { scrape: true })
-
+    // Get stats data, this will auto fetch if data not exist
+    const stats = useBlockscout().stats().get(data?.total_blocks, { scrape: true })
     if (stats.isLoading) return <span>Loading...</span>
 
     return (

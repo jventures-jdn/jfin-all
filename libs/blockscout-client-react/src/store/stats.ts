@@ -16,9 +16,9 @@ export function useBlockscoutStats() {
 }
 
 // Fetch stats data from api
-const _fullStatsFetcher = (totalBlock: number) => {
+const _fullStatsFetcher = () => {
     return RESTFetcher.apiv2Get(
-        `/stats/${totalBlock}`,
+        `/stats`,
         // convert stats data to our format
         item => _formatFullData(item, 'fetch'),
     )
@@ -26,10 +26,7 @@ const _fullStatsFetcher = (totalBlock: number) => {
 
 // Individual stats state
 function _statsStoreGet(totalBlock: number, options?: { scrape?: boolean }) {
-    const existing = useSWR(key(), () => {
-        if (!totalBlock) return null
-        return _fullStatsFetcher(totalBlock)
-    })
+    const existing = useSWR(key(), () => (!totalBlock ? null : _fullStatsFetcher()))
 
     // force fetch if full data is required and not yet presented
     if (
@@ -45,13 +42,6 @@ function _statsStoreGet(totalBlock: number, options?: { scrape?: boolean }) {
     return existing
 }
 
-// Internal to update latest stats numberhelper
-function _updateBlockMeta(totalBlock: number) {
-    mutate('stats-meta', {
-        cuerrentTotalBlock: totalBlock,
-    })
-}
-
 // Initial stats loading
 function _statsStoreInitial() {
     // auto clear on unmount
@@ -62,11 +52,8 @@ function _statsStoreInitial() {
     return useSWR('initial-stats', GlobalApis.stats, {
         onSuccess: response => {
             const items = response as Stats
-
             const parsed = _formatFullData(items, 'init')
-
             mutate(key(), parsed, { revalidate: false })
-            _updateBlockMeta(Number(items.total_blocks))
         },
     })
 }
@@ -78,9 +65,7 @@ export function statsStoreInitialClear() {
 // Global stats state
 function _statsStoreMeta() {
     // Auto fetch initial transactions
-    _statsStoreInitial()
-
-    return useSWR('stats-meta', null).data || {}
+    return _statsStoreInitial()
 }
 
 export function statsWebSocketRecord(
@@ -106,7 +91,6 @@ export function statsWebSocketRecord(
                 revalidate: false,
             },
         )
-        _updateBlockMeta(data[4].block_number as number)
     } else if (data[4].count) {
         mutate(
             key(),
@@ -115,7 +99,6 @@ export function statsWebSocketRecord(
             },
             {
                 populateCache: (data, current) => ({ ...current, ...data }),
-
                 revalidate: false,
             },
         )
