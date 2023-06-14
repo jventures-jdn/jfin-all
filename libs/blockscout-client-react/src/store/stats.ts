@@ -74,27 +74,19 @@ function _statsStoreInitial() {
                 key(Number(items.total_blocks)),
                 {
                     ...parsed,
-                    average_block_time: _resolveAverageฺฺBlockTime(parsed.average_block_time),
-                    total_addresses: _resolveTotalAddresses(parsed.total_addresses),
+                    average_block_time:
+                        parsed.average_block_time === 3000
+                            ? `3 seconds`
+                            : parsed.average_block_time,
+                    total_addresses: Intl.NumberFormat('th', { currency: 'THB' }).format(
+                        Number(parsed.total_addresses),
+                    ),
                 },
                 { revalidate: false },
             )
             _updateBlockMeta(Number(items.total_blocks))
         },
     })
-}
-
-function _resolveAverageฺฺBlockTime(averageBlockTime: any) {
-    //TODO : refactor function
-    if (averageBlockTime === 3000) {
-        return `3 seconds`
-    }
-    return averageBlockTime
-}
-
-function _resolveTotalAddresses(totalAddresses: any) {
-    //TODO : refactor function
-    return Intl.NumberFormat('th', { currency: 'THB' }).format(totalAddresses)
 }
 
 export function statsStoreInitialClear() {
