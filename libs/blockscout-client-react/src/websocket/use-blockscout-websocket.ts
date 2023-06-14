@@ -51,6 +51,12 @@ export function useBlockscoutWebSocket(options?: BlockscoutWebSocketOptions) {
         } else if (readyState === ReadyState.OPEN) {
             // Auto send message on open
             if (options?.newBlocks)
+                // 15: ref identifier ยังไม่รู้่าคืออะไร ลองส่งเลข 9 ,30 ,12 ไปก็ได้ข้อมูล
+                // 15: join ref identifier ยังไม่รู้่าคืออะไร ลองส่งเลข 9 ,30 ,12 ไปก็ได้ข้อมูล
+                // blocks:new_block: Channel name with sub topic to join and receive updates on new blocks
+                // phx_join: Phoenix socket event that the client is triggering to join a specified channel
+                // Payload: {}
+
                 sendMessage(JSON.stringify(['15', '15', 'blocks:new_block', 'phx_join', {}]))
             if (options?.newTransactions)
                 sendMessage(
