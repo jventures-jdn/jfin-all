@@ -1,14 +1,7 @@
 import { observer } from 'mobx-react'
-// import React, { useEffect } from 'react'
-// import BlockInfo from './components/Layout/BlockInfo/BlockInfo'
 import Conditions from './components/Conditions'
 import Navbar from './components/Layout/Navbar/Navbar'
-import {
-  Route,
-  RouterProvider,
-  Routes,
-  createBrowserRouter,
-} from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import CookieConsent from 'react-cookie-consent'
 import { useAccount, useNetwork } from 'wagmi'
 import Footer from './components/Layout/Footer/Footer'
@@ -74,6 +67,9 @@ const App = observer(() => {
           <Route path="/" element={<Staking />}>
             <Route path="/staking" element={<Staking />} />
           </Route>
+          <Route path="/governance" element={<Governance />} />
+          <Route path="/assets" element={<Assets />} />
+          <Route path="/staking-recovery" element={<StakingRecovery />} />
         </Routes>
       </div>
       <Footer />
@@ -95,7 +91,6 @@ const App = observer(() => {
             margin: '0',
             display: 'block',
             flex: 'none',
-            with: 'auto',
           }}
           cookieName="jfinstk"
           expires={365}
