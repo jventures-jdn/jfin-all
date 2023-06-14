@@ -4,13 +4,19 @@
 
 .ant-modal-content {
   background-color: var(--SD075) !important;
+  padding: 0 !important;
   border-radius: 15px;
 }
 
 .ant-modal-header {
+  padding: 16px 24px;
   color: var(--SL075) !important;
   border-bottom: none;
-  background: linear-gradient(to bottom right, var(--S075), var(--SD100));
+  background: linear-gradient(
+    to bottom right,
+    var(--S075),
+    var(--SD100)
+  ) !important;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
@@ -18,7 +24,11 @@
 .ant-modal-close-x,
 .ant-modal-title,
 .ant-modal-body {
-  color: var(--SL075);
+  color: var(--SL075) !important;
+}
+
+.ant-modal-body {
+  padding: 20px 24px;
 }
 
 .ant-modal-footer {
