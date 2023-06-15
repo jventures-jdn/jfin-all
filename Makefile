@@ -6,8 +6,8 @@ help:
 setup: ## Setup prerequisites for development environmemt
 	@echo ⌛ Installing prerequisites...
 	@echo Please use Node 🤖 version 18.14+, your Node version: $$(node -v)
-	@echo 💻 Changing PNPM version to 7.32.5
-	npm i --location=global --silent pnpm@7.32.5
+	@echo 💻 Changing PNPM version to 8.6.1
+	npm i --location=global --silent pnpm@8.6.1
 	@echo ✅ Ready
 
 .SILENT: clean

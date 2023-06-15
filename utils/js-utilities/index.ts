@@ -13,7 +13,7 @@ import { YamlUtilities } from './src/yaml'
 import { PhoneFormat } from './src/phoneFormat'
 import { PaginationHelper, Pagination } from './src/pagination-helper'
 const isDocker = require('./src/isdocker')
-const minimatch = require('minimatch')
+const { minimatch } = require('minimatch')
 const ipfsHash = require('ipfs-only-hash')
 
 export {
