@@ -5,7 +5,8 @@ export function StatsComponentDemo() {
     const { data } = useBlockscout().stats().meta()
 
     // Get stats data, this will auto fetch if data not exist
-    const stats = useBlockscout().stats().get(data?.total_blocks, { scrape: true })
+    const stats = useBlockscout().stats().get(data?.total_blocks)
+
     if (stats.isLoading) return <span>Loading...</span>
 
     return (

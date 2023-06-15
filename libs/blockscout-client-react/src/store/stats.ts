@@ -15,29 +15,9 @@ export function useBlockscoutStats() {
     }
 }
 
-// Fetch stats data from api
-const _fullStatsFetcher = () => {
-    return RESTFetcher.apiv2Get(
-        `/stats`,
-        // convert stats data to our format
-        item => _formatFullData(item, 'fetch'),
-    )
-}
-
 // Individual stats state
-function _statsStoreGet(totalBlock: number, options?: { scrape?: boolean }) {
-    const existing = useSWR(key(), () => (!totalBlock ? null : _fullStatsFetcher()))
-
-    // force fetch if full data is required and not yet presented
-    if (
-        !options?.scrape &&
-        existing.data &&
-        !existing.data.is_full_data &&
-        !existing.isValidating
-    ) {
-        // clear cache so that full block data is auto fetched
-        existing.mutate(undefined, { revalidate: true, populateCache: false })
-    }
+function _statsStoreGet(totalBlock: number) {
+    const existing = !totalBlock ? useSWR('initial-stats') : useSWR(key())
 
     return existing
 }
