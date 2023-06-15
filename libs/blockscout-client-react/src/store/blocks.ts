@@ -1,7 +1,7 @@
 import { mutate } from 'swr'
 import useSWR from 'swr/immutable'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
-import { Block } from '../types'
+import { Block, BlockWebSocket } from '../types'
 import { GlobalApis } from '../apis/global-apis'
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
@@ -50,7 +50,10 @@ function _blockStoreGet(
 }
 
 // Internal helper to update latest block number
-function _updateBlockMeta(currentBlockData: { currentBlockNumber?: number, currentPageBlockNumber?: number }) {
+function _updateBlockMeta(currentBlockData: {
+    currentBlockNumber?: number
+    currentPageBlockNumber?: number
+}) {
     mutate('blocks-meta', currentBlockData, {
         // merge with existing data if exist
         populateCache: (data, current) => ({ ...current, ...data }),
@@ -96,7 +99,7 @@ function _blockStoreMeta(options?: { initialFetch?: boolean }) {
 }
 
 // Handle new scrape block data from web socket
-export function blockWebSocketRecord(data: any) {
+export function blockWebSocketRecord(data: BlockWebSocket) {
     const blockNumber = data?.block_number
     const blockData = {
         data_source: 'ws',
@@ -175,10 +178,10 @@ function _blockStoreList() {
             prevPageIndexRef.current = pageIndex
             router.push(
                 `${pathname}${
-                // if the user returns to the first page, do not include the block number parameter
-                newBlockNumber && pageIndex !== 1
-                    ? `?block_number=${newBlockNumber}&page=${pageIndex}`
-                    : '?page=1'
+                    // if the user returns to the first page, do not include the block number parameter
+                    newBlockNumber && pageIndex !== 1
+                        ? `?block_number=${newBlockNumber}&page=${pageIndex}`
+                        : '?page=1'
                 }`,
             )
         }
@@ -197,25 +200,39 @@ function _blockStoreList() {
     }, [existing.data])
 
     // fetch block list when mounted
-    const list = useSWR(blockListKey, () => isValidBlock ? GlobalApis.blocks(blockNumber) : null, {
-        onSuccess: response => {
-            const items = response
-            items.items.forEach((item: any, index: number) => {
-                const parsed = _formatFullData(item, 'fetch')
+    const list = useSWR(
+        blockListKey,
+        () => (isValidBlock ? GlobalApis.blocks(blockNumber) : null),
+        {
+            onSuccess: response => {
+                const items = response
+                items.items.forEach((item: any, index: number) => {
+                    const parsed = _formatFullData(item, 'fetch')
 
-                // write individual block data to cache
-                mutate(key(item.height), parsed, { revalidate: true })
-            })
-            _updateBlockMeta({ currentPageBlockNumber: items.items[0].height })
-            // avoid keeping cache on the latest block
-            mutate('blocks-list-latest', undefined)
+                    // write individual block data to cache
+                    mutate(key(item.height), parsed, { revalidate: true })
+                })
+                _updateBlockMeta({ currentPageBlockNumber: items.items[0].height })
+                // avoid keeping cache on the latest block
+                mutate('blocks-list-latest', undefined)
+            },
         },
-    }
     )
 
     // update page index
     const nextPage = () => setPageIndex(pageIndex - 1)
     const previousPage = () => setPageIndex(pageIndex + 1)
 
-    return { list, nextPage, previousPage, isFirstPage, isLastPage, isWs, isValidBlock, blockNumber, itemCount, pageIndex }
+    return {
+        list,
+        nextPage,
+        previousPage,
+        isFirstPage,
+        isLastPage,
+        isWs,
+        isValidBlock,
+        blockNumber,
+        itemCount,
+        pageIndex,
+    }
 }

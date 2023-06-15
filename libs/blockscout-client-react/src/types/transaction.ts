@@ -7,3 +7,8 @@ export type Transaction = {
     data_source: 'init' | 'ws' | 'fetch'
     is_full_data: boolean
 }
+
+export interface TransactionWebSocket {
+    transaction_hash: string
+    transaction_html: string
+}
