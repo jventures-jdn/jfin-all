@@ -60,9 +60,10 @@ export function statsWebSocketRecord(
             key(),
             {
                 data_source: 'ws',
-                average_block_time: !isFinite(data[4]?.average_block_time)
-                    ? 3000
-                    : data[4]?.average_block_time,
+                average_block_time:
+                    typeof data[4]?.average_block_time == 'string'
+                        ? 3000
+                        : data[4]?.average_block_time,
                 total_blocks: data[4]?.block_number,
             },
             {
