@@ -1,7 +1,7 @@
 import { mutate } from 'swr'
 import useSWR from 'swr/immutable'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
-import { Block, BlockWebSocket } from '../types'
+import { Block, HelpeWebSocketBlack } from '../types'
 import { GlobalApis } from '../apis/global-apis'
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
@@ -99,7 +99,7 @@ function _blockStoreMeta(options?: { initialFetch?: boolean }) {
 }
 
 // Handle new scrape block data from web socket
-export function blockWebSocketRecord(data: BlockWebSocket) {
+export function blockWebSocketRecord(data: HelpeWebSocketBlack) {
     const blockNumber = data?.block_number
     const blockData = {
         data_source: 'ws',

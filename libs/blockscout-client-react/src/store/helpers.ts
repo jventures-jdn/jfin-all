@@ -1,6 +1,6 @@
 import { blockStoreInitialClear, blockWebSocketRecord } from './blocks'
 import { transactionStoreInitialClear, transactionWebSocketRecord } from './transactions'
-import { BlockWebSocket, Helper, TransactionWebSocket } from '../types'
+import { HelpeWebSocketBlack, Helper, HelperWebSocketTransaction } from '../types'
 
 // Handle new data from web socket
 export function blockScoutWebSocketRecord([, , eventNewType, newDataWebSocket, dataObject]: [
@@ -8,16 +8,15 @@ export function blockScoutWebSocketRecord([, , eventNewType, newDataWebSocket, d
     string | null,
     Helper['eventNewType'],
     Helper['eventType'],
-    //TODO : แก้ไข
-    BlockWebSocket | TransactionWebSocket,
+    Helper['HelpedWebSocket'],
 ]) {
     if (eventNewType === 'blocks:new_block' && newDataWebSocket === 'new_block') {
-        blockWebSocketRecord(dataObject as BlockWebSocket)
+        blockWebSocketRecord(dataObject as HelpeWebSocketBlack)
     } else if (
         eventNewType === 'transactions:new_transaction' &&
         newDataWebSocket === 'transaction'
     ) {
-        transactionWebSocketRecord(dataObject as TransactionWebSocket)
+        transactionWebSocketRecord(dataObject as HelperWebSocketTransaction)
     }
 }
 // Handle when websocket just closed

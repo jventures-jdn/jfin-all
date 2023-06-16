@@ -1,7 +1,7 @@
 import { mutate } from 'swr'
 import useSWR from 'swr/immutable'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
-import { Transaction, TransactionWebSocket } from '../types'
+import { HelperWebSocketTransaction, Transaction } from '../types'
 import { GlobalApis } from '../apis/global-apis'
 import { useEffect } from 'react'
 
@@ -48,7 +48,7 @@ function _transactionStoreGet(
 }
 
 // Handle new  scrape transaction data from web socket
-export function transactionWebSocketRecord(data: TransactionWebSocket) {
+export function transactionWebSocketRecord(data: HelperWebSocketTransaction) {
     const txHash = data?.transaction_hash
     const transactionData = {
         data_source: 'ws',

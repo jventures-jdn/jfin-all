@@ -13,11 +13,3 @@ export type Block = {
     data_source: 'init' | 'ws' | 'fetch'
     is_full_data: boolean
 }
-
-export interface BlockWebSocket {
-    average_block_time: string
-    block_html: string
-    block_miner_hash: string
-    block_number: number
-    chain_block_html: string
-}
