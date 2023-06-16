@@ -20,12 +20,18 @@ export function TransactionsListComponentDemo(props: { count: number }) {
     const { latestTransactions } = useBlockscout().transactions().meta()
     return (
         <div>
-            {latestTransactions &&
-                latestTransactions.slice(0, props.count).map((txHash: string, index: number) => (
-                    <div key={index}>
-                        <TransactionComponentDemo transactionHash={txHash} scrape />
-                    </div>
-                ))}
+            <Link href={`/txs`}>View All Transactions</Link>
+
+            <div>
+                {latestTransactions &&
+                    latestTransactions
+                        .slice(0, props.count)
+                        .map((txHash: string, index: number) => (
+                            <div key={index}>
+                                <TransactionComponentDemo transactionHash={txHash} scrape />
+                            </div>
+                        ))}
+            </div>
         </div>
     )
 }
