@@ -1,6 +1,5 @@
 import { MinusOutlined, PlusOutlined, WalletOutlined } from '@ant-design/icons'
 import { Col, Row, message } from 'antd'
-import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 import { getCurrentEnv, useModalStore } from '../../../stores'
@@ -12,7 +11,8 @@ import './ValidatorCollapseContent.css'
 import { Validator, chainStaking } from '@utils/staking-contract'
 import CountUpMemo from '../../Countup'
 import { Address, useAccount } from 'wagmi'
-import { formatEther } from 'viem'
+import { BaseError, formatEther } from 'viem'
+import * as Sentry from '@sentry/react'
 
 interface IValidatorCollapseContentProps {
   validator: Validator
@@ -41,11 +41,13 @@ const ValidatorCollapseContent = observer(
     /* -------------------------------------------------------------------------- */
 
     const inital = async () => {
-      const [_myStakingReward, _myStakingAmount, _apr] = await Promise.all([
-        chainStaking.getMyStakingRewards(validator.owner),
-        chainStaking.getMyStakingAmount(validator.owner),
-        chainStaking.calcValidatorApr(validator.owner),
-      ])
+      const _myStakingReward = await chainStaking.getMyStakingRewards(
+        validator.address,
+      )
+      const _myStakingAmount = await chainStaking.getMyStakingAmount(
+        validator.address,
+      )
+      const _apr = await chainStaking.calcValidatorApr(validator.owner)
 
       setMyStakingReward(Number(formatEther(_myStakingReward)))
       setMyStakingAmount(Number(formatEther(_myStakingAmount)))
@@ -69,7 +71,11 @@ const ValidatorCollapseContent = observer(
         await chainStaking.claimValidatorReward(validator.owner as Address)
         message.success('Claim reward was done!')
       } catch (e: any) {
-        message.error(`Something went wrong ${e?.message || ''}`)
+        const error: BaseError = e
+        message.error(
+          `Something went wrong ${error?.details || error?.message || ''}`,
+        )
+        Sentry.captureException(e) // throw to sentry.io
       }
     }
 

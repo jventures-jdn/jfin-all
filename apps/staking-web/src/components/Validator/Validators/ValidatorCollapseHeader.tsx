@@ -1,8 +1,7 @@
-import { Col, Row, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 import defaultValidatorImg from '../../../assets/images/partners/default.png'
-import CopyToClipboard from 'react-copy-to-clipboard'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import {
   CopyOutlined,
   DownOutlined,
@@ -15,6 +14,7 @@ import { getValidatorStatus } from '@utils/chain-config'
 import CountUpMemo from '../../Countup'
 import { Address } from 'wagmi'
 import { formatEther } from 'viem'
+import { Col, Row, Tooltip } from 'antd'
 
 interface IValidatorCollapseHeader {
   validator: Validator
@@ -37,13 +37,13 @@ const ValidatorCollapseHeader = observer(
     const inital = async () => {
       try {
         setLoading(true)
-
-        // TODO: can refactor to be reused on other component, ex. ValidatorCollapseContent
-        const [_myStakingReward, _myStakingAmount, _apr] = await Promise.all([
-          chainStaking.getMyStakingRewards(validator.owner),
-          chainStaking.getMyStakingAmount(validator.owner),
-          chainStaking.calcValidatorApr(validator.owner),
-        ])
+        const _myStakingReward = await chainStaking.getMyStakingRewards(
+          validator.address,
+        )
+        const _myStakingAmount = await chainStaking.getMyStakingAmount(
+          validator.address,
+        )
+        const _apr = await chainStaking.calcValidatorApr(validator.owner)
 
         setMyStakingReward(Number(formatEther(_myStakingReward)))
         setMyStakingAmount(Number(formatEther(_myStakingAmount)))
