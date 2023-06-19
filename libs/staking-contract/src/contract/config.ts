@@ -9,6 +9,7 @@ export class Config {
     /* ------------------------------- Properties ------------------------------- */
     constructor() {
         makeObservable(this, {
+            isReady: observable,
             epoch: observable,
             nextEpochIn: observable,
             endBlock: observable,
@@ -31,6 +32,7 @@ export class Config {
         })
     }
 
+    public isReady = false
     public blockSec = 3 // base on sdk
     public epoch: number
     public nextEpochIn: number
@@ -84,6 +86,8 @@ export class Config {
      * https://wagmi.sh/core/actions/readContracts
      */
     public async fetchChainConfig() {
+        if (this.isReady) return
+
         // prepare promises fetch
         const promiseFetchBlockNumber = fetchBlockNumber({
             chainId: EXPECT_CHAIN.chainId,
@@ -169,6 +173,7 @@ export class Config {
             this.epochBlockIntervalSec = this.calcBlockIntervalSec()
             this.undelegateIntervalSec = this.calcUndelegateIntervalSec()
             this.validatorJailIntervalSec = this.calcValidatorJailIntervalSec()
+            this.isReady = true
         })
 
         // return all chain config
