@@ -3,60 +3,18 @@ import Conditions from './components/Conditions'
 import Navbar from './components/Layout/Navbar/Navbar'
 import { Route, Routes } from 'react-router-dom'
 import CookieConsent from 'react-cookie-consent'
-import { useAccount, useNetwork } from 'wagmi'
 import Footer from './components/Layout/Footer/Footer'
-import {
-  useChainAccount,
-  useChainConfig,
-  useChainStaking,
-} from '@utils/staking-contract'
-import { useEffect } from 'react'
 import BlockInfo from './components/Layout/BlockInfo/BlockInfo'
 import Staking from './pages/Staking/Staking'
 import Governance from './pages/Governance/Governance'
 import Assets from './pages/Assets/Assets'
 import StakingRecovery from './pages/StakingRecovery/StakingRecovery'
+import { initialStakingContract } from './stores/StakingContractStore'
+import * as Sentry from '@sentry/react'
 
 const App = observer(() => {
   /* --------------------------------- States --------------------------------- */
-
-  const chainConfig = useChainConfig()
-  const chainAccount = useChainAccount()
-  const chainStaking = useChainStaking()
-  const { chain } = useNetwork()
-  const { address } = useAccount()
-
-  // /* --------------------------------- Methods -------------------------------- */
-  const initialChainConfig = async () => {
-    await chainConfig.fetchChainConfig()
-    setInterval(() => {
-      chainConfig.updateChainConfig()
-    }, 5000)
-  }
-
-  const initialChainStaking = async () => {
-    await chainStaking.fetchValidators()
-  }
-
-  const initialChainAccount = async () => {
-    await chainAccount.getAccount()
-    await chainAccount.fetchBalance()
-  }
-
-  // /* --------------------------------- Watches -------------------------------- */
-  useEffect(() => {
-    initialChainConfig()
-    initialChainStaking()
-    initialChainAccount()
-  }, [])
-
-  // on connected or disconnected update validators & account
-  useEffect(() => {
-    initialChainAccount()
-    if (!chainStaking.validators?.length) return
-    chainStaking.updateValidators()
-  }, [address, chain?.id])
-
+  initialStakingContract()
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="app-container">
@@ -112,4 +70,4 @@ const App = observer(() => {
   )
 })
 
-export default App
+export default Sentry.withProfiler(App, { includeUpdates: false }) as React.FC
