@@ -3,11 +3,6 @@ lockfileVersion: '6.1'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
-lockfileVersion: '6.1'
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
 
 importers:
 
@@ -178,11 +173,24 @@ importers:
 
   libs/blockscout-client-react:
     dependencies:
-      '@utils/global-config': link:../../utils/global-config
-      '@utils/js-utilities': link:../../utils/js-utilities
-      react-use-websocket: 4.3.1
-      swr: 2.1.5
-      zustand: 4.3.8
+      '@utils/global-config':
+        specifier: workspace:*
+        version: link:../../utils/global-config
+      '@utils/js-utilities':
+        specifier: workspace:*
+        version: link:../../utils/js-utilities
+      next:
+        specifier: 13.4.4
+        version: 13.4.4
+      react-use-websocket:
+        specifier: ^4.3.1
+        version: 4.3.1
+      swr:
+        specifier: 2.1.5
+        version: 2.1.5
+      zustand:
+        specifier: 4.3.8
+        version: 4.3.8
     devDependencies:
       '@config/eslint-react':
         specifier: workspace:*
@@ -6394,7 +6402,51 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: false
 
-  /next/13.4.4_biqbaboplfbrettd7655fr4n2y:
+  /next@13.4.4:
+    resolution: {integrity: sha512-C5S0ysM0Ily9McL4Jb48nOQHT1BukOWI59uC3X/xCMlYIh9rJZCv7nzG92J6e1cOBqQbKovlpgvHWFmz4eKKEA==}
+    engines: {node: '>=16.8.0'}
+    hasBin: true
+    peerDependencies:
+      '@opentelemetry/api': '*'
+      fibers: '*'
+      react: '*'
+      react-dom: '*'
+      sass: '*'
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      fibers:
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      sass:
+        optional: true
+    dependencies:
+      '@next/env': 13.4.4
+      '@swc/helpers': 0.5.1
+      busboy: 1.6.0
+      caniuse-lite: 1.0.30001494
+      postcss: 8.4.14
+      styled-jsx: 5.1.1(react@18.2.0)
+      zod: 3.21.4
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 13.4.4
+      '@next/swc-darwin-x64': 13.4.4
+      '@next/swc-linux-arm64-gnu': 13.4.4
+      '@next/swc-linux-arm64-musl': 13.4.4
+      '@next/swc-linux-x64-gnu': 13.4.4
+      '@next/swc-linux-x64-musl': 13.4.4
+      '@next/swc-win32-arm64-msvc': 13.4.4
+      '@next/swc-win32-ia32-msvc': 13.4.4
+      '@next/swc-win32-x64-msvc': 13.4.4
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+    dev: false
+
+  /next@13.4.4(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-C5S0ysM0Ily9McL4Jb48nOQHT1BukOWI59uC3X/xCMlYIh9rJZCv7nzG92J6e1cOBqQbKovlpgvHWFmz4eKKEA==}
     engines: {node: '>=16.8.0'}
     hasBin: true
@@ -6422,8 +6474,8 @@ packages:
       caniuse-lite: 1.0.30001494
       postcss: 8.4.14
       react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      styled-jsx: 5.1.1_react@18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      styled-jsx: 5.1.1(react@18.2.0)
       zod: 3.21.4
     optionalDependencies:
       '@next/swc-darwin-arm64': 13.4.4
@@ -6440,52 +6492,7 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /next/13.4.4_react@18.2.0:
-    resolution: {integrity: sha512-C5S0ysM0Ily9McL4Jb48nOQHT1BukOWI59uC3X/xCMlYIh9rJZCv7nzG92J6e1cOBqQbKovlpgvHWFmz4eKKEA==}
-    engines: {node: '>=16.8.0'}
-    hasBin: true
-    peerDependencies:
-      '@opentelemetry/api': '*'
-      fibers: '*'
-      react: '*'
-      react-dom: '*'
-      sass: '*'
-    peerDependenciesMeta:
-      '@opentelemetry/api':
-        optional: true
-      fibers:
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-      sass:
-        optional: true
-    dependencies:
-      '@next/env': 13.4.4
-      '@swc/helpers': 0.5.1
-      busboy: 1.6.0
-      caniuse-lite: 1.0.30001494
-      postcss: 8.4.14
-      react: 18.2.0
-      styled-jsx: 5.1.1_react@18.2.0
-      zod: 3.21.4
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 13.4.4
-      '@next/swc-darwin-x64': 13.4.4
-      '@next/swc-linux-arm64-gnu': 13.4.4
-      '@next/swc-linux-arm64-musl': 13.4.4
-      '@next/swc-linux-x64-gnu': 13.4.4
-      '@next/swc-linux-x64-musl': 13.4.4
-      '@next/swc-win32-arm64-msvc': 13.4.4
-      '@next/swc-win32-ia32-msvc': 13.4.4
-      '@next/swc-win32-x64-msvc': 13.4.4
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-    dev: false
-
-  /nextjs-toploader/1.4.2_z4pol2qj2yv3um3jqqobs4b3eu:
+  /nextjs-toploader@1.4.2(next@13.4.4)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-FS5+zCdNHLq0YA+SijkbDifOMFNayKfxkCLTiM6TIrvSaf6kAzCGlNjwgVpoG3zpampVMQSVf5L/jrWFJgs23g==}
     peerDependencies:
       next: '*'
@@ -7894,56 +7901,56 @@ packages:
       tslib: 1.14.1
     dev: true
 
-  /turbo-darwin-64/1.10.1:
-    resolution: {integrity: sha512-isLLoPuAOMNsYovOq9BhuQOZWQuU13zYsW988KkkaA4OJqOn7qwa9V/KBYCJL8uVQqtG+/Y42J37lO8RJjyXuA==}
+  /turbo-darwin-64@1.10.3:
+    resolution: {integrity: sha512-IIB9IomJGyD3EdpSscm7Ip1xVWtYb7D0x7oH3vad3gjFcjHJzDz9xZ/iw/qItFEW+wGFcLSRPd+1BNnuLM8AsA==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.10.1:
-    resolution: {integrity: sha512-x1nloPR10fLElNCv17BKr0kCx/O5gse/UXAcVscMZH2tvRUtXrdBmut62uw2YU3J9hli2fszYjUWXkulVpQvFA==}
+  /turbo-darwin-arm64@1.10.3:
+    resolution: {integrity: sha512-SBNmOZU9YEB0eyNIxeeQ+Wi0Ufd+nprEVp41rgUSRXEIpXjsDjyBnKnF+sQQj3+FLb4yyi/yZQckB+55qXWEsw==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.10.1:
-    resolution: {integrity: sha512-abV+ODCeOlz0503OZlHhPWdy3VwJZc1jObf1VQj7uQM+JqJ/kXbMyqJIMQVz+m7QJUFdferYPRxGhYT/NbYK7Q==}
+  /turbo-linux-64@1.10.3:
+    resolution: {integrity: sha512-kvAisGKE7xHJdyMxZLvg53zvHxjqPK1UVj4757PQqtx9dnjYHSc8epmivE6niPgDHon5YqImzArCjVZJYpIGHQ==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.10.1:
-    resolution: {integrity: sha512-zRC3nZbHQ63tofOmbuySzEn1ROISWTkemYYr1L98rpmT5aVa0kERlGiYcfDwZh3cBso/Ylg/wxexRAaPzcCJYQ==}
+  /turbo-linux-arm64@1.10.3:
+    resolution: {integrity: sha512-Qgaqln0IYRgyL0SowJOi+PNxejv1I2xhzXOI+D+z4YHbgSx87ox1IsALYBlK8VRVYY8VCXl+PN12r1ioV09j7A==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.10.1:
-    resolution: {integrity: sha512-Irqz8IU+o7Q/5V44qatZBTunk+FQAOII1hZTsEU54ah62f9Y297K6/LSp+yncmVQOZlFVccXb6MDqcETExIQtA==}
+  /turbo-windows-64@1.10.3:
+    resolution: {integrity: sha512-rbH9wManURNN8mBnN/ZdkpUuTvyVVEMiUwFUX4GVE5qmV15iHtZfDLUSGGCP2UFBazHcpNHG1OJzgc55GFFrUw==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-arm64/1.10.1:
-    resolution: {integrity: sha512-124IT15d2gyjC+NEn11pHOaVFvZDRHpxfF+LDUzV7YxfNIfV0mGkR3R/IyVXtQHOgqOdtQTbC4y411sm31+SEw==}
+  /turbo-windows-arm64@1.10.3:
+    resolution: {integrity: sha512-ThlkqxhcGZX39CaTjsHqJnqVe+WImjX13pmjnpChz6q5HHbeRxaJSFzgrHIOt0sUUVx90W/WrNRyoIt/aafniw==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.10.1:
-    resolution: {integrity: sha512-wq0YeSv6P/eEDXOL42jkMUr+T4z34dM8mdHu5u6C6OOAq8JuLJ72F/v4EVR1JmY8icyTkFz10ICLV0haUUYhbQ==}
+  /turbo@1.10.3:
+    resolution: {integrity: sha512-U4gKCWcKgLcCjQd4Pl8KJdfEKumpyWbzRu75A6FCj6Ctea1PIm58W6Ltw1QXKqHrl2pF9e1raAskf/h6dlrPCA==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
