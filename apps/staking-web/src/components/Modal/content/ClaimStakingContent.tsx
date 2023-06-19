@@ -1,16 +1,13 @@
-import {
-  AlertOutlined,
-  LoadingOutlined,
-  WarningOutlined,
-} from '@ant-design/icons'
+import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { FormEvent, useEffect, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
 import { useModalStore } from '../../../stores'
 import { Validator, chainStaking } from '@utils/staking-contract'
 import { message } from 'antd'
-import { CHAIN_GAS_LIMIT_CUSTOM, EXPECT_CHAIN } from '@utils/chain-config'
 import { Address } from 'wagmi'
+import { BaseError } from 'viem'
+import * as Sentry from '@sentry/react'
 
 interface IClaimStakingContent {
   validator: Validator
@@ -36,7 +33,11 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
       modalStore.setVisible(false)
       message.success('Claim reward was done!')
     } catch (e: any) {
-      message.error(`Something went wrong ${e?.message || ''}`)
+      const error: BaseError = e
+      message.error(
+        `Something went wrong ${error?.details || error?.message || ''}`,
+      )
+      Sentry.captureException(e) // throw to sentry.io
     } finally {
       modalStore.setIsLoading(false)
     }

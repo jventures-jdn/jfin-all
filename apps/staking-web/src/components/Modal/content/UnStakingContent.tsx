@@ -1,14 +1,15 @@
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { FormEvent, useEffect, useState } from 'react'
-import { getCurrentEnv, useModalStore } from '../../../stores'
+import { useModalStore } from '../../../stores'
 import { message } from 'antd'
 import JfinCoin from '../../JfinCoin/JfinCoin'
 import { Validator, chainStaking } from '@utils/staking-contract'
 import { Address } from 'wagmi'
 import { formatEther } from 'ethers/lib/utils'
 import { EXPECT_CHAIN } from '@utils/chain-config'
-import { Link } from 'react-router-dom'
+import * as Sentry from '@sentry/react'
+import { BaseError } from 'viem'
 
 interface IUnStakingContent {
   forceActionButtonsEnabled?: boolean
@@ -49,7 +50,11 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
       modalStore.setVisible(false)
       message.success(`Un-Stake was done!`)
     } catch (e: any) {
-      message.error(`Something went wrong ${e?.message || ''}`)
+      const error: BaseError = e
+      message.error(
+        `Something went wrong ${error?.details || error?.message || ''}`,
+      )
+      Sentry.captureException(e) // throw to sentry.io
     } finally {
       modalStore.setIsLoading(false)
     }

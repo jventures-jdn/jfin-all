@@ -1,15 +1,13 @@
-import { LoadingOutlined } from '@ant-design/icons'
+import LoadingOutlined from '@ant-design/icons'
 import { message } from 'antd'
 import { observer } from 'mobx-react'
 import { FormEvent, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
 import { useModalStore } from '../../../stores'
-import {
-  Validator,
-  chainStaking,
-  useChainAccount,
-} from '@utils/staking-contract'
+import { Validator, chainAccount, chainStaking } from '@utils/staking-contract'
 import { Address } from 'wagmi'
+import { BaseError } from 'viem'
+import * as Sentry from '@sentry/react'
 
 interface IAddStakingContent {
   validator: Validator
@@ -19,7 +17,6 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
-  const chainAccount = useChainAccount()
   const modalStore = useModalStore()
   const [stakingAmount, setStakingAmount] = useState(props.amount || 0)
   const [error, setError] = useState<string>()
@@ -45,7 +42,9 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
       modalStore.setVisible(false)
       message.success(`Staked was done!`)
     } catch (e: any) {
-      message.error(`Something went wrong ${e?.message || ''}`)
+      const err: BaseError = e
+      message.error(`Something went wrong ${err?.cause || err.message || ''}`)
+      Sentry.captureException(e) // throw to sentry.io
     } finally {
       modalStore.setIsLoading(false)
     }
