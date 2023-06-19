@@ -9,11 +9,3 @@ export type Stats = {
     data_source: 'init' | 'ws' | 'fetch'
     is_full_data: boolean
 }
-
-export type StatsBlock = {
-    block_number: number //average_block_time
-    average_block_time: number // block_number
-}
-export type StatsAddresses = {
-    count: string
-}

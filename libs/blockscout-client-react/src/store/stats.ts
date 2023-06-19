@@ -1,8 +1,7 @@
 import { mutate } from 'swr'
 import useSWR from 'swr/immutable'
-import { RESTFetcher } from '../fetcher/rest-fetcher'
 import { GlobalApis } from '../apis/global-apis'
-import { Stats, StatsAddresses, StatsBlock } from '../types'
+import { HelperStats, Stats } from '../types'
 import { useEffect } from 'react'
 
 const key = () => `stats`
@@ -48,13 +47,7 @@ function _statsStoreMeta() {
     return _statsStoreInitial()
 }
 
-export function statsWebSocketRecord(
-    data: {
-        count: StatsAddresses['count']
-        block_number: StatsBlock['block_number']
-        average_block_time: StatsBlock['average_block_time']
-    }[],
-) {
+export async function statsWebSocketRecord(data: HelperStats[]) {
     if (data[4].block_number) {
         mutate(
             key(),
@@ -76,7 +69,19 @@ export function statsWebSocketRecord(
         mutate(
             key(),
             {
-                total_addresses: Number(data[4]?.count.replace(/,/g, '')),
+                total_addressess: Number(String(data[4]?.count).replace(/,/g, '')),
+            },
+            {
+                populateCache: (data, current) => ({ ...current, ...data }),
+                revalidate: false,
+            },
+        )
+    } else if (data[4].transaction_hash) {
+        const { total_transactions } = await mutate('stats')
+        mutate(
+            key(),
+            {
+                total_transactions: total_transactions + 1,
             },
             {
                 populateCache: (data, current) => ({ ...current, ...data }),
