@@ -20,7 +20,7 @@ const Governance = () => {
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
-    <div className="governance-container mt-2" id="view-point2">
+    <div className="governance-container mt-2" id="viewpoint">
       <div className="content-card">
         <div className="card-title">
           <b>
@@ -28,7 +28,7 @@ const Governance = () => {
           </b>
         </div>
         <div className="card-body">
-          <div id="view-point1">
+          <div>
             <ProposalTable loading={loading} />
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { Provider } from 'mobx-react'
-import React from 'react'
+import { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
@@ -13,23 +13,27 @@ import './assets/css/pagination.css'
 import './assets/css/modal.css'
 
 import { BrowserRouter } from 'react-router-dom'
-import { WalletConnectProvider } from '@libs/wallet-connect-react'
 import { createRoot } from 'react-dom/client'
+import { WalletConnectProvider } from '@libs/wallet-connect-react'
 
 export const isProd =
   process.env.PROD_MODE === '1' || process.env.PROD_MODE === 'true' || false
 
+console.log(process.env.REACT_APP_SENTRY_DNS)
+
 Sentry.init({
   dsn:
     process.env.NODE_ENV === 'production'
-      ? 'https://6fdd78509c3e443f85dffd333976349e@o4505033136537600.ingest.sentry.io/4505033142108160'
+      ? process.env.REACT_APP_SENTRY_DNS // need to change to env
       : '',
-  integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
-  // Performance Monitoring
-  tracesSampleRate: isProd ? 1.0 : 0.0, // Capture 100% of the transactions, reduce in production!
-  // Session Replay
-  replaysSessionSampleRate: isProd ? 0.0 : 0.0, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-  replaysOnErrorSampleRate: isProd ? 1.0 : 0.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  integrations: [
+    new Sentry.Integrations.GlobalHandlers({
+      onerror: false,
+      onunhandledrejection: false,
+    }),
+  ],
+  tracesSampleRate: isProd ? 0.1 : 0.0,
+  replaysOnErrorSampleRate: isProd ? 1 : 0.0,
   environment: `${process.env.NETWORK}_${
     isProd ? 'production' : 'development'
   }`,
@@ -39,7 +43,7 @@ Sentry.init({
 const Main = () => {
   /* ---------------------------------- Doms ---------------------------------- */
   return (
-    <React.StrictMode>
+    <StrictMode>
       <BrowserRouter>
         <WalletConnectProvider>
           <Provider>
@@ -48,11 +52,12 @@ const Main = () => {
           </Provider>
         </WalletConnectProvider>
       </BrowserRouter>
-    </React.StrictMode>
+    </StrictMode>
   )
 }
 
-createRoot(document.getElementById('root') as HTMLElement).render(<Main />)
+const root = createRoot(document.getElementById('root') as HTMLElement)
+root.render(<Main />)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

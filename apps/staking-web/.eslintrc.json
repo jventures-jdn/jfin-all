@@ -1,4 +1,4 @@
 {
   "root": true,
-  "extends": ["@config/eslint-react/base.json"]
+  "extends": ["./node_modules/@config/eslint-next"]
 }
