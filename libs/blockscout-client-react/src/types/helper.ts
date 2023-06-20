@@ -1,12 +1,12 @@
 export type HelperStats = {
     count: HelperWebSocketCount
-    block_number: HelperWebSocketBlack
-    average_block_time: HelperWebSocketBlack
+    block_number: HelperWebSocketBlock
+    average_block_time: HelperWebSocketBlock
     transaction_hash: HelperWebSocketTransaction
 }
 
-export interface HelperWebSocketBlack {
-    //ws black
+export interface HelperWebSocketBlock {
+    //ws block
     average_block_time: string
     block_html: string
     block_miner_hash: string
