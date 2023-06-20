@@ -32,3 +32,4 @@ out
 
 ### gitignore specifics ###
 .config**.yaml
+**/.env

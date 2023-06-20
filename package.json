@@ -9,17 +9,24 @@
   "devDependencies": {
     "cross-env": "7.0.3",
     "prettier": "2.8.8",
-    "turbo": "1.10.3",
-    "wagmi": "1.0.8"
+    "turbo": "1.6.1",
+    "wagmi": "1.2.0",
+    "@wagmi/core": "1.2.0",
+    "@web3modal/react": "2.4.5",
+    "@web3modal/ethereum": "2.4.5"
   },
   "pnpm": {
     "peerDependencyRules": {
-      "ignoreMissing": [
-        "*"
-      ],
-      "allowAny": [
-        "*"
-      ]
+      "allowedVersions": {
+        "viem": "1.0.5",
+        "wagmi": "1.2.0",
+        "@wagmi/core": "1.2.0",
+        "@web3modal/ethereum": "2.4.5",
+        "@tanstack/query-core": "4.29.14",
+        "typescript": "5.0.4",
+        "react": "18.2.0",
+        "react-dom": "18.2.0"
+      }
     }
   }
 }

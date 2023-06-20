@@ -15,7 +15,7 @@
     "@ethersproject/abstract-provider": "^5.7.0",
     "@types/node": "^18.16.0",
     "abitype": "^0.8.4",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "typescript": "^5.0.4"
   },
   "scripts": {

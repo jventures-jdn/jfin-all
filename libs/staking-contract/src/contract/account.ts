@@ -1,9 +1,7 @@
-import BigNumber from 'bignumber.js'
 import { action, makeObservable, observable, runInAction } from 'mobx'
 import { chainStaking } from '.'
 import { GetAccountResult, fetchBalance, getAccount } from 'wagmi/actions'
 import { PublicClient } from 'wagmi'
-import { EXPECT_CHAIN } from '@utils/chain-config'
 import { formatEther } from 'viem'
 
 export class Account {

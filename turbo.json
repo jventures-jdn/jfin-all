@@ -17,6 +17,9 @@
     },
     "test": {
       "cache": true
+    },
+    "lint": {
+      "cache": false
     }
   }
 }
