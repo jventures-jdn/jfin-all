@@ -15,10 +15,17 @@ export function useBlockscoutStats() {
 }
 
 // Individual stats state
-function _statsStoreGet(totalBlock: number) {
-    const existing = !totalBlock ? useSWR('initial-stats') : useSWR(key())
-
-    return existing
+function _statsStoreGet(options?: { scrape?: boolean }) {
+    // const existing = !totalBlock ? useSWR('initial-stats') : useSWR(key())
+    if (options?.scrape) {
+        const existing = useSWR(key())
+        // if (!useSWR('initial-stats').data) {
+        //     _statsStoreMeta()
+        // }
+        return existing
+    } else {
+        return null
+    }
 }
 
 // Initial stats loading
@@ -69,7 +76,7 @@ export async function statsWebSocketRecord(data: HelperStats[]) {
         mutate(
             key(),
             {
-                total_addressess: Number(String(data[4]?.count).replace(/,/g, '')),
+                total_addresses: Number(String(data[4]?.count).replace(/,/g, '')),
             },
             {
                 populateCache: (data, current) => ({ ...current, ...data }),
