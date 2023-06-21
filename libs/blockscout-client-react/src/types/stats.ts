@@ -7,5 +7,4 @@ export type Stats = {
 
     // internal use
     data_source: 'init' | 'ws' | 'fetch'
-    is_full_data: boolean
 }

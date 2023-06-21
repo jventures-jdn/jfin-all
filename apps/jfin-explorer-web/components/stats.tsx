@@ -2,7 +2,7 @@ import { useBlockscout } from '@libs/blockscout-client-react'
 
 export function StatsComponentDemo() {
     // Get stats data, this will auto fetch if data not exist
-    const stats = useBlockscout().stats().get({ scrape: true })
+    const stats = useBlockscout().stats().get({ initialUse: true })
 
     if (stats?.isLoading) return <span>Loading...</span>
 

@@ -15,8 +15,8 @@ export function useBlockscoutStats() {
 }
 
 // Individual stats state
-function _statsStoreGet(options?: { scrape?: boolean }) {
-    if (options?.scrape) {
+function _statsStoreGet(options?: { initialUse?: boolean }) {
+    if (options?.initialUse) {
         _statsStoreInitial()
         return useSWR(key())
     } else {
@@ -102,6 +102,5 @@ function _formatFullData(item: Stats, from: Stats['data_source']) {
         total_addresses: Number(String(item.total_addresses).replace(/,/g, '')),
         total_blocks: Number(item.total_blocks),
         total_transactions: Number(item.total_transactions),
-        is_full_data: true,
     } as Stats
 }
