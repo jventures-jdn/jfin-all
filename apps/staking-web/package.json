@@ -7,9 +7,10 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@web3modal/react": "2.4.5",
+    "@web3modal/ethereum": "2.4.5",
     "@libs/wallet-connect-react": "workspace:*",
     "@utils/staking-contract": "workspace:*",
-    "@utils/chain-config": "workspace:*",
     "@ant-design/icons": "^5.1.4",
     "@sentry/react": "^7.54.0",
     "antd": "^5.6.2",

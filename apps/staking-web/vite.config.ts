@@ -9,9 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          wagmi: ['@web3modal/react'],
-        },
+        manualChunks: {},
       },
     },
   },

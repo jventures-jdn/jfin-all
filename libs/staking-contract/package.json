@@ -6,7 +6,8 @@
     "mobx": "^6.5.0",
     "pretty-time": "^1.1.0",
     "web3": "^1.10.0",
-    "viem": "1.0.5"
+    "viem": "1.0.5",
+    "wagmi": "1.2.0"
   },
   "devDependencies": {
     "@utils/chain-config": "workspace:*",
@@ -15,7 +16,6 @@
     "@ethersproject/abstract-provider": "^5.7.0",
     "@types/node": "^18.16.0",
     "abitype": "^0.8.4",
-    "react": "^18.2.0",
     "typescript": "^5.0.4"
   },
   "scripts": {
