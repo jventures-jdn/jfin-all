@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import logo from '../../../assets/images/logo.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { CloseOutlined, MenuOutlined, WarningOutlined } from '@ant-design/icons'
@@ -286,7 +286,10 @@ const Navbar = observer(() => {
         }}
       >
         <NavHashLink
-          activeClassName="active"
+          className={`${
+            ['/', '/staking'].includes(location?.pathname) && 'active'
+          }`}
+          smooth
           onClick={handleRoute}
           to={`/assets${isAuto ? '?auto=1' : ''}#viewpoint`}
         >
@@ -294,7 +297,7 @@ const Navbar = observer(() => {
         </NavHashLink>
         <NavHashLink
           smooth
-          activeClassName="active"
+          className={`${location?.pathname === '/governance' && 'active'}`}
           onClick={handleRoute}
           to={`/governance${isAuto ? '?auto=1' : ''}#viewpoint`}
         >
@@ -302,7 +305,7 @@ const Navbar = observer(() => {
         </NavHashLink>
         <NavHashLink
           smooth
-          activeClassName="active"
+          className={`${location?.pathname === '/assets' && 'active'}`}
           onClick={handleRoute}
           to={`/assets${isAuto ? '?auto=1' : ''}#viewpoint`}
         >
