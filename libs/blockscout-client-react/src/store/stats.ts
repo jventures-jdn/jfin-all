@@ -15,13 +15,9 @@ export function useBlockscoutStats() {
 }
 
 // Individual stats state
-function _statsStoreGet(options?: { initialUse?: boolean }) {
-    if (options?.initialUse) {
-        _statsStoreInitial()
-        return useSWR(key())
-    } else {
-        return null
-    }
+function _statsStoreGet() {
+    _statsStoreInitial()
+    return useSWR(key())
 }
 
 // Initial stats loading
