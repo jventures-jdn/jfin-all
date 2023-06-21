@@ -16,13 +16,9 @@ export function useBlockscoutStats() {
 
 // Individual stats state
 function _statsStoreGet(options?: { scrape?: boolean }) {
-    // const existing = !totalBlock ? useSWR('initial-stats') : useSWR(key())
     if (options?.scrape) {
-        const existing = useSWR(key())
-        // if (!useSWR('initial-stats').data) {
-        //     _statsStoreMeta()
-        // }
-        return existing
+        _statsStoreInitial()
+        return useSWR(key())
     } else {
         return null
     }
