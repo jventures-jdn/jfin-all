@@ -4,16 +4,16 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import GlobalModal from './components/Modal/GlobalModal'
 import * as Sentry from '@sentry/react'
+import { BrowserRouter } from 'react-router-dom'
+import { createRoot } from 'react-dom/client'
+import { WalletConnectProvider } from '@libs/wallet-connect-react'
+import { ConfigProvider, theme } from 'antd'
 import './assets/css/index.css'
 import './assets/css/button.css'
 import './assets/css/helper.css'
 import './assets/css/input.css'
 import './assets/css/pagination.css'
 import './assets/css/modal.css'
-
-import { BrowserRouter } from 'react-router-dom'
-import { createRoot } from 'react-dom/client'
-import { WalletConnectProvider } from '@libs/wallet-connect-react'
 
 export const isProd = import.meta.env.PROD
 
@@ -38,14 +38,20 @@ Sentry.init({
 const Main = () => {
   return (
     <StrictMode>
-      <BrowserRouter>
-        <WalletConnectProvider>
-          <Provider>
-            <GlobalModal />
-            <App />
-          </Provider>
-        </WalletConnectProvider>
-      </BrowserRouter>
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm,
+        }}
+      >
+        <BrowserRouter>
+          <WalletConnectProvider>
+            <Provider>
+              <GlobalModal />
+              <App />
+            </Provider>
+          </WalletConnectProvider>
+        </BrowserRouter>
+      </ConfigProvider>
     </StrictMode>
   )
 }
