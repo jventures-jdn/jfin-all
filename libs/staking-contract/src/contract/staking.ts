@@ -321,6 +321,9 @@ export class Staking {
         }
         runInAction(() => {
             this.isFetchingValidators = true
+            this.myValidators = []
+            this.myTotalReward = []
+            this.myTotalStake = []
         })
 
         // get chain config if epoch is not valid
@@ -340,9 +343,6 @@ export class Staking {
         )
 
         runInAction(() => {
-            this.myValidators = []
-            this.myTotalReward = []
-            this.myTotalStake = []
             this.validators = sortValidators
             this.isFetchingValidators = false
         })
