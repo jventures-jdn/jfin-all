@@ -208,16 +208,20 @@ export class Staking {
      * @returns Events from `stake` `unstake` `claim` included sort event with blocknumber
      */
     public async getMyStakingHistoryLogs() {
-        const address = chainAccount.account.address
+        const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
+        if (!walletClient?.account)
+            throw new Error(
+                '[stakeToValidator] No wallet client found, Ensure you have conneted your wallet',
+            )
+
         runInAction(() => {
             this.myStakingHistoryLogs = [] // clear events
         })
-        if (!address) return
 
         const [stake, unstake, claim] = await Promise.all([
-            this.getStakeLogs(address),
-            this.getUnStakeLogs(address),
-            this.getClaimLogs(address),
+            this.getStakeLogs(walletClient.account.address),
+            this.getUnStakeLogs(walletClient.account.address),
+            this.getClaimLogs(walletClient.account.address),
         ])
 
         // sort considered events

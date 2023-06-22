@@ -6,42 +6,43 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import { getCurrentEnv } from '../../../stores'
 import { chainConfig, chainStaking } from '@utils/staking-contract'
 import { Event } from 'ethers'
-import { CHAIN_DECIMAL } from '@utils/chain-config'
 import CountUpMemo from '../../Countup'
-import BigNumber from 'bignumber.js'
 import prettyTime from 'pretty-time'
 import { VALIDATOR_WALLETS } from '@/utils/const'
 import defaultImage from '../../../assets/images/partners/default.png'
+import { formatEther } from 'viem'
+type StakingHistoryLog = (typeof chainStaking.myStakingHistoryLogs)[0]
 
 const StakingHistory = observer(({ loading }: { loading: boolean }) => {
   /* --------------------------------- States --------------------------------- */
-  const columns: ColumnProps<Event>[] = [
+  const columns: ColumnProps<StakingHistoryLog>[] = [
     {
       title: 'Type',
       key: 'type',
-      render: (v: Event) => {
-        if (v.event === 'Undelegated') {
+      render: (log: StakingHistoryLog) => {
+        if (log.eventName === 'Undelegated') {
           const undelegatedBlock =
-            v.blockNumber + chainConfig.epochBlockInterval
+            Number(log.blockNumber) + chainConfig.epochBlockInterval
 
           if (undelegatedBlock < chainConfig.blockNumber)
             return (
               <>
-                {v.event} <span style={{ color: 'green' }}>(Done)</span>
+                {log.eventName} <span style={{ color: 'green' }}>(Done)</span>
               </>
             )
 
           const undelegatedBlockRemain =
-            chainConfig.endBlock -
-            v.blockNumber +
-            chainConfig.epochBlockInterval
+            (chainConfig.endBlock -
+              Number(log.blockNumber) +
+              chainConfig.epochBlockInterval) *
+            2 // multiple 2 cause something contract delay
 
           const undelegatedBlockRemainNs =
             undelegatedBlockRemain * chainConfig.blockSec * 10e8
 
           return (
             <>
-              {v.event}{' '}
+              {log.eventName}{' '}
               <span style={{ color: 'orange' }}>
                 (Ready in {prettyTime(undelegatedBlockRemainNs || 0, 's')})
               </span>
@@ -49,20 +50,16 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
           )
         }
 
-        return <>{v.event}</>
+        return <>{log.eventName}</>
       },
     },
     {
       title: 'Amount',
       key: 'amount',
-      render: (validator: Event) => {
-        // const args = chainStaking.getValidatorEventArgs(validator.args)
-        // if (!args) return 0
-        // const amount = new BigNumber(args.amount.toString()).div(CHAIN_DECIMAL)
+      render: (log: StakingHistoryLog) => {
         return (
           <CountUpMemo
-            // end={amount.toNumber()}
-            end={0}
+            end={Number(formatEther(log.args.amount as bigint))}
             duration={1}
             decimals={5}
             enableScrollSpy
@@ -74,14 +71,18 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
     {
       key: 'validator',
       title: 'Validator',
-      render: (validator: Event) => {
-        const args = chainStaking.getValidatorEventArgs(validator.args)
-        if (!args) return
+      render: (log: StakingHistoryLog) => {
         return (
           <div className="items-center column-validator">
             <img
-              src={VALIDATOR_WALLETS[args?.validator]?.image || defaultImage}
-              alt={VALIDATOR_WALLETS[args?.validator]?.name || args?.validator}
+              src={
+                VALIDATOR_WALLETS[log.args.validator as string]?.image ||
+                defaultImage
+              }
+              alt={
+                VALIDATOR_WALLETS[log.args.validator as string]?.name ||
+                log.args.validator
+              }
               style={{
                 width: '30px',
                 height: '30px',
@@ -92,9 +93,10 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
             />
             <div>
               <span>
-                {VALIDATOR_WALLETS[args?.validator]?.name || args?.validator}
+                {VALIDATOR_WALLETS[log.args.validator as string]?.name ||
+                  log.args.validator}
               </span>
-              <CopyToClipboard text={args?.validator}>
+              <CopyToClipboard text={log.args.validator as string}>
                 <CopyOutlined
                   className="copy-clipboard"
                   style={{ paddingLeft: '5px' }}
@@ -108,16 +110,16 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
     {
       key: 'block',
       title: 'Block',
-      render: (valdiator: Event) => {
+      render: (log: StakingHistoryLog) => {
         return (
           <a
             href={`https://exp.${
               getCurrentEnv() === 'jfin' ? '' : 'testnet.'
-            }jfinchain.com/block/${valdiator.blockNumber}/transactions`}
+            }jfinchain.com/block/${Number(log.blockNumber)}/transactions`}
             target="_blank"
             rel="noreferrer"
           >
-            {valdiator.blockNumber}
+            {Number(log.blockNumber)}
           </a>
         )
       },
@@ -150,10 +152,10 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
       <Table
         columns={columns}
         loading={loading}
-        dataSource={chainStaking.myStakingHistoryEvents}
+        dataSource={chainStaking.myStakingHistoryLogs}
         pagination={{ size: 'small' }}
         scroll={{ x: true }}
-        rowKey={(row) => row.transactionHash}
+        rowKey={(row) => row.transactionHash || 0}
       />
     </div>
   )
