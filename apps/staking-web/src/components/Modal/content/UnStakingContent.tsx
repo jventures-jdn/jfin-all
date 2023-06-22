@@ -51,9 +51,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
       message.success(`Un-Stake was done!`)
     } catch (e: any) {
       const error: BaseError = e
-      message.error(
-        `Something went wrong ${error?.details || error?.message || ''}`,
-      )
+      message.error(`${error?.cause || error?.message || 'Unknown'}`)
       Sentry.captureException(e) // throw to sentry.io
     } finally {
       modalStore.setIsLoading(false)

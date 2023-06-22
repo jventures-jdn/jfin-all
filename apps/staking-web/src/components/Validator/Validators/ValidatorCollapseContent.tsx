@@ -72,9 +72,7 @@ const ValidatorCollapseContent = observer(
         message.success('Claim reward was done!')
       } catch (e: any) {
         const error: BaseError = e
-        message.error(
-          `Something went wrong ${error?.details || error?.message || ''}`,
-        )
+        message.error(`${error?.cause || error?.message || 'Unknown'}`)
         Sentry.captureException(e) // throw to sentry.io
       }
     }
@@ -233,7 +231,11 @@ const ValidatorCollapseContent = observer(
 
                     <button
                       className="button secondary lg"
-                      disabled={!isConnected && !forceActionButtonsEnabled}
+                      disabled={
+                        !isConnected ||
+                        !!myStakingReward ||
+                        forceActionButtonsEnabled
+                      }
                       onClick={handleUnStaking}
                       style={{ marginLeft: '10px' }}
                       type="button"

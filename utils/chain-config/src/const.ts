@@ -36,7 +36,7 @@ export const CHAIN_GAS_PRICE: { [key in InternalChain]: bigint } = {
     JFINT: BigInt(23000000000),
 }
 
-export const CHAIN_GAS_LIMIT: { [key in InternalChain]?: BigInt } = {
+export const CHAIN_GAS_LIMIT: { [key in InternalChain]: bigint } = {
     JFIN: BigInt(15000000),
     JFINT: BigInt(7000000),
 }

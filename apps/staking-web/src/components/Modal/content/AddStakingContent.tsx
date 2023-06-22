@@ -1,4 +1,4 @@
-import LoadingOutlined from '@ant-design/icons'
+import { LoadingOutlined } from '@ant-design/icons'
 import { message } from 'antd'
 import { observer } from 'mobx-react'
 import { FormEvent, useState } from 'react'
@@ -42,8 +42,8 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
       modalStore.setVisible(false)
       message.success(`Staked was done!`)
     } catch (e: any) {
-      const err: BaseError = e
-      message.error(`Something went wrong ${err?.cause || err.message || ''}`)
+      const error: BaseError = e
+      message.error(`${error?.cause || error?.message || 'Unknown'}`)
       Sentry.captureException(e) // throw to sentry.io
     } finally {
       modalStore.setIsLoading(false)
