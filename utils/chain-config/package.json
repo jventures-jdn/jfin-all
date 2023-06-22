@@ -1,9 +1,12 @@
 {
   "name": "@utils/chain-config",
+  "dependencies": {
+    "wagmi": "1.2.0",
+    "viem": "1.0.5"
+  },
   "devDependencies": {
     "@config/typescript": "workspace:*",
     "@types/node": "20.2.5",
-    "typescript": "5.1.3",
-    "viem": "1.0.5"
+    "typescript": "5.1.3"
   }
 }

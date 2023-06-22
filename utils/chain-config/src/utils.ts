@@ -1,7 +1,5 @@
 import { Chain } from 'wagmi'
 import {
-    CHAIN_DECIMAL,
-    CHAIN_DECIMAL_UNIT,
     CHAIN_EXPLORER,
     CHAIN_ID,
     CHAIN_NAME,
@@ -24,7 +22,6 @@ export const getChain = (chain: InternalChain) => {
         chainName: CHAIN_NAME[chain],
         chainRpc: CHAIN_RPC[chain],
         chainExplorer: CHAIN_EXPLORER[chain],
-        chainGasDecimal: CHAIN_DECIMAL[chain],
     }
 }
 
@@ -39,7 +36,7 @@ export const getChainConfig = (chain: InternalChain): Chain => {
         name: CHAIN_NAME[chain],
         network: CHAIN_NETWORK[chain],
         nativeCurrency: {
-            decimals: CHAIN_DECIMAL_UNIT[chain],
+            decimals: 18,
             name: CHAIN_NAME[chain],
             symbol: CHAIN_NETWORK[chain],
         },
@@ -83,4 +80,4 @@ export const getValidatorStatus = (status: VALIDATOR_STATUS_ENUM) => {
 }
 
 export const EXPECT_CHAIN =
-    process.env.REACT_APP_ENVIRONMENT === 'jfintest' ? getChain('JFINT') : getChain('JFIN')
+    process.env.NETWORK === 'jfintest' ? getChain('JFINT') : getChain('JFIN')

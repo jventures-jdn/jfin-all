@@ -4,7 +4,7 @@ import { useWalletConnectModule } from '../core'
 import { Web3Modal } from '@web3modal/react'
 
 export function WalletConnectProvider({ children }: { children: ReactNode }) {
-    const isProd = process.env.PROD_MODE === '1' || process.env.PROD_MODE === 'true' || false
+    const isProd = process.env.PROD
     const { wagmiConfig, projectId, ethereumClient } = useWalletConnectModule()
     return (
         <>

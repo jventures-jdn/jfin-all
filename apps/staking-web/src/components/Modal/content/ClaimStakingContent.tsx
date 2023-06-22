@@ -1,21 +1,17 @@
-import {
-  AlertOutlined,
-  LoadingOutlined,
-  WarningOutlined,
-} from '@ant-design/icons'
+import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { FormEvent, useEffect, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
 import { useModalStore } from '../../../stores'
-import { Validator, chainStaking } from '@utils/chain/src/contract'
-import BigNumber from 'bignumber.js'
+import { Validator, chainStaking } from '@utils/staking-contract'
 import { message } from 'antd'
-import { GAS_LIMIT_CLAIM } from '@utils/chain/src/gas'
+import { Address } from 'wagmi'
+import { BaseError } from 'viem'
+import * as Sentry from '@sentry/react'
 
 interface IClaimStakingContent {
-  isStaking?: boolean
   validator: Validator
-  amount?: BigNumber
+  amount: number
 }
 const ClaimStakingContent = observer((props: IClaimStakingContent) => {
   /* -------------------------------------------------------------------------- */
@@ -33,11 +29,13 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
 
     try {
       modalStore.setIsLoading(true)
-      await chainStaking.claimValidatorReward(props.validator.ownerAddress)
+      await chainStaking.claimValidatorReward(props.validator.owner as Address)
       modalStore.setVisible(false)
       message.success('Claim reward was done!')
     } catch (e: any) {
-      message.error(`Something went wrong ${e?.message || ''}`)
+      const error: BaseError = e
+      message.error(`${error?.cause || error?.message || 'Unknown'}`)
+      Sentry.captureException(e) // throw to sentry.io
     } finally {
       modalStore.setIsLoading(false)
     }
@@ -73,19 +71,13 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
           </div>
         </div>
 
-        {props?.isStaking ? (
-          <div className="alert-message">
-            <AlertOutlined />
-            Please claim all rewards before staking or un-staking
-          </div>
-        ) : (
-          <div className="warning-message">
-            <WarningOutlined />
-            If reward you received does not match the reward that the system has
-            indicated, This may happen from the gas limit. Please increase the
-            gas limit in wallet (up to {GAS_LIMIT_CLAIM}).
-          </div>
-        )}
+        <div className="warning-message">
+          <WarningOutlined />
+          When you have a large number of rewards claim rewards will requires a
+          lot of gas. This may result in you not receiving the full amount of
+          rewards, If you encounter any of these events, please try several
+          times until you have received all the rewards.
+        </div>
 
         <button
           className="button lg w-100 m-0 ghost mt-2"

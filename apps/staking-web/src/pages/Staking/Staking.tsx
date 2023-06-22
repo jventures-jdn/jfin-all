@@ -1,14 +1,15 @@
 import './Staking.css'
-import { LockOutlined } from '@ant-design/icons'
 import ValidatorInfo from '@/components/Validator/ValidatorInfo/ValidatorInfo'
 import Validators from '@/components/Validator/Validators/Validators'
+import { LockOutlined } from '@ant-design/icons'
+import * as Sentry from '@sentry/react'
 
 const Staking = () => {
   /* --------------------------------- States --------------------------------- */
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
-    <div className="staking-container">
+    <div className="staking-container" id="viewpoint">
       <div className="content-card">
         <div className="card-title">
           <b>
@@ -27,4 +28,6 @@ const Staking = () => {
   )
 }
 
-export default Staking
+export default Sentry.withProfiler(Staking, {
+  name: 'Staking Page',
+}) as React.FC

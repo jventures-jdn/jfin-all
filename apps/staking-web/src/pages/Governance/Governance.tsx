@@ -1,6 +1,6 @@
 import ProposalTable from '@/components/Governance/ProposalTable'
 import { BankOutlined } from '@ant-design/icons'
-import { chainGovernance } from '@utils/chain/src/contract'
+import { chainGovernance } from '@utils/staking-contract'
 import { useEffect, useState } from 'react'
 
 const Governance = () => {
@@ -15,12 +15,11 @@ const Governance = () => {
   }
   useEffect(() => {
     initial()
-    return () => setLoading(false)
   }, [])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
-    <div className="governance-container mt-2" id="view-point2">
+    <div className="governance-container mt-2" id="viewpoint">
       <div className="content-card">
         <div className="card-title">
           <b>
@@ -28,7 +27,7 @@ const Governance = () => {
           </b>
         </div>
         <div className="card-body">
-          <div id="view-point1">
+          <div>
             <ProposalTable loading={loading} />
           </div>
         </div>

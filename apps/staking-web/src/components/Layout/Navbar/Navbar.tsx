@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom'
-import './Navbar.css'
 import logo from '../../../assets/images/logo.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { CloseOutlined, MenuOutlined, WarningOutlined } from '@ant-design/icons'
@@ -9,8 +8,9 @@ import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../../stores'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
 import { Progress } from 'antd'
-import { EXPECT_CHAIN } from '@utils/chain/src/chain'
-import { switchChain } from '@utils/chain/src/utils/wallet'
+import { switchChain } from '@utils/staking-contract'
+import { EXPECT_CHAIN } from '@utils/chain-config'
+import './Navbar.css'
 
 const Navbar = observer(() => {
   /* --------------------------------- States --------------------------------- */
@@ -287,24 +287,27 @@ const Navbar = observer(() => {
       >
         <NavHashLink
           className={`${
-            ['/', '/staking'].includes(location.pathname) && 'active'
+            ['/', '/staking'].includes(location?.pathname) && 'active'
           }`}
+          smooth
           onClick={handleRoute}
-          to={`/staking${isAuto ? '?auto=1' : ''}`}
+          to={`/assets${isAuto ? '?auto=1' : ''}#viewpoint`}
         >
           Staking
         </NavHashLink>
         <NavHashLink
-          className={`${location.pathname === '/governance' && 'active'}`}
+          smooth
+          className={`${location?.pathname === '/governance' && 'active'}`}
           onClick={handleRoute}
-          to={`/governance${isAuto ? '?auto=1' : ''}`}
+          to={`/governance${isAuto ? '?auto=1' : ''}#viewpoint`}
         >
           Governance
         </NavHashLink>
         <NavHashLink
-          className={`${location.pathname === '/assets' && 'active'}`}
+          smooth
+          className={`${location?.pathname === '/assets' && 'active'}`}
           onClick={handleRoute}
-          to={`/assets${isAuto ? '?auto=1' : ''}`}
+          to={`/assets${isAuto ? '?auto=1' : ''}#viewpoint`}
         >
           Assets
         </NavHashLink>

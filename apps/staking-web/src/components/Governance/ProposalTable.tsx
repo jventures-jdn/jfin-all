@@ -1,31 +1,37 @@
 import { VALIDATOR_WALLETS } from '@/utils/const'
 import { CopyOutlined } from '@ant-design/icons'
-import { EXPECT_CHAIN } from '@utils/chain/src/chain'
-import { chainGovernance } from '@utils/chain/src/contract'
-import Table, { ColumnProps } from 'antd/lib/table'
+import { EXPECT_CHAIN } from '@utils/chain-config'
+import { chainGovernance } from '@utils/staking-contract'
+import { Table } from 'antd'
+import { ColumnProps } from 'antd/lib/table'
 import { observer } from 'mobx-react'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import defaultImage from '../../assets/images/partners/default.png'
 
+type Proposal = (typeof chainGovernance.proposals)[0]
 const ProposalTable = observer(({ loading }: { loading: boolean }) => {
   /* --------------------------------- States --------------------------------- */
-  const columns: ColumnProps<(typeof chainGovernance.proposals)[0]>[] = [
+  const columns: ColumnProps<Proposal>[] = [
     {
       title: 'Description',
-      render: (v: (typeof chainGovernance.proposals)[0]) => (
+      render: (proposal: Proposal) => (
         <span style={{ textTransform: 'capitalize' }}>
-          {v.values.description}
+          {proposal.args.description}
         </span>
       ),
     },
     {
       title: 'Proposal From',
-      render: (v: (typeof chainGovernance.proposals)[0]) => (
+      render: (v: Proposal) => (
         <div className="items-center column-validator">
           <img
-            src={VALIDATOR_WALLETS[v.values.proposal]?.image || defaultImage}
+            src={
+              VALIDATOR_WALLETS[v.args.proposer as string]?.image ||
+              defaultImage
+            }
             alt={
-              VALIDATOR_WALLETS[v.values.proposal]?.name || v.values.proposal
+              VALIDATOR_WALLETS[v.args.proposer as string]?.name ||
+              v.args.proposer
             }
             style={{
               width: '30px',
@@ -37,9 +43,10 @@ const ProposalTable = observer(({ loading }: { loading: boolean }) => {
           />
           <div>
             <span>
-              {VALIDATOR_WALLETS[v.values.proposal]?.name || v.values.proposal}
+              {VALIDATOR_WALLETS[v.args.proposer as string]?.name ||
+                v.args.proposer}
             </span>
-            <CopyToClipboard text={v.values.proposal}>
+            <CopyToClipboard text={v.args.proposer as string}>
               <CopyOutlined
                 className="copy-clipboard"
                 style={{ paddingLeft: '5px' }}
@@ -51,44 +58,49 @@ const ProposalTable = observer(({ loading }: { loading: boolean }) => {
     },
     {
       title: 'Voting Period',
-      render: (v: (typeof chainGovernance.proposals)[0]) => (
+      render: (proposal: Proposal) => (
         <>
           <a
             href={`https://exp.${
               EXPECT_CHAIN.chainName === 'JFIN' ? '' : 'testnet.'
-            }jfinchain.com/block/${v.values.startBlock.toString()}/transactions`}
+            }jfinchain.com/block/${Number(
+              proposal.args.startBlock,
+            )}/transactions`}
             target="_blank"
             rel="noreferrer"
           >
-            {v.values.startBlock.toString()}
+            {Number(proposal.args.startBlock)}
           </a>
           {` --> `}
           <a
             href={`https://exp.${
               EXPECT_CHAIN.chainName === 'JFIN' ? '' : 'testnet.'
-            }jfinchain.com/block/${v.values.endBlock.toString()}/transactions`}
+            }jfinchain.com/block/${Number(
+              proposal.args.endBlock,
+            )}/transactions`}
             target="_blank"
             rel="noreferrer"
           >
-            {v.values.endBlock.toString()}
+            {Number(proposal.args.endBlock)}
           </a>
         </>
       ),
     },
     {
       title: 'Hash',
-      render: (v: (typeof chainGovernance.proposals)[0]) => (
+      render: (proposal: Proposal) => (
         <>
           <a
             href={`https://exp.${
               EXPECT_CHAIN.chainName === 'JFIN' ? '' : 'testnet.'
-            }jfinchain.com/tx/${v.transactionHash}`}
+            }jfinchain.com/tx/${proposal.transactionHash}`}
             target="_blank"
             rel="noreferrer"
           >
-            {[v.transactionHash.slice(0, 5), v.transactionHash.slice(-5)].join(
-              '....',
-            )}
+            {[
+              proposal.transactionHash?.slice(0, 5),
+              proposal.transactionHash?.slice(-5),
+            ].join('....')}
           </a>
         </>
       ),
@@ -104,7 +116,7 @@ const ProposalTable = observer(({ loading }: { loading: boolean }) => {
         dataSource={chainGovernance.proposals}
         pagination={{ size: 'small' }}
         scroll={{ x: true }}
-        rowKey={(row) => row.transactionHash}
+        rowKey={(row) => row.transactionHash as string}
       />
     </div>
   )

@@ -4,10 +4,9 @@ import { observer } from 'mobx-react'
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
 import { useAccount, useNetwork } from 'wagmi'
 import prettyTime from 'pretty-time'
-import { useChainConfig } from '@utils/chain/src/contract'
+import { useChainConfig, switchChain } from '@utils/staking-contract'
 import CountUpMemo from '../../Countup'
-import { switchChain } from '@utils/chain/src/utils/wallet'
-import { EXPECT_CHAIN } from '@utils/chain/src/chain'
+import { EXPECT_CHAIN } from '@utils/chain-config'
 
 const BlockInfo = observer(() => {
   /* --------------------------------- States --------------------------------- */
@@ -59,7 +58,10 @@ const BlockInfo = observer(() => {
                 <b>Block Number: </b>
                 <span>
                   {chainConfig.blockNumber ? (
-                    <CountUpMemo duration={1} end={chainConfig.blockNumber} />
+                    <CountUpMemo
+                      duration={1}
+                      end={Number(chainConfig.blockNumber)}
+                    />
                   ) : (
                     <LoadingOutlined spin />
                   )}

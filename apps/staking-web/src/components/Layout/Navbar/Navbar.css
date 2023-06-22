@@ -16,6 +16,7 @@
 }
 
 .navbar-container .navbar-menu a {
+  text-decoration: none;
   font-display: inline-block;
   color: var(--SD010);
 }
@@ -76,6 +77,7 @@
 }
 
 .navbar-overlay a {
+  text-decoration: none;
   color: var(--SD010);
   padding: 15px;
   font-weight: bold;
@@ -96,6 +98,7 @@
 }
 
 .wallet-overlay a {
+  text-decoration: none;
   padding: 0.5rem 1rem;
   background: var(--SD050);
   transition: 0.3s ease-out;

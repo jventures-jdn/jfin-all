@@ -3,7 +3,7 @@ import { Col, Row } from 'antd'
 import { observer } from 'mobx-react'
 import './ValidatorInfo.css'
 import CountUpMemo from '../../Countup'
-import { useChainStaking } from '@utils/chain/src/contract'
+import { useChainStaking } from '@utils/staking-contract'
 
 const ValidatorInfo = observer(() => {
   /* -------------------------------------------------------------------------- */
@@ -12,7 +12,7 @@ const ValidatorInfo = observer(() => {
   const chainStaking = useChainStaking()
   const loading = chainStaking.isFetchingValidators
   const activeValidators = chainStaking.activeValidator?.length || 0
-  const totalDelegated = chainStaking.totalStake.toNumber()
+  const totalDelegated = chainStaking.totalStake
   const totalValidators = chainStaking.activeValidator?.length || 0
 
   return (

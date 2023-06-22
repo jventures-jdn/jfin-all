@@ -1,20 +1,19 @@
 import {
-  ClockCircleOutlined,
   LoadingOutlined,
+  ClockCircleOutlined,
   WalletOutlined,
 } from '@ant-design/icons'
-import './Assets.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react'
 import JfinCoin from '../../components/JfinCoin/JfinCoin'
 import StakingHistory from '../../components/Staking/StakingHistory/StakingHistory'
-import { chainAccount, useChainStaking } from '@utils/chain/src/contract'
+import { useChainStaking } from '@utils/staking-contract'
 import CountUpMemo from '@/components/Countup'
 import { useAccount, useNetwork } from 'wagmi'
 import Validators from '@/components/Validator/Validators/Validators'
-import { CHAIN_DECIMAL } from '@utils/chain/src/chain'
 import { Link } from 'react-router-dom'
-import BigNumber from 'bignumber.js'
+import * as Sentry from '@sentry/react'
+import './Assets.css'
 
 const Assets = observer(() => {
   /* -------------------------------------------------------------------------- */
@@ -24,26 +23,30 @@ const Assets = observer(() => {
   const { address } = useAccount()
   const [loading, setLoading] = useState(true)
   const chainStaking = useChainStaking()
-  const isLoading = loading || chainStaking.isFetchingValidators
+  const isLoading =
+    loading || chainStaking.isFetchingValidators || !chainStaking.isReady
 
   /* --------------------------------- Methods -------------------------------- */
-  const initialChainAccount = async () => {
-    await chainAccount.getAccount()
-    await chainAccount.fetchBalance()
-  }
 
   const initial = async () => {
     setLoading(true)
-    await initialChainAccount()
-    chainStaking.fetchMyStakingHistory()
+    await chainStaking.getMyStakingHistoryLogs()
     setLoading(false)
   }
 
   /* --------------------------------- Watches -------------------------------- */
 
   useEffect(() => {
+    if (!chainStaking.isReady) return
     initial()
-  }, [address, chain?.id])
+  }, [address, chain?.id, chainStaking.isReady])
+
+  const myValidators = useMemo(() => {
+    if (!chainStaking.isReady) return []
+    return chainStaking.validators?.filter((v) =>
+      chainStaking.myValidators?.find((i) => i === v.owner),
+    )
+  }, [chainStaking.isReady, chainStaking.myValidators, chainStaking.validators])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
@@ -86,13 +89,7 @@ const Assets = observer(() => {
                 ) : (
                   <>
                     <CountUpMemo
-                      end={chainStaking.myTotalStake
-                        .reduce(
-                          (prev, curr) => prev.plus(curr.amount),
-                          BigNumber(0),
-                        )
-                        ?.div(CHAIN_DECIMAL)
-                        ?.toNumber()}
+                      end={chainStaking.getMyTotalStake}
                       decimals={2}
                       duration={1}
                     />
@@ -128,13 +125,7 @@ const Assets = observer(() => {
               ) : (
                 <>
                   <CountUpMemo
-                    end={chainStaking.myTotalReward
-                      .reduce(
-                        (prev, curr) => prev.plus(curr.amount),
-                        BigNumber(0),
-                      )
-                      ?.div(CHAIN_DECIMAL)
-                      ?.toNumber()}
+                    end={chainStaking.getMyTotalReward}
                     decimals={5}
                     duration={1}
                   />
@@ -153,14 +144,14 @@ const Assets = observer(() => {
           </b>
         </div>
         <div className="card-body">
-          <div id="view-point1">
-            {!chainStaking.myValidators.length && (
+          <div>
+            {!myValidators.length && (
               <div style={{ display: 'none' }}>
                 <Validators validators={chainStaking.activeValidator} />
               </div>
             )}
 
-            {!chainStaking.myValidators.length && !isLoading && (
+            {!myValidators.length && !isLoading && (
               <div
                 className="items-center justify-center"
                 style={{ width: '100%', textAlign: 'center', height: '44px' }}
@@ -171,7 +162,7 @@ const Assets = observer(() => {
               </div>
             )}
 
-            <Validators validators={chainStaking.myValidators} />
+            <Validators validators={myValidators} />
           </div>
         </div>
       </div>
@@ -182,7 +173,7 @@ const Assets = observer(() => {
             <ClockCircleOutlined /> <span>History</span>
           </b>
         </div>
-        <div className="card-body" id="view-point3">
+        <div className="card-body" id="viewpoint">
           <StakingHistory loading={isLoading} />
         </div>
       </div>
@@ -190,4 +181,4 @@ const Assets = observer(() => {
   )
 })
 
-export default Assets
+export default Sentry.withProfiler(Assets, { name: 'Assets Page' }) as React.FC
