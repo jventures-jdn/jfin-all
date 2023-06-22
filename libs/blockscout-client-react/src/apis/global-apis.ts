@@ -9,7 +9,7 @@ export class GlobalApis {
         return RESTFetcher.apiv2Get('/main-page/transactions')
     }
 
-    static async blocks() {
-        return RESTFetcher.apiv2Get('/blocks')
+    static async blocks(blockNumber?: number) {
+        return RESTFetcher.apiv2Get(`/blocks${blockNumber ? `?block_number=${blockNumber}` : ''}`)
     }
 }
