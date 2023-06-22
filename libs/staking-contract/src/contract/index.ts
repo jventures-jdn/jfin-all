@@ -7,7 +7,6 @@ import GOVERNANCE_ABI from '../abi/Governance'
 import CHAIN_CONFIG_ABI from '../abi/ChainConfig'
 import RUNTIME_UPGRADE_ABI from '../abi/RuntimeUpgrade.json'
 import DEPLOYER_PROXY_ABI from '../abi/DeployerProxy'
-import { getContract } from 'wagmi/actions'
 import { Config } from './config'
 import { Staking } from './staking'
 
@@ -20,7 +19,6 @@ import {
     STAKING_ADDRESS,
     SYSTEM_REWARD_ADDRESS,
 } from '@utils/chain-config'
-import { Account } from './account'
 import { Governance } from './governance'
 
 /**
@@ -68,32 +66,12 @@ export const deployerProxyObject = {
     abi: DEPLOYER_PROXY_ABI,
 }
 
-/**
- * Get contract instance
- *
- * ex. stakingContract.getValidatorStatus(validator).call()
- * ex. takingContract.delegate(validator).encodeABI()
- *
- * https://docs.ethers.org/v5/api/contract/contract/#Contract--metaclass
- */
-
-// export const stakingContract = getContract(stakingObject)
-// export const slashingIndicatorContract = getContract(slashingIndicatorObject)
-// export const systemRewardContract = getContract(systemRewardObject)
-// export const stakingPoolContract = getContract(stakingPoolObject)
-// export const governanceContract = getContract(governanceObject)
-// export const chainConfigContract = getContract(chainConfigObject)
-// export const runtimeUpgradeContract = getContract(runtimeUpgradeObject)
-// export const deployerProxyContract = getContract(deployerProxyObject)
-
 export const chainConfig = new Config()
 export const chainStaking = new Staking()
-export const chainAccount = new Account()
 export const chainGovernance = new Governance()
 
 export const useChainConfig = () => chainConfig
 export const useChainStaking = () => chainStaking
-export const useChainAccount = () => chainAccount
 export const useChainGovernance = () => chainGovernance
 
 export {

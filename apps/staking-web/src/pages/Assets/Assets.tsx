@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react'
 import JfinCoin from '../../components/JfinCoin/JfinCoin'
 import StakingHistory from '../../components/Staking/StakingHistory/StakingHistory'
-import { chainAccount, useChainStaking } from '@utils/staking-contract'
+import { useChainStaking } from '@utils/staking-contract'
 import CountUpMemo from '@/components/Countup'
 import { useAccount, useNetwork } from 'wagmi'
 import Validators from '@/components/Validator/Validators/Validators'
@@ -27,14 +27,9 @@ const Assets = observer(() => {
     loading || chainStaking.isFetchingValidators || !chainStaking.isReady
 
   /* --------------------------------- Methods -------------------------------- */
-  const initialChainAccount = async () => {
-    await chainAccount.getAccount()
-    await chainAccount.fetchBalance()
-  }
 
   const initial = async () => {
     setLoading(true)
-    await initialChainAccount()
     await chainStaking.getMyStakingHistoryLogs()
     setLoading(false)
   }
@@ -42,8 +37,9 @@ const Assets = observer(() => {
   /* --------------------------------- Watches -------------------------------- */
 
   useEffect(() => {
+    if (!chainStaking.isReady) return
     initial()
-  }, [address, chain?.id])
+  }, [address, chain?.id, chainStaking.isReady])
 
   const myValidators = useMemo(() => {
     if (!chainStaking.isReady) return []

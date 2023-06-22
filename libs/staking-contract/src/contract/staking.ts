@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { Validator, chainAccount, stakingObject } from '.'
+import { Validator, stakingObject } from '.'
 import { Address } from 'abitype'
 import {
     EXPECT_CHAIN,
@@ -386,11 +386,7 @@ export class Staking {
         const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
         // update balance, validators, staking history
-        await Promise.all([
-            chainAccount.fetchBalance(),
-            this.updateValidators(),
-            this.getMyStakingHistoryLogs(),
-        ])
+        await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
 
         return receipt
     }
@@ -423,11 +419,7 @@ export class Staking {
         const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
         // update balance, validators, staking history
-        await Promise.all([
-            chainAccount.fetchBalance(),
-            this.updateValidators(),
-            this.getMyStakingHistoryLogs(),
-        ])
+        await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
 
         return receipt
     }
@@ -461,11 +453,7 @@ export class Staking {
         const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
         // update balance, validators, staking history
-        await Promise.all([
-            chainAccount.fetchBalance(),
-            this.updateValidators(),
-            this.getMyStakingHistoryLogs(),
-        ])
+        await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
 
         return receipt
     }

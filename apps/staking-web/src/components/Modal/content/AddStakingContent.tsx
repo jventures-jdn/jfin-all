@@ -1,13 +1,14 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { message } from 'antd'
 import { observer } from 'mobx-react'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useMemo, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
 import { useModalStore } from '../../../stores'
-import { Validator, chainAccount, chainStaking } from '@utils/staking-contract'
-import { Address } from 'wagmi'
-import { BaseError } from 'viem'
+import { Validator, chainStaking } from '@utils/staking-contract'
+import { Address, useAccount, useBalance } from 'wagmi'
+import { BaseError, formatEther } from 'viem'
 import * as Sentry from '@sentry/react'
+import { getWalletClient } from 'wagmi/dist/actions'
 
 interface IAddStakingContent {
   validator: Validator
@@ -17,9 +18,16 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
   /* -------------------------------------------------------------------------- */
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
+  const { address } = useAccount()
+  const fetchBalance = useBalance({ address })
   const modalStore = useModalStore()
   const [stakingAmount, setStakingAmount] = useState(props.amount || 0)
   const [error, setError] = useState<string>()
+  const balance = useMemo(() => {
+    if (fetchBalance.isLoading || fetchBalance.data?.value === undefined)
+      return 0
+    return Number(formatEther(fetchBalance.data.value))
+  }, [fetchBalance])
 
   /* -------------------------------------------------------------------------- */
   /*                                   Methods                                  */
@@ -30,8 +38,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
     setError(undefined)
 
     if (stakingAmount < 1) return setError('Stake amount must be more 1')
-    if (stakingAmount > chainAccount.balance)
-      return setError(`Insufficient Balance`)
+    if (stakingAmount > balance) return setError(`Insufficient Balance`)
 
     try {
       modalStore.setIsLoading(true)
@@ -76,7 +83,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
           <div className="staking-sub-input justify-between ">
             <span className="wallet-warning">{error}</span>
             <span className="col-title">
-              Your balance: <span>{chainAccount.balance.toFixed(5)}</span>
+              Your balance: <span>{balance.toFixed(5)}</span>
             </span>
           </div>
         </div>
