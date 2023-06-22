@@ -11,10 +11,13 @@ import prettyTime from 'pretty-time'
 import { VALIDATOR_WALLETS } from '@/utils/const'
 import defaultImage from '../../../assets/images/partners/default.png'
 import { formatEther } from 'viem'
+import { getNetwork } from 'wagmi/actions'
+import { EXPECT_CHAIN } from '@utils/chain-config'
 type StakingHistoryLog = (typeof chainStaking.myStakingHistoryLogs)[0]
 
 const StakingHistory = observer(({ loading }: { loading: boolean }) => {
   /* --------------------------------- States --------------------------------- */
+  const { chain } = getNetwork()
   const columns: ColumnProps<StakingHistoryLog>[] = [
     {
       title: 'Type',
@@ -152,7 +155,11 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
       <Table
         columns={columns}
         loading={loading}
-        dataSource={chainStaking.myStakingHistoryLogs}
+        dataSource={
+          EXPECT_CHAIN.chainId === chain?.id
+            ? chainStaking.myStakingHistoryLogs
+            : []
+        } // check expect chain before process history, blockNumber, blockEnd etc.. that user used not match with expect chain cause prettyTime error
         pagination={{ size: 'small' }}
         scroll={{ x: true }}
         rowKey={(row) => row.transactionHash || 0}
