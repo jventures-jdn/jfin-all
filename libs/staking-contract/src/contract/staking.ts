@@ -318,7 +318,7 @@ export class Staking {
     }
 
     public async updateValidators() {
-        if (!this.validatorLogs.length) {
+        if (!this.validatorLogs?.length) {
             throw new Error(
                 '[updateValidators] No validatorEvents found. Ensure you have set fetch validator with `fetchValidators()`',
             )

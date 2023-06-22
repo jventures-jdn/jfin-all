@@ -35,7 +35,7 @@ const Assets = observer(() => {
   const initial = async () => {
     setLoading(true)
     await initialChainAccount()
-    chainStaking.getMyStakingHistoryLogs()
+    await chainStaking.getMyStakingHistoryLogs()
     setLoading(false)
   }
 
@@ -46,11 +46,11 @@ const Assets = observer(() => {
   }, [address, chain?.id])
 
   const myValidators = useMemo(() => {
-    if (!chainStaking.validators) return []
+    if (!chainStaking.isReady) return []
     return chainStaking.validators?.filter((v) =>
       chainStaking.myValidators?.find((i) => i === v.owner),
     )
-  }, [chainStaking.isReady])
+  }, [chainStaking.isReady, chainStaking.myValidators, chainStaking.validators])
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
