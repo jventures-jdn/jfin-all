@@ -1,6 +1,5 @@
 import { Provider } from 'mobx-react'
 import { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import GlobalModal from './components/Modal/GlobalModal'
@@ -16,16 +15,12 @@ import { BrowserRouter } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import { WalletConnectProvider } from '@libs/wallet-connect-react'
 
-export const isProd =
-  process.env.PROD_MODE === '1' || process.env.PROD_MODE === 'true' || false
-
-console.log(process.env.REACT_APP_SENTRY_DNS)
+export const isProd = import.meta.env.PROD
 
 Sentry.init({
-  dsn:
-    process.env.NODE_ENV === 'production'
-      ? process.env.REACT_APP_SENTRY_DNS // need to change to env
-      : '',
+  dsn: isProd
+    ? process.env.VITE_SENTRY_DNS // need to change to env
+    : '',
   integrations: [
     new Sentry.Integrations.GlobalHandlers({
       onerror: false,
@@ -41,7 +36,6 @@ Sentry.init({
 })
 
 const Main = () => {
-  /* ---------------------------------- Doms ---------------------------------- */
   return (
     <StrictMode>
       <BrowserRouter>

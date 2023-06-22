@@ -11,6 +11,7 @@ import Assets from './pages/Assets/Assets'
 import StakingRecovery from './pages/StakingRecovery/StakingRecovery'
 import { initialStakingContract } from './stores/StakingContractStore'
 import * as Sentry from '@sentry/react'
+import { isProd } from '.'
 
 const App = observer(() => {
   /* --------------------------------- States --------------------------------- */
@@ -32,7 +33,7 @@ const App = observer(() => {
       </div>
       <Footer />
 
-      {process.env.NODE_ENV === 'production' && (
+      {isProd && (
         <CookieConsent
           overlay
           buttonStyle={{
