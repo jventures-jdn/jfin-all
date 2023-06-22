@@ -13,38 +13,45 @@ const chainStaking = useChainStaking()
 const chainConfig = useChainConfig()
 let configTimer: NodeJS.Timer
 
-const fetchAccount = async () => {
-  await chainAccount.getAccount()
-  await chainAccount.fetchBalance()
-
-  if (configTimer) return clearInterval(configTimer)
-  configTimer = setInterval(() => {
-    chainConfig.updateChainConfig()
-  }, 5000)
-}
-
-const fetchValidator = async () => {
-  chainStaking.fetchValidators()
-}
-
-const fetchConfig = async () => {
-  await chainConfig.fetchChainConfig()
-}
-
-const _setupChain = async () => {
-  await fetchConfig()
-  await Promise.all([fetchValidator(), fetchAccount()])
-}
-
 export const initialStakingContract = async () => {
+  /* --------------------------------- States --------------------------------- */
   const { chain } = useNetwork()
   const { address } = useAccount()
   const { data } = useBalance({
     address: address,
   })
 
+  /* --------------------------------- Methods -------------------------------- */
+  const fetchAccount = async () => {
+    await chainAccount.getAccount()
+    await chainAccount.fetchBalance()
+
+    if (configTimer) return clearInterval(configTimer)
+    configTimer = setInterval(() => {
+      chainConfig.updateChainConfig()
+    }, 5000)
+  }
+
+  const fetchValidator = async () => {
+    chainStaking.fetchValidators()
+  }
+
+  const fetchConfig = async () => {
+    await chainConfig.fetchChainConfig()
+  }
+
+  /* --------------------------------- Watches -------------------------------- */
   useEffect(() => {
-    _setupChain()
+    // prevent strict mode call useEffect twice
+    let ignore = false
+    fetchConfig().then(() => {
+      if (ignore) return
+      Promise.all([fetchValidator(), fetchAccount()])
+    })
+
+    return () => {
+      ignore = true
+    }
   }, [])
 
   // on connected or disconnected update validators & account

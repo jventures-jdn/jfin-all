@@ -288,8 +288,6 @@ export class Staking {
      * @returns All validator information
      */
     public async fetchValidators() {
-        if (this.isReady) return
-
         runInAction(() => {
             this.isFetchingValidators = true
         })
@@ -341,7 +339,6 @@ export class Staking {
                 Number(prev.validatorLog.blockNumber) - Number(curr.validatorLog.blockNumber),
         )
 
-        // TODO: need to re-check
         runInAction(() => {
             this.myValidators = []
             this.myTotalReward = []
