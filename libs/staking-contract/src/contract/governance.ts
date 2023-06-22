@@ -1,12 +1,9 @@
 import { action, makeObservable, observable, runInAction } from 'mobx'
-import { Event } from 'ethers'
-import { Bytes, Result } from 'ethers/lib/utils.js'
 import { Address } from 'abitype'
-import { BigNumber as $BigNumber } from 'ethers'
-import BigNumber from 'bignumber.js'
+import { governanceObject, stakingObject } from '.'
+import { getPublicClient } from 'wagmi/actions'
 import { EXPECT_CHAIN } from '@utils/chain-config'
-import { stakingObject } from '.'
-import { getContract } from 'wagmi/actions'
+import { getAbiItem, getContract } from 'viem'
 
 export class Governance {
     constructor() {
@@ -17,64 +14,7 @@ export class Governance {
     }
 
     /* ------------------------------- Propperties ------------------------------ */
-    public governanceContract: any = {}
     public proposals: Awaited<ReturnType<typeof this.getProposals>>
-
-    /* --------------------------------- Helper --------------------------------- */
-
-    public mappingCastVoteEventArgs(args?: Result) {
-        const [address, proposalId, support, weight, reason] = args as [
-            address: Address,
-            proposalId: $BigNumber,
-            support: $BigNumber,
-            weight: $BigNumber,
-            reason: string,
-        ]
-
-        return {
-            address,
-            proposalId: BigNumber(proposalId.toString()),
-            support: BigNumber(support.toString()),
-            weight: BigNumber(weight.toString()),
-            reason,
-        }
-    }
-
-    public mappingCreatedEventArgs(args?: Result) {
-        const [
-            proposalId,
-            proposal,
-            targets,
-            values,
-            signatures,
-            calldatas,
-            startBlock,
-            endBlock,
-            description,
-        ] = args as [
-            proposalId: $BigNumber,
-            proposer: Address,
-            targets: Address[],
-            values: $BigNumber[],
-            signatures: string[],
-            calldatas: Bytes[],
-            startBlock: $BigNumber,
-            endBlock: $BigNumber,
-            description: string,
-        ]
-
-        return {
-            proposalId: BigNumber(proposalId.toString()),
-            proposal,
-            targets,
-            values: values.map(v => BigNumber(v.toString())),
-            signatures,
-            calldatas,
-            startBlock: BigNumber(startBlock.toString()),
-            endBlock: BigNumber(endBlock.toString()),
-            description,
-        }
-    }
 
     /* --------------------------------- Actions -------------------------------- */
     public async addDeployer() {}
@@ -86,53 +26,56 @@ export class Governance {
     public async upgradeRuntime() {}
 
     /* --------------------------------- Fetch -------------------------------- */
-    private async getProposalState(proposalId: $BigNumber) {
-        const provider = getProvider({ chainId: EXPECT_CHAIN.chainId })
-        const governanceContract = this.governanceContract.connect(provider)
-        return await governanceContract.state(proposalId)
+    private async getProposalStateLogs(proposalId: bigint) {
+        const publicClient = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
+        const contract = getContract({ ...governanceObject, publicClient })
+        return await contract.read.state([proposalId])
     }
 
     public async getVotingPowers() {}
 
-    public async getProposalCreatedEvents(): Promise<
-        (Event & { values: ReturnType<Governance['mappingCreatedEventArgs']> })[]
-    > {
-        const provider = getProvider({ chainId: EXPECT_CHAIN.chainId })
-        const governanceContract = this.governanceContract.connect(provider)
-        const proposalEvents = await governanceContract.queryFilter(
-            'ProposalCreated',
-            'earliest',
-            'latest',
-        )
+    public async getProposalCreatedLogs() {
+        const client = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
+        const contract = getContract(governanceObject)
+        const abiItem = getAbiItem({ abi: contract.abi, name: 'ProposalCreated' })
 
-        const proposals = proposalEvents.map(event => {
-            const args = this.mappingCreatedEventArgs(event.args)
-            return { ...event, values: { ...args } }
+        const logs = await client.getLogs({
+            event: abiItem,
+            fromBlock: 'earliest',
+            toBlock: 'latest',
         })
 
-        return proposals
+        return logs
     }
 
-    public async getProposalCastVoteEvents(): Promise<
-        (Event & { values: ReturnType<Governance['mappingCastVoteEventArgs']> })[]
-    > {
-        const provider = getProvider({ chainId: EXPECT_CHAIN.chainId })
-        const governanceContract = this.governanceContract.connect(provider)
+    public async getProposalCastVoteLogs() {
+        const client = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
+        const contract = getContract(governanceObject)
+        const abiVoteCast = getAbiItem({ abi: contract.abi, name: 'VoteCast' })
+        const abiVoteCastWithParams = getAbiItem({ abi: contract.abi, name: 'VoteCastWithParams' })
+
         const [vote, voteParams] = await Promise.all([
-            governanceContract.queryFilter('VoteCast', 'earliest', 'latest'),
-            governanceContract.queryFilter('VoteCastWithParams', 'earliest', 'latest'),
+            client.getLogs({
+                event: abiVoteCast,
+                fromBlock: 'earliest',
+                toBlock: 'latest',
+            }),
+            client.getLogs({
+                event: abiVoteCastWithParams,
+                fromBlock: 'earliest',
+                toBlock: 'latest',
+            }),
         ])
 
         // sort data
-        const proposalVoteEvents = [...vote, ...voteParams].sort(
-            (prev, curr) => curr.blockNumber - prev.blockNumber,
+        const proposalVoteLogs = [...vote, ...voteParams].sort(
+            (prev, curr) => Number(curr.blockNumber) - Number(prev.blockNumber),
         )
 
-        const proposalVotes = proposalVoteEvents.map(event => {
-            const args = this.mappingCastVoteEventArgs(event.args)
-
+        const proposalVotes = proposalVoteLogs.map(log => {
             let voteType = 'ABSTAIN'
-            switch (args?.support.toNumber()) {
+
+            switch (log.args.support) {
                 case 0:
                     voteType = 'AGAINST'
                     break
@@ -141,7 +84,7 @@ export class Governance {
                     break
             }
 
-            return { ...event, values: { ...args, voteType } }
+            return { ...log, values: { ...log.args, voteType } }
         })
 
         return proposalVotes
@@ -149,15 +92,15 @@ export class Governance {
 
     /* --------------------------------- Getters -------------------------------- */
     public async getProposals() {
-        const [createdEvents, voteEvents] = await Promise.all([
-            this.getProposalCreatedEvents(),
-            this.getProposalCastVoteEvents(),
+        const [createdLogs, voteLogs] = await Promise.all([
+            this.getProposalCreatedLogs(),
+            this.getProposalCastVoteLogs(),
         ])
 
         runInAction(() => {
-            this.proposals = createdEvents
+            this.proposals = createdLogs
         })
 
-        return createdEvents
+        return createdLogs
     }
 }
