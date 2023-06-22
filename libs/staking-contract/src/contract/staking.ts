@@ -366,24 +366,23 @@ export class Staking {
      * @returns contract receipt
      */
     public async claimValidatorReward(validatorAddress: Address) {
-        const { chain } = getNetwork()
-        const wallet = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
-        const client = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
-        if (!wallet?.account)
+        const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
+        const publicClient = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
+        if (!walletClient?.account)
             throw new Error(
                 '[claimValidatorReward] No wallet client found, Ensure you have conneted your wallet',
             )
 
         const contract = getContract({
             ...stakingObject,
-            publicClient: client,
+            walletClient,
         })
-        const { request } = await contract.simulate.claimDelegatorFee([validatorAddress], {
+        const hash = await contract.write.claimDelegatorFee([validatorAddress], {
             gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
             gas: CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork].claim,
         })
-        const hash = await wallet.writeContract(request)
-        const receipt = await client.waitForTransactionReceipt({ hash })
+
+        const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
         // update balance, validators, staking history
         await Promise.all([
@@ -406,22 +405,21 @@ export class Staking {
      * @returns contract receipt
      */
     public async stakeToValidator(validatorAddress: Address, amount: number) {
-        const wallet = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
-        const client = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
-        if (!wallet?.account)
+        const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
+        const publicClient = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
+        if (!walletClient?.account)
             throw new Error(
                 '[stakeToValidator] No wallet client found, Ensure you have conneted your wallet',
             )
 
         await switchChainWhenIncorrectChain()
-        const contract = getContract({ ...stakingObject, publicClient: client })
-        const { request } = await contract.simulate.delegate([validatorAddress], {
+        const contract = getContract({ ...stakingObject, walletClient })
+        const hash = await contract.write.delegate([validatorAddress], {
             gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
             value: parseEther(`${amount}`),
         })
 
-        const hash = await wallet.writeContract(request)
-        const receipt = await client.waitForTransactionReceipt({ hash })
+        const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
         // update balance, validators, staking history
         await Promise.all([
@@ -444,27 +442,22 @@ export class Staking {
      * @returns contract receipt
      */
     public async unstakeFromValidator(validatorAddress: Address, amount: number) {
-        const wallet = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
-        const client = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
+        const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
+        const publicClient = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
 
-        if (!wallet?.account)
+        if (!walletClient?.account)
             throw new Error(
                 '[unstakeFromValidator] No wallet client found, Ensure you have conneted your wallet',
             )
 
         await switchChainWhenIncorrectChain()
-        const contract = getContract({ ...stakingObject, publicClient: client })
+        const contract = getContract({ ...stakingObject, walletClient })
 
-        const { request } = await contract.simulate.undelegate(
-            [validatorAddress, parseEther(`${amount}`)],
-            {
-                account: wallet.account.address,
-                value: BigInt(0),
-            },
-        )
+        const hash = await contract.write.undelegate([validatorAddress, parseEther(`${amount}`)], {
+            value: BigInt(0),
+        })
 
-        const hash = await wallet.writeContract(request)
-        const receipt = await client.waitForTransactionReceipt({ hash })
+        const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
         // update balance, validators, staking history
         await Promise.all([
