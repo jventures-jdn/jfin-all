@@ -15,7 +15,6 @@ const Governance = () => {
   }
   useEffect(() => {
     initial()
-    return () => setLoading(false)
   }, [])
 
   /* ---------------------------------- Doms ---------------------------------- */
