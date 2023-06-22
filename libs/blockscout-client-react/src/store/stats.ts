@@ -10,7 +10,6 @@ const key = () => `stats`
 export function useBlockscoutStats() {
     return {
         get: _statsStoreGet,
-        meta: _statsStoreMeta,
     }
 }
 
@@ -40,22 +39,13 @@ export function statsStoreInitialClear() {
     mutate('initial-stats', undefined)
 }
 
-// Global stats state
-function _statsStoreMeta() {
-    // Auto fetch initial transactions
-    return _statsStoreInitial()
-}
-
 export async function statsWebSocketRecord(data: HelperStats[]) {
     if (data[4].block_number) {
         mutate(
             key(),
             {
                 data_source: 'ws',
-                average_block_time:
-                    typeof data[4]?.average_block_time == 'string'
-                        ? 3000
-                        : data[4]?.average_block_time,
+                average_block_time: Number(data[4]?.average_block_time.split(' ')[0]) * 1000, //from ws type string
                 total_blocks: data[4]?.block_number,
             },
             {
@@ -94,9 +84,9 @@ export async function statsWebSocketRecord(data: HelperStats[]) {
 function _formatFullData(item: Stats, from: Stats['data_source']) {
     return {
         data_source: from,
-        average_block_time: item.average_block_time,
+        average_block_time: item.average_block_time, //from api type number
         total_addresses: Number(String(item.total_addresses).replace(/,/g, '')),
-        total_blocks: Number(item.total_blocks),
-        total_transactions: Number(item.total_transactions),
+        total_blocks: item.total_blocks,
+        total_transactions: item.total_transactions,
     } as Stats
 }
