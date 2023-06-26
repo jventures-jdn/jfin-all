@@ -17,6 +17,8 @@ import './assets/css/modal.css'
 
 export const isProd = import.meta.env.PROD
 
+console.log(process.env)
+
 Sentry.init({
   dsn: isProd
     ? process.env.VITE_SENTRY_DNS // need to change to env
