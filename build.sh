@@ -7,22 +7,20 @@ echo $CF_PAGES_BRANCH
 if [[ $CF_PAGES_BRANCH =~ "staking" ]]; then
     # STAKING 
     if [[ $CF_PAGES_BRANCH =~ "release" ]]; then
-        if [[ $CF_PAGES_BRANCH =~ "mainnet" ]]; then
-            pnpm -C apps/staking-web build:jfin --outDir=../../dist
-        elif [[ $CF_PAGES_BRANCH =~ "testnet" ]]; then
+        if [[ $CF_PAGES_BRANCH =~ "testnet" ]]; then
+            # testnet
             pnpm -C apps/staking-web build:jfintest --outDir=../../dist
         else
-            echo Error : network not found in branch name A
-            exit 1
+            # mainnet
+            pnpm -C apps/staking-web build:jfin --outDir=../../dist
         fi
     else
-        if [[ $CF_PAGES_BRANCH =~ "mainnet" ]]; then
-            pnpm -C apps/staking-web build:jfin:preview --outDir=../../dist
-        elif [[ $CF_PAGES_BRANCH =~ "testnet" ]]; then
+        if [[ $CF_PAGES_BRANCH =~ "testnet" ]]; then
+            # testnet
             pnpm -C apps/staking-web build:jfintest:preview  --outDir=../../dist
         else
-            echo Error : network not found in branch name B
-            exit 1
+            # mainnet
+            pnpm -C apps/staking-web build:jfin:preview --outDir=../../dist
         fi
     fi
 else
