@@ -6,7 +6,7 @@ import {
     configureChains,
     createConfig,
 } from 'wagmi'
-import { arbitrum, mainnet, polygon, goerli, arbitrumGoerli } from 'wagmi/chains'
+
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { FallbackTransport } from 'viem'
 import { QueryClient } from '@tanstack/query-core'
@@ -14,7 +14,7 @@ import { getChains } from '@utils/chain-config'
 
 class WalletConnectModule {
     projectId = process.env.WALLET_CONNECT_PROJECT_ID || '2dc0abd48b692cc1375af974f7533524'
-    chains: Chain[] = [...getChains(), arbitrum, arbitrumGoerli, mainnet, polygon, goerli]
+    chains: Chain[] = [...getChains()]
     configureChains = configureChains(this.chains, [w3mProvider({ projectId: this.projectId })])
     wagmiConfig: Config<PublicClient<FallbackTransport>, WebSocketPublicClient> & {
         queryClient: QueryClient
