@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, has, makeObservable, observable, runInAction } from 'mobx'
 import { Validator, stakingObject } from '.'
 import { Address } from 'abitype'
 import {
@@ -8,10 +8,9 @@ import {
     CHAIN_GAS_LIMIT_CUSTOM,
     VALIDATOR_STATUS_MAPPING,
 } from '@utils/chain-config'
-import { getWalletClient, getPublicClient, getNetwork } from 'wagmi/actions'
+import { getWalletClient, getPublicClient } from 'wagmi/actions'
 import { chainConfig } from '.'
-import { switchChainWhenIncorrectChain } from '../utils/wallet'
-import { formatEther, getAbiItem, getContract, parseEther } from 'viem'
+import { BaseError, formatEther, getAbiItem, getContract, parseEther } from 'viem'
 
 export class Staking {
     constructor() {
@@ -36,6 +35,7 @@ export class Staking {
         })
     }
     /* ------------------------------- Properties ------------------------------- */
+    public walletTimeout = 15000
     public isFetchingValidators = true
     public isReady = false
     public validators: Validator[] = []
@@ -378,17 +378,39 @@ export class Staking {
             ...stakingObject,
             walletClient,
         })
-        const hash = await contract.write.claimDelegatorFee([validatorAddress], {
-            gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
-            gas: CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork].claim,
-        })
 
-        const receipt = await publicClient.waitForTransactionReceipt({ hash })
+        try {
+            const execute: Promise<Address> = new Promise(async resolve => {
+                return resolve(
+                    await contract.write.claimDelegatorFee([validatorAddress], {
+                        gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
+                        gas: CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork].claim,
+                    }),
+                )
+            })
+            const timeout: Promise<BaseError> = new Promise(reject => {
+                setTimeout(() => {
+                    reject(new BaseError(`An unknown RPC error occurred.`))
+                }, this.walletTimeout)
+            })
+            const hash = await Promise.race([execute, timeout])
+            if (hash instanceof BaseError) throw hash
 
-        // update balance, validators, staking history
-        await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
+            const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
-        return receipt
+            // update balance, validators, staking history
+            await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
+
+            return receipt
+        } catch (e: any) {
+            const err: BaseError = e
+            const isUnknownRpc = err.shortMessage === `An unknown RPC error occurred.`
+            if (isUnknownRpc)
+                throw new Error(
+                    `Wallet connection timeout, This might be your website network and your wallet are inconsistent, Please switch your wallet network to [${EXPECT_CHAIN.chainName}] manully.`,
+                )
+            throw e
+        }
     }
 
     /**
@@ -409,19 +431,40 @@ export class Staking {
                 '[stakeToValidator] No wallet client found, Ensure you have conneted your wallet',
             )
 
-        await switchChainWhenIncorrectChain()
         const contract = getContract({ ...stakingObject, walletClient })
-        const hash = await contract.write.delegate([validatorAddress], {
-            gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
-            value: parseEther(`${amount}`),
-        })
 
-        const receipt = await publicClient.waitForTransactionReceipt({ hash })
+        try {
+            const execute: Promise<Address> = new Promise(async resolve => {
+                return resolve(
+                    await contract.write.delegate([validatorAddress], {
+                        gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
+                        value: parseEther(`${amount}`),
+                    }),
+                )
+            })
+            const timeout: Promise<BaseError> = new Promise(reject => {
+                setTimeout(() => {
+                    reject(new BaseError(`An unknown RPC error occurred.`))
+                }, this.walletTimeout)
+            })
+            const hash = await Promise.race([execute, timeout])
+            if (hash instanceof BaseError) throw hash
 
-        // update balance, validators, staking history
-        await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
+            const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
-        return receipt
+            // update balance, validators, staking history
+            await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
+
+            return receipt
+        } catch (e: any) {
+            const err: BaseError = e
+            const isUnknownRpc = err.shortMessage === `An unknown RPC error occurred.`
+            if (isUnknownRpc)
+                throw new Error(
+                    `Wallet connection timeout, This might be your website network and your wallet are inconsistent, Please switch your wallet network to [${EXPECT_CHAIN.chainName}] manully.`,
+                )
+            throw e
+        }
     }
 
     /**
@@ -443,19 +486,39 @@ export class Staking {
                 '[unstakeFromValidator] No wallet client found, Ensure you have conneted your wallet',
             )
 
-        await switchChainWhenIncorrectChain()
         const contract = getContract({ ...stakingObject, walletClient })
 
-        const hash = await contract.write.undelegate([validatorAddress, parseEther(`${amount}`)], {
-            value: BigInt(0),
-        })
+        try {
+            const execute: Promise<Address> = new Promise(async resolve => {
+                return resolve(
+                    await contract.write.undelegate([validatorAddress, parseEther(`${amount}`)], {
+                        value: BigInt(0),
+                    }),
+                )
+            })
+            const timeout: Promise<BaseError> = new Promise(reject => {
+                setTimeout(() => {
+                    reject(new BaseError(`An unknown RPC error occurred.`))
+                }, this.walletTimeout)
+            })
+            const hash = await Promise.race([execute, timeout])
+            if (hash instanceof BaseError) throw hash
 
-        const receipt = await publicClient.waitForTransactionReceipt({ hash })
+            const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
-        // update balance, validators, staking history
-        await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
+            // update balance, validators, staking history
+            await Promise.all([this.updateValidators(), this.getMyStakingHistoryLogs()])
 
-        return receipt
+            return receipt
+        } catch (e: any) {
+            const err: BaseError = e
+            const isUnknownRpc = err.shortMessage === `An unknown RPC error occurred.`
+            if (isUnknownRpc)
+                throw new Error(
+                    `Wallet connection timeout, This might be your website network and your wallet are inconsistent, Please switch your wallet network to [${EXPECT_CHAIN.chainName}] manully.`,
+                )
+            throw e
+        }
     }
 
     /* -------------------------------------------------------------------------- */
