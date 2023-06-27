@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import { WagmiConfig } from 'wagmi'
 import { useWalletConnectModule } from '../core'
 import { Web3Modal } from '@web3modal/react'
+import { EXPECT_CHAIN, getChainConfig } from '@utils/chain-config'
 
 export function WalletConnectProvider({ children }: { children: ReactNode }) {
     const isProd = process.env.PROD
@@ -10,6 +11,11 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
         <>
             <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
             <Web3Modal
+                explorerRecommendedWalletIds={[
+                    'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+                    'join',
+                ]}
+                defaultChain={getChainConfig(EXPECT_CHAIN.chainNetwork)}
                 projectId={projectId}
                 ethereumClient={ethereumClient}
                 themeVariables={{
