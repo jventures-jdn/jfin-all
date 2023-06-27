@@ -18,8 +18,6 @@ const Footer = () => {
     </span>
   )
 
-  console.log(isProd)
-
   const prodContent = (
     <span>
       <span>{`${

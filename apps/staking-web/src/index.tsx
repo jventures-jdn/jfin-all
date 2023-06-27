@@ -15,7 +15,7 @@ import './assets/css/input.css'
 import './assets/css/pagination.css'
 import './assets/css/modal.css'
 
-export const isProd = import.meta.env.PROD
+export const isProd = process.env.PROD
 
 Sentry.init({
   dsn: isProd

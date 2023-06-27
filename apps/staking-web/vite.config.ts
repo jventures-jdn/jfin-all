@@ -29,6 +29,7 @@ export default defineConfig(({ mode }) => {
         },
       }),
       sentryVitePlugin({
+        disable: !process.env.PROD,
         org: 'jventures',
         project: 'jfin-staking',
         debug: !process.env.PROD,
