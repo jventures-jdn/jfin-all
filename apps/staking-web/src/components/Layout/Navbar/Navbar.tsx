@@ -6,9 +6,8 @@ import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
 import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../../stores'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
-import { Progress } from 'antd'
-import { switchChain } from '@utils/staking-contract'
+import { useAccount, useBalance, useNetwork, useSwitchNetwork } from 'wagmi'
+import { Progress, message } from 'antd'
 import { EXPECT_CHAIN } from '@utils/chain-config'
 import './Navbar.css'
 
@@ -17,6 +16,11 @@ const Navbar = observer(() => {
   const defaultLoadingDuration = 7000
   const { isConnected, address } = useAccount()
   const { chain } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork({
+    chainId: EXPECT_CHAIN.chainId,
+    throwForSwitchChainNotSupported: true,
+    onError: (err) => message.error(`${err?.cause || err.message}`),
+  })
   const balance = useBalance({ address: address, watch: true })
   const [isBurgerActive, setIsBurgerActive] = useState(false)
   const location = useLocation()
@@ -121,29 +125,6 @@ const Navbar = observer(() => {
   }, [progressStep, progress])
 
   /* ---------------------------------- Doms ---------------------------------- */
-  const ConnectMetamaskButton = () => {
-    return (
-      <div>
-        <a
-          href={`https://metamask.app.link/dapp/${window.location.href}?auto=1`}
-          style={{
-            marginBottom: '2rem',
-            display: 'inline-flex',
-            alignItems: 'center',
-            borderRadius: '10px',
-            backgroundColor: '#F6851B',
-            padding: '0 15px 1px',
-            height: '40px',
-            color: '#fff',
-            fontSize: '15px',
-            fontWeight: 'normal',
-          }}
-        >
-          Open Metamask
-        </a>
-      </div>
-    )
-  }
 
   return (
     <>
@@ -252,7 +233,7 @@ const Navbar = observer(() => {
                           cursor: 'pointer',
                           textDecoration: 'underline',
                         }}
-                        onClick={() => switchChain()}
+                        onClick={() => switchNetwork?.(EXPECT_CHAIN.chainId)}
                       >
                         ({EXPECT_CHAIN.chainName})
                       </b>
@@ -339,9 +320,7 @@ const Navbar = observer(() => {
             visibility: isAuto ? 'visible' : 'visible',
           }}
         >
-          {!isMetamask && !isAuto ? (
-            <ConnectMetamaskButton />
-          ) : isConnected ? (
+          {isConnected && isAuto ? (
             <div>
               Balance:{' '}
               <b style={{ color: '#c60000' }}>
