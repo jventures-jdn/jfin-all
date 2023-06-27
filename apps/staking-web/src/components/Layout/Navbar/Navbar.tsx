@@ -272,7 +272,7 @@ const Navbar = observer(() => {
           }`}
           smooth
           onClick={handleRoute}
-          to={`/assets${isAuto ? '?auto=1' : ''}#viewpoint`}
+          to={`/staking${isAuto ? '?auto=1' : ''}#viewpoint`}
         >
           Staking
         </NavHashLink>
