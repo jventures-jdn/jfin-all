@@ -70,7 +70,7 @@ export async function statsWebSocketRecord(data: HelperStats[]) {
         mutate(
             key(),
             {
-                total_transactions: total_transactions + 1,
+                total_transactions: Number(total_transactions) + 1,
             },
             {
                 populateCache: (data, current) => ({ ...current, ...data }),
