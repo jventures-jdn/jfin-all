@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "author": "JVentures Co.,Ltd.",
-  "repository": "https://github.com/jventures-jdn/project-staking-ui",
+  "repository": "https://github.com/jventures-jdn/jfin-all",
   "license": "MIT",
   "private": true,
   "dependencies": {

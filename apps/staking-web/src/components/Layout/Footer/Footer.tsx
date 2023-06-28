@@ -10,7 +10,7 @@ const Footer = () => {
         <a
           target="_blank"
           rel="noreferrer"
-          href={`https://github.com/jventures-jdn/project-staking-ui/commit/${hash}`}
+          href={`${packageJson.repository}/commit/${hash}`}
         >
           {hash.slice(0, 7)}
         </a>
