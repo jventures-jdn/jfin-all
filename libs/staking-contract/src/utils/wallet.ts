@@ -1,5 +1,5 @@
 import { EXPECT_CHAIN, getChain } from '@utils/chain-config'
-import { getNetwork } from 'wagmi/actions'
+import { getNetwork, switchNetwork } from 'wagmi/actions'
 import Web3 from 'web3'
 
 const { chainRpc } = getChain(EXPECT_CHAIN.chainNetwork)
@@ -9,8 +9,9 @@ const web3 = new Web3(httpProvider)
 export const switchChainWhenIncorrectChain = async () => {
     const { chain } = getNetwork()
     if (EXPECT_CHAIN.chainId !== chain?.id) {
-        const result = await switchChain()
-        if (result !== true) throw result
+        switchNetwork({ chainId: EXPECT_CHAIN.chainId }).catch(e => {
+            throw e
+        })
     }
 }
 

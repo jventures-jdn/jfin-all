@@ -11,6 +11,7 @@ import {
 import { getWalletClient, getPublicClient } from 'wagmi/actions'
 import { chainConfig } from '.'
 import { BaseError, formatEther, getAbiItem, getContract, parseEther } from 'viem'
+import { switchChainWhenIncorrectChain } from '../utils/wallet'
 
 export class Staking {
     constructor() {
@@ -367,6 +368,8 @@ export class Staking {
      * @returns contract receipt
      */
     public async claimValidatorReward(validatorAddress: Address) {
+        await switchChainWhenIncorrectChain()
+
         const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
         const publicClient = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
         if (!walletClient?.account)
@@ -424,6 +427,8 @@ export class Staking {
      * @returns contract receipt
      */
     public async stakeToValidator(validatorAddress: Address, amount: number) {
+        await switchChainWhenIncorrectChain()
+
         const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
         const publicClient = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
         if (!walletClient?.account)
@@ -478,6 +483,8 @@ export class Staking {
      * @returns contract receipt
      */
     public async unstakeFromValidator(validatorAddress: Address, amount: number) {
+        await switchChainWhenIncorrectChain()
+
         const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
         const publicClient = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
 
