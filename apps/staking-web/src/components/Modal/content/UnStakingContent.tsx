@@ -6,10 +6,9 @@ import { message } from 'antd'
 import JfinCoin from '../../JfinCoin/JfinCoin'
 import { Validator, chainStaking } from '@utils/staking-contract'
 import { Address } from 'wagmi'
-import { formatEther } from 'ethers/lib/utils'
 import { EXPECT_CHAIN } from '@utils/chain-config'
 import * as Sentry from '@sentry/react'
-import { BaseError } from 'viem'
+import { BaseError, formatEther } from 'viem'
 
 interface IUnStakingContent {
   forceActionButtonsEnabled?: boolean

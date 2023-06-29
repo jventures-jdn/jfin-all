@@ -212,7 +212,7 @@ export class Staking {
         const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
         if (!walletClient?.account)
             throw new Error(
-                '[stakeToValidator] No wallet client found, Ensure you have conneted your wallet',
+                '[getMyStakingHistoryLogs] No wallet client found, Ensure you have conneted your wallet',
             )
 
         runInAction(() => {
@@ -375,7 +375,7 @@ export class Staking {
         const publicClient = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
         if (!walletClient?.account)
             throw new Error(
-                '[stakeToValidator] No wallet client found, Ensure you have conneted your wallet',
+                '[claimValidatorReward] No wallet client found, Ensure you have conneted your wallet',
             )
 
         const contract = getContract({ ...stakingObject, walletClient })
@@ -509,7 +509,7 @@ export class Staking {
         const publicClient = await getPublicClient({ chainId: EXPECT_CHAIN.chainId })
         if (!walletClient?.account)
             throw new Error(
-                '[stakeToValidator] No wallet client found, Ensure you have conneted your wallet',
+                '[unstakeFromValidator] No wallet client found, Ensure you have conneted your wallet',
             )
 
         const contract = getContract({ ...stakingObject, walletClient })

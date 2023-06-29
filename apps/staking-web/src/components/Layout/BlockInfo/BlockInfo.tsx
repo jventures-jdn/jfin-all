@@ -1,10 +1,10 @@
-import { Col, Row } from 'antd'
+import { Col, Row, message } from 'antd'
 import './BlockInfo.css'
 import { observer } from 'mobx-react'
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import prettyTime from 'pretty-time'
-import { useChainConfig, switchChain } from '@utils/staking-contract'
+import { useChainConfig } from '@utils/staking-contract'
 import CountUpMemo from '../../Countup'
 import { EXPECT_CHAIN } from '@utils/chain-config'
 
@@ -14,6 +14,11 @@ const BlockInfo = observer(() => {
   const chainConfig = useChainConfig()
   const { chain } = useNetwork()
   const isExpectChain = chain?.id === EXPECT_CHAIN.chainId
+  const { switchNetwork } = useSwitchNetwork({
+    chainId: EXPECT_CHAIN.chainId,
+    throwForSwitchChainNotSupported: true,
+    onError: (err) => message.error(`${err?.cause || err.message}`),
+  })
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
@@ -35,7 +40,7 @@ const BlockInfo = observer(() => {
                 cursor: 'pointer',
                 textDecoration: 'underline',
               }}
-              onClick={() => switchChain()}
+              onClick={() => switchNetwork?.(EXPECT_CHAIN.chainId)}
             >
               ({EXPECT_CHAIN.chainName})
             </b>
