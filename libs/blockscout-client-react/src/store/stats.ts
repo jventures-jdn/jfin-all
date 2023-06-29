@@ -70,7 +70,7 @@ export async function statsWebSocketRecord(data: HelperStats[]) {
         mutate(
             key(),
             {
-                total_transactions: Number(total_transactions) + 1,
+                total_transactions: total_transactions + 1,
             },
             {
                 populateCache: (data, current) => ({ ...current, ...data }),
@@ -84,9 +84,9 @@ export async function statsWebSocketRecord(data: HelperStats[]) {
 function _formatFullData(item: Stats, from: Stats['data_source']) {
     return {
         data_source: from,
-        average_block_time: item.average_block_time, //from api type number
-        total_addresses: Number(String(item.total_addresses).replace(/,/g, '')),
-        total_blocks: item.total_blocks,
-        total_transactions: item.total_transactions,
+        average_block_time: item.average_block_time,
+        total_addresses: Number(item.total_addresses),
+        total_blocks: Number(item.total_blocks),
+        total_transactions: Number(item.total_transactions),
     } as Stats
 }
