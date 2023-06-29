@@ -21,7 +21,7 @@ const Assets = observer(() => {
   /* -------------------------------------------------------------------------- */
   const { chain } = useNetwork()
   const { address } = useAccount()
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const chainStaking = useChainStaking()
   const isLoading =
     loading || chainStaking.isFetchingValidators || !chainStaking.isReady
@@ -37,7 +37,7 @@ const Assets = observer(() => {
   /* --------------------------------- Watches -------------------------------- */
 
   useEffect(() => {
-    if (!chainStaking.isReady) return
+    if (!chainStaking.isReady || !address) return
     initial()
   }, [address, chain?.id, chainStaking.isReady])
 
