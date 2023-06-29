@@ -1,6 +1,5 @@
 import { action, makeObservable, observable, runInAction } from 'mobx'
-import { Address } from 'abitype'
-import { governanceObject, stakingObject } from '.'
+import { governanceObject } from '.'
 import { getPublicClient } from 'wagmi/actions'
 import { EXPECT_CHAIN } from '@utils/chain-config'
 import { getAbiItem, getContract } from 'viem'
@@ -16,7 +15,11 @@ export class Governance {
     /* ------------------------------- Propperties ------------------------------ */
     public proposals: Awaited<ReturnType<typeof this.getProposals>>
 
-    /* --------------------------------- Actions -------------------------------- */
+    /* --------------------------------- Methods -------------------------------- */
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Actions                                  */
+    /* -------------------------------------------------------------------------- */
     public async addDeployer() {}
     public async removeDeployer() {}
     public async addValidator() {}
@@ -25,14 +28,34 @@ export class Governance {
     public async disableValidator() {}
     public async upgradeRuntime() {}
 
-    /* --------------------------------- Fetch -------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                                   Fetcher                                  */
+    /* -------------------------------------------------------------------------- */
+    public async getProposals() {
+        const [createdLogs] = await Promise.all([this.getProposalCreatedLogs()])
+
+        runInAction(() => {
+            this.proposals = createdLogs
+        })
+
+        return createdLogs
+    }
+    public async getVotingPowers() {}
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    Logs                                    */
+    /* -------------------------------------------------------------------------- */
+
+    /**
+     * Get `ProposalCreated` logs from giving `proposalId` with earliest to latest block
+     * @param proposalId
+     * @returns logs of proposal state
+     */
     private async getProposalStateLogs(proposalId: bigint) {
         const publicClient = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
         const contract = getContract({ ...governanceObject, publicClient })
         return await contract.read.state([proposalId])
     }
-
-    public async getVotingPowers() {}
 
     public async getProposalCreatedLogs() {
         const client = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
@@ -48,6 +71,10 @@ export class Governance {
         return logs
     }
 
+    /**
+     * Get `VoteCastWithParams` logs from earliest to latest block
+     * @returns logs of VoteCastWithParams
+     */
     public async getProposalCastVoteLogs() {
         const client = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
         const contract = getContract(governanceObject)
@@ -72,6 +99,7 @@ export class Governance {
             (prev, curr) => Number(curr.blockNumber) - Number(prev.blockNumber),
         )
 
+        // mapping wording
         const proposalVotes = proposalVoteLogs.map(log => {
             let voteType = 'ABSTAIN'
 
@@ -88,19 +116,5 @@ export class Governance {
         })
 
         return proposalVotes
-    }
-
-    /* --------------------------------- Getters -------------------------------- */
-    public async getProposals() {
-        const [createdLogs, voteLogs] = await Promise.all([
-            this.getProposalCreatedLogs(),
-            this.getProposalCastVoteLogs(),
-        ])
-
-        runInAction(() => {
-            this.proposals = createdLogs
-        })
-
-        return createdLogs
     }
 }
