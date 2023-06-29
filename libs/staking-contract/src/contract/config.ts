@@ -4,7 +4,7 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { chainConfigObject } from '.'
 import { formatEther } from 'viem'
 
-// All config calculate base on javascript sdk
+// All config calculate base on old javascript sdk
 export class Config {
     /* ------------------------------- Properties ------------------------------- */
     constructor() {
@@ -52,6 +52,9 @@ export class Config {
     public validatorJailIntervalSec: number
 
     /* --------------------------------- Methods -------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                                 Calculation                                */
+    /* -------------------------------------------------------------------------- */
     private calcStartBlock() {
         return ((Number(this.blockNumber) / this.epochBlockInterval) | 0) * this.epochBlockInterval
     }
@@ -80,10 +83,14 @@ export class Config {
     private calcValidatorJailIntervalSec() {
         return this.validatorJailEpochLength * this.epochBlockInterval * this.blockSec
     }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Fetcher                                  */
+    /* -------------------------------------------------------------------------- */
+
     /**
-     * Read all chain config data via readContracts
-     *
-     * https://wagmi.sh/core/actions/readContracts
+     * Fetch chain config
+     * @returns chain config from `getConfig()`
      */
     public async fetchChainConfig() {
         if (this.isReady) return
@@ -138,7 +145,6 @@ export class Config {
             ],
         })
 
-        // parallel fetch
         const [
             _blockNumber,
             [
@@ -194,7 +200,9 @@ export class Config {
         })
     }
 
-    /* --------------------------------- Getters -------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                                   Getters                                  */
+    /* -------------------------------------------------------------------------- */
     /**
      * get all chain propperty
      */
