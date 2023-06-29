@@ -115,23 +115,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/staking-contract
       '@web3modal/ethereum':
-        specifier: 2.4.5
-        version: 2.4.5(@wagmi/core@1.2.0)(viem@1.0.5)
+        specifier: 2.6.1
+        version: 2.6.1(@wagmi/core@1.2.0)(viem@1.0.5)
       '@web3modal/react':
-        specifier: 2.4.5
-        version: 2.4.5(react-dom@18.2.0)(react@18.2.0)
+        specifier: 2.6.1
+        version: 2.6.1(react-dom@18.2.0)(react@18.2.0)
       antd:
         specifier: ^5.6.2
         version: 5.6.2(react-dom@18.2.0)(react@18.2.0)
-      bignumber.js:
-        specifier: ^9.1.1
-        version: 9.1.1
-      clear:
-        specifier: ^0.1.0
-        version: 0.1.0
-      ethers:
-        specifier: ^5
-        version: 5.0.0
       mobx:
         specifier: ^6.9.0
         version: 6.9.0
@@ -396,11 +387,11 @@ importers:
   libs/wallet-connect-react:
     dependencies:
       '@web3modal/ethereum':
-        specifier: 2.4.5
-        version: 2.4.5(@wagmi/core@1.2.0)(viem@1.0.5)
+        specifier: 2.6.1
+        version: 2.6.1(@wagmi/core@1.2.0)(viem@1.0.5)
       '@web3modal/react':
-        specifier: 2.4.5
-        version: 2.4.5(react-dom@18.2.0)(react@18.2.0)
+        specifier: 2.6.1
+        version: 2.6.1(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -7151,15 +7142,6 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@web3modal/core@2.4.5(react@18.2.0):
-    resolution: {integrity: sha512-iulOIW2irVaq+xWTzzM2xbRI4TCR0yTnV2Yz+ifIFl+r3OF3ZOC1jsy4jJnKL7/6e7p4NmmKJk0/w951KzCF5g==}
-    dependencies:
-      buffer: 6.0.3
-      valtio: 1.10.5(react@18.2.0)
-    transitivePeerDependencies:
-      - react
-    dev: false
-
   /@web3modal/core@2.4.7(react@18.2.0):
     resolution: {integrity: sha512-FZMmI4JnEZovRDdN+PZBMe2ot8ly+UftVkZ6lmtfgiRZ2Gy3k/4IYE8/KwOSmN63Lf2Oj2077buLR17i0xoKZA==}
     dependencies:
@@ -7169,8 +7151,17 @@ packages:
       - react
     dev: false
 
-  /@web3modal/ethereum@2.4.5(@wagmi/core@1.2.0)(viem@1.0.5):
-    resolution: {integrity: sha512-IXz2xWwQvdnwyd0pJjhdYXdmYmrzvPnRH1MtapcX9+a0SyqRkCOovjc9vu2YsLLX/+eFRL9810KJzbjV8FCLJw==}
+  /@web3modal/core@2.6.1(react@18.2.0):
+    resolution: {integrity: sha512-zvWRRtnN3DdOJ30zeTQl5HRdJ3z0wFrX/8StmPhCTUkhah4QcLg2vXOa5MBV2ZzF9MdjmVLLB5+LGCGVNeUDEA==}
+    dependencies:
+      buffer: 6.0.3
+      valtio: 1.10.6(react@18.2.0)
+    transitivePeerDependencies:
+      - react
+    dev: false
+
+  /@web3modal/ethereum@2.6.1(@wagmi/core@1.2.0)(viem@1.0.5):
+    resolution: {integrity: sha512-sGvGE5vArpXu8s5/bQKGa18XbRlpmtw68gMBVvzWbwDbjtPu3Ede1Do2fW0QwbfigVtE3cC3csPDspe/bJtFXA==}
     peerDependencies:
       '@wagmi/core': '>=1 || 1.2.0'
       viem: '>=1 || 1.0.5'
@@ -7179,22 +7170,22 @@ packages:
       viem: 1.0.5(typescript@5.0.4)
     dev: false
 
-  /@web3modal/react@2.4.5(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-FHvpPFkZxag3p58GZygyxHjSnyw5YQTdQNIGYNb38WozltIcI/2QT3aMNcAjBt580/ZBLs3HzJYiFyJaQrG7lw==}
+  /@web3modal/react@2.6.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-FeAlVxCeidzXlAF1XZp54xgRVU2+Ts/6A1P9Izxu6KCdFpXitTM1EPamw4Z+m0Qq5oVJZS2NP0W6wyjWqgP43Q==}
     peerDependencies:
       react: '>=17 || 18.2.0'
       react-dom: '>=17 || 18.2.0'
     dependencies:
-      '@web3modal/core': 2.4.5(react@18.2.0)
-      '@web3modal/ui': 2.4.5(react@18.2.0)
+      '@web3modal/core': 2.6.1(react@18.2.0)
+      '@web3modal/ui': 2.6.1(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@web3modal/ui@2.4.5(react@18.2.0):
-    resolution: {integrity: sha512-LvGjGL7vyQrUrrQOtFAK0SyxJs1yozOnJjP7s7gWXJa7wFWCE+kVjrhE8VrKbwx7nHe78IFA1rs7V1ncCirqVQ==}
+  /@web3modal/ui@2.4.7(react@18.2.0):
+    resolution: {integrity: sha512-5tU9u5CVYueZ9y+1x1A1Q0bFUfk3gOIKy3MT6Vx+aI0RDxVu7OYQDw6wbNPlgz/wd9JPYXG6uSv8WTBpdyit8Q==}
     dependencies:
-      '@web3modal/core': 2.4.5(react@18.2.0)
+      '@web3modal/core': 2.4.7(react@18.2.0)
       lit: 2.7.5
       motion: 10.16.2
       qrcode: 1.5.3
@@ -7202,10 +7193,10 @@ packages:
       - react
     dev: false
 
-  /@web3modal/ui@2.4.7(react@18.2.0):
-    resolution: {integrity: sha512-5tU9u5CVYueZ9y+1x1A1Q0bFUfk3gOIKy3MT6Vx+aI0RDxVu7OYQDw6wbNPlgz/wd9JPYXG6uSv8WTBpdyit8Q==}
+  /@web3modal/ui@2.6.1(react@18.2.0):
+    resolution: {integrity: sha512-D8MHDg6ydIc0HmIOe6EoQwqKi8c8mMI/brOiVh8s+klehKhDty26SBDdOhbFceBmtDFNuxmaEgf0BMAZ4cYivw==}
     dependencies:
-      '@web3modal/core': 2.4.7(react@18.2.0)
+      '@web3modal/core': 2.6.1(react@18.2.0)
       lit: 2.7.5
       motion: 10.16.2
       qrcode: 1.5.3
@@ -9388,10 +9379,6 @@ packages:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
     engines: {node: '>=6'}
     dev: true
-
-  /clear@0.1.0:
-    resolution: {integrity: sha512-qMjRnoL+JDPJHeLePZJuao6+8orzHMGP04A8CdwCNsKhRbOnKRjefxONR7bwILT3MHecxKBjHkKL/tkZ8r4Uzw==}
-    dev: false
 
   /cli-boxes@3.0.0:
     resolution: {integrity: sha512-/lzGpEWL/8PfI0BmBOPRwp0c/wFNX1RdUML3jK/RcSBA9T8mZDdQpqYBKtCFTOfQbwPqWEOpjqW+Fnayc0969g==}
@@ -20091,6 +20078,20 @@ packages:
 
   /valtio@1.10.5(react@18.2.0):
     resolution: {integrity: sha512-jTp0k63VXf4r5hPoaC6a6LCG4POkVSh629WLi1+d5PlajLsbynTMd7qAgEiOSPxzoX5iNvbN7iZ/k/g29wrNiQ==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      react: '>=16.8 || 18.2.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      proxy-compare: 2.5.1
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  /valtio@1.10.6(react@18.2.0):
+    resolution: {integrity: sha512-SxN1bHUmdhW6V8qsQTpCgJEwp7uHbntuH0S9cdLQtiohuevwBksbpXjwj5uDMA7bLwg1WKyq9sEpZrx3TIMrkA==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       react: '>=16.8 || 18.2.0'
