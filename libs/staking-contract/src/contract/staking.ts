@@ -55,13 +55,13 @@ export class Staking {
     /*                                    Logs                                    */
     /* -------------------------------------------------------------------------- */
     /**
-     * Use for fetch "stake" events from giving wallet or validator address then update result to `stakeEvents`
-     * - When giving wallet address will return events of specific wallet address in all validators.
-     * - When giving validator address will return events of specific validator in all wallet.
-     * - When giving both wallet and validator address will return events from specific wallet and validator address
-     * @param {address} wallet - The wallet address
+     * Get `Delegated` logs from giving staker address and validator add with earliest to latest block
+     * - When giving staker address will return logs of specific staker address in all validators.
+     * - When giving validator address will return logs of specific validator in all staker.
+     * - When giving both staker and validator address will return logs from specific staker and validator address
+     * @param {address} staker - The staker address
      * @param {address} validator - The validator address
-     * @returns Stake events of giving wallet or validator
+     * @returns `Delegated` logs
      */
     private async getStakeLogs(staker?: Address, validator?: Address) {
         const client = getPublicClient()
@@ -82,13 +82,13 @@ export class Staking {
     }
 
     /**
-     * Use for fetch "un-stake" events from giving wallet or validator address then update result to `unStakeEvents`
-     * - When giving wallet address will return events of specific wallet address in all validators.
-     * - When giving validator address will return events of specific validator in all wallet.
-     * - When giving both wallet and validator address will return events from specific wallet and validator address
-     * @param {address} wallet - The wallet address
+     * Get `Undelegated` logs from giving staker address and validator add with earliest to latest block
+     * - When giving staker address will return logs of specific staker address in all validators.
+     * - When giving validator address will return logs of specific validator in all staker.
+     * - When giving both staker and validator address will return logs from specific staker and validator address
+     * @param {address} staker - The staker address
      * @param {address} validator - The validator address
-     * @returns Un-stake events of giving wallet or validator
+     * @returns `Undelegated` logs
      */
     private async getUnStakeLogs(staker?: Address, validator?: Address) {
         const client = getPublicClient()
@@ -107,13 +107,13 @@ export class Staking {
     }
 
     /**
-     * Use for fetch "claim" events from giving wallet or validator address then update result to `claimEvents`
-     * - When giving wallet address will return events of specific wallet address in all validators.
-     * - When giving validator address will return events of specific validator in all wallet.
-     * - When giving both wallet and validator address will return events from specific wallet and validator address
-     * @param {address} wallet - The wallet address
+     * Get `Claimed` logs from giving staker address and validator add with earliest to latest block
+     * - When giving staker address will return events of specific staker address in all validators.
+     * - When giving validator address will return events of specific validator in all staker.
+     * - When giving both staker and validator address will return events from specific staker and validator address
+     * @param {address} staker - The staker address
      * @param {address} validator - The validator address
-     * @returns Claim events of giving wallet or validator
+     * @returns `Claimed` logs
      */
     private async getClaimLogs(staker?: Address, validator?: Address) {
         const client = getPublicClient()
@@ -132,81 +132,11 @@ export class Staking {
     }
 
     /**
-     * Get `added` events of validators
-     * @returns  `added` events of validators
-     */
-    private async getAddedValidatorLogs() {
-        const client = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
-        const contract = getContract(stakingObject)
-        const abiItem = getAbiItem({ abi: contract.abi, name: 'ValidatorAdded' })
-        const logs = await client.getLogs({
-            event: abiItem,
-            args: {},
-            fromBlock: 'earliest',
-            toBlock: 'latest',
-        })
-
-        return logs
-    }
-
-    /**
-     * Get `removed` events of validators
-     * @returns  `removed` events of validators
-     */
-    private async getRemovedValidatorLogs() {
-        const client = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
-        const contract = getContract(stakingObject)
-        const abiItem = getAbiItem({ abi: contract.abi, name: 'ValidatorRemoved' })
-        const logs = await client.getLogs({
-            event: abiItem,
-            args: {},
-            fromBlock: 'earliest',
-            toBlock: 'latest',
-        })
-        return logs
-    }
-
-    /**
-     * Get `jailed` events of validators
-     * @returns  `jailed` events of validators
-     */
-    private async getJailedValidatorLogs() {
-        const client = getPublicClient()
-        const contract = getContract(stakingObject)
-        const abiItem = getAbiItem({ abi: contract.abi, name: 'ValidatorJailed' })
-        const logs = await client.getLogs({
-            event: abiItem,
-            args: {},
-            fromBlock: 'earliest',
-            toBlock: 'latest',
-        })
-        return logs
-    }
-
-    /**
-     * Get `added` `removed` `jailed` events of validators then update result to `validatorEvents`
-     * @returns  `added` `removed` `jailed` events of validators
-     */
-    public async getValidatorLogs() {
-        const [addedValidators, removedValidators] = await Promise.all([
-            this.getAddedValidatorLogs(),
-            this.getRemovedValidatorLogs(),
-        ])
-
-        const availableValidators = addedValidators.filter(
-            i => !removedValidators.find(r => r.args.validator === r.args.validator),
-        )
-
-        this.validatorLogs = availableValidators
-
-        return availableValidators
-    }
-
-    /**
-     * Use for fetch `stake` `un-stake` `claim` events from user wallet address then update result to `myStakingHistoryEvents`
-     * - If `myStakingHistoryEvents` is already exist this function will skip fetch procress
-     * - If `myStakingHistoryEvents` is empty this function will fetch `fetchStakeEvents()` `fetchUnStakeEvents()` `fetchClaimEvents()`
-     * @returns Events from `stake` `unstake` `claim` included sort event with blocknumber
+     * Get user staking history logs, included stake, unstake, claim logs
+     * - this function clear `myStakingHistoryLogs` before fetch logs
+     * - logs will be update to `myStakingHistoryLogs` after fetch finished
+     * - logs will be sort by block number
+     * @returns staking history logs
      */
     public async getMyStakingHistoryLogs() {
         const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
@@ -236,13 +166,85 @@ export class Staking {
         return sortedLogs
     }
 
+    /**
+     * Get `ValidatorAdded` logs from earliest to latest block
+     * @returns `ValidatorAdded` logs
+     */
+    private async getAddedValidatorLogs() {
+        const client = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
+        const contract = getContract(stakingObject)
+        const abiItem = getAbiItem({ abi: contract.abi, name: 'ValidatorAdded' })
+        const logs = await client.getLogs({
+            event: abiItem,
+            args: {},
+            fromBlock: 'earliest',
+            toBlock: 'latest',
+        })
+
+        return logs
+    }
+
+    /**
+     * Get `ValidatorRemoved` logs from earliest to latest block
+     * @returns `ValidatorRemoved` logs
+     */
+    private async getRemovedValidatorLogs() {
+        const client = getPublicClient({ chainId: EXPECT_CHAIN.chainId })
+        const contract = getContract(stakingObject)
+        const abiItem = getAbiItem({ abi: contract.abi, name: 'ValidatorRemoved' })
+        const logs = await client.getLogs({
+            event: abiItem,
+            args: {},
+            fromBlock: 'earliest',
+            toBlock: 'latest',
+        })
+        return logs
+    }
+
+    /**
+     * Get `ValidatorJailed` logs from earliest to latest block
+     * @returns `ValidatorJailed` logs
+     */
+    private async getJailedValidatorLogs() {
+        const client = getPublicClient()
+        const contract = getContract(stakingObject)
+        const abiItem = getAbiItem({ abi: contract.abi, name: 'ValidatorJailed' })
+        const logs = await client.getLogs({
+            event: abiItem,
+            args: {},
+            fromBlock: 'earliest',
+            toBlock: 'latest',
+        })
+        return logs
+    }
+
+    /**
+     * Get available validators logs
+     * @returns validators logs
+     */
+    public async getValidatorLogs() {
+        const [addedValidators, removedValidators] = await Promise.all([
+            this.getAddedValidatorLogs(),
+            this.getRemovedValidatorLogs(),
+        ])
+
+        const availableValidators = addedValidators.filter(
+            i => !removedValidators.find(r => r.args.validator === r.args.validator),
+        )
+
+        this.validatorLogs = availableValidators
+
+        return availableValidators
+    }
+
     /* -------------------------------------------------------------------------- */
     /*                                   Fetcher                                  */
     /* -------------------------------------------------------------------------- */
 
     /**
-     * Use for fetch validator information from giving validator address and epoch
-     * @returns Validator information
+     * Fetch validator information from giving validator log and epoch
+     * - this function will fetch `getMyStakingRewards` and `getMyStakingAmount` during fetching
+     * @returns Mixed of validator logs and information
      */
     public async fetchValidator(validatorLog: (typeof this.validatorLogs)[0], epoch: number) {
         if (!validatorLog.args.validator)
@@ -288,9 +290,11 @@ export class Staking {
     }
 
     /**
-     * Use for fetch all validators included validator information from system then update result to `validators`
-     * - This function include state `isFetchingValidators`
-     * @returns All validator information
+     * Fetch all validators in network
+     * - this function will update `isFetchingValidators` and `isReady`
+     * - this function will update `validators` after fetch finished
+     * - validator will be sort by block number
+     * @returns List of mixed validator logs and validator information
      */
     public async fetchValidators() {
         runInAction(() => {
@@ -318,12 +322,22 @@ export class Staking {
         return sortValidators
     }
 
+    /**
+     * Update validators
+     * - this function will clear `myValidators`, `myTotalReward`, `myTotalStake` before start
+     * - this function will fetch `fetchChainConfig` if `epoch` is not valid
+     * - this function will update `isFetchingValidators` and `isReady`
+     * - this function will update `validators` after fetch finished
+     * - validator will be sort by block number
+     * @returns List of mixed validator logs and validator information
+     */
     public async updateValidators() {
         if (!this.validatorLogs?.length) {
             throw new Error(
                 '[updateValidators] No validatorEvents found. Ensure you have set fetch validator with `fetchValidators()`',
             )
         }
+
         runInAction(() => {
             this.isFetchingValidators = true
             this.myValidators = []
@@ -359,13 +373,12 @@ export class Staking {
     /*                                   Actions                                  */
     /* -------------------------------------------------------------------------- */
     /**
-     * Use for `claim` reward from giving validator address
-     * - user must be signed in
-     * - update validators from call `updateValidators()` after transaction finished
-     * - update myValidators from call `fetchMyStakingValidators()`  after transaction finished
-     * - update myTotalReward from call `calcMyTotalReward()` after transaction finished
+     * Claim reward from giving validator address
+     * - this function have time limit and will be throw error if contract not throw anything and time over 15s
+     * - if contract throw any resolve or reject limit time will be clear
+     * - this function will be call `updateValidators()` and `getMyStakingHistoryLogs()` when finished
      * @param validatorAddress validator address
-     * @returns contract receipt
+     * @returns transaction receipt
      */
     public async claimValidatorReward(validatorAddress: Address) {
         let timer: NodeJS.Timeout | undefined = undefined
@@ -425,14 +438,13 @@ export class Staking {
     }
 
     /**
-     * Use for `stake` amount of token to giving validator
-     * - user must be signed in
-     * - update validators from call `updateValidators()` after transaction finished
-     * - update myValidators from call `fetchMyStakingValidators()`  after transaction finished
-     * - update myTotalReward from call `calcMyTotalReward()` after transaction finished
+     * Stake amount of token to giving validator address
+     * - this function have time limit and will be throw error if contract not throw anything and time over 15s
+     * - if contract throw any resolve or reject limit time will be clear
+     * - this function will be call `updateValidators()` and `getMyStakingHistoryLogs()` when finished
      * @param validatorAddress validator address
      * @param amount amount of token to stake
-     * @returns contract receipt
+     * @returns transaction receipt
      */
     public async stakeToValidator(validatorAddress: Address, amount: number) {
         let timer: NodeJS.Timeout | undefined = undefined
@@ -492,14 +504,13 @@ export class Staking {
     }
 
     /**
-     * Use for `un-stake` amount of token to giving validator
-     * - user must be signed in
-     * - update validators from call `updateValidators()` after transaction finished
-     * - update myValidators from call `fetchMyStakingValidators()`  after transaction finished
-     * - update myTotalReward from call `calcMyTotalReward()` after transaction finished
+     * Un-Stake amount of token from giving validator address
+     * - this function have time limit and will be throw error if contract not throw anything and time over 15s
+     * - if contract throw any resolve or reject limit time will be clear
+     * - this function will be call `updateValidators()` and `getMyStakingHistoryLogs()` when finished
      * @param validatorAddress validator address
      * @param amount amount of token to un-stake
-     * @returns contract receipt
+     * @returns transaction receipt
      */
     public async unstakeFromValidator(validatorAddress: Address, amount: number) {
         let timer: NodeJS.Timeout | undefined = undefined
@@ -561,9 +572,9 @@ export class Staking {
     /*                                 Calculator                                 */
     /* -------------------------------------------------------------------------- */
     /**
-     * Calculate validator block reward from giving validator length
+     * Calculate validator block reward from giving validator amount
      * @remark this function base on old sdk library
-     * @param validatorAddress length of validator
+     * @param validatorAmount amount of validator
      * @returns number of blockreward
      */
     public calcValidatorBlockReward(validatorAmount: number) {

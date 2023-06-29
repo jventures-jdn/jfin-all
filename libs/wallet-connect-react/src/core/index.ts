@@ -22,7 +22,6 @@ class WalletConnectModule {
         autoConnect: true,
         connectors: w3mConnectors({
             projectId: this.projectId,
-            version: 2,
             chains: this.chains,
         }),
         publicClient: this.configureChains.publicClient,
