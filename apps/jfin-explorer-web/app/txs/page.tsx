@@ -19,7 +19,7 @@ export default function ValidatedTransactionsPage() {
     } = useBlockscout().blocks().list()
 
     const testData = useBlockscout().blocks().getTxs(9995467)
-    console.log('txs_ testData', testData)
+    // console.log('txs_ testData', testData)
 
     return (
         <div id="blocks-page">
