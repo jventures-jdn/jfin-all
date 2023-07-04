@@ -19,7 +19,7 @@ const Navbar = observer(() => {
   const { switchNetwork } = useSwitchNetwork({
     chainId: EXPECT_CHAIN.chainId,
     throwForSwitchChainNotSupported: true,
-    onError: (err) => message.error(`${err?.cause || err.message}`),
+    onError: (err) => message.error(`${err.message}`),
   })
   const balance = useBalance({ address: address, watch: true })
   const [isBurgerActive, setIsBurgerActive] = useState(false)
