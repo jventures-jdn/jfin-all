@@ -36,8 +36,8 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
                         links: {
                             native: '',
                             universal: isProd
-                                ? 'https://jfinwallet.page.link'
-                                : 'https://joinwalletdev.page.link',
+                                ? 'https://jfinwallet.page.link/'
+                                : 'https://joinwalletdev.page.link/',
                         },
                     },
                 ]}
