@@ -14,6 +14,8 @@ export class GlobalApis {
     }
 
     static async blocksTxs(blockNumber?: number) {
-        return RESTFetcher.apiv2Get(`/blocks/${blockNumber}/transactions`)
+        return RESTFetcher.apiv2Get(
+            `/transactions${String(blockNumber) ? `?block_number=${String(blockNumber)}` : ''}`,
+        )
     }
 }

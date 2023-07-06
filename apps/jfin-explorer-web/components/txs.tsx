@@ -1,14 +1,11 @@
 import { useBlockscout } from '@libs/blockscout-client-react'
 import Link from 'next/link'
 
-//Txs
-export function TxsComponentDemo(props: { blockNumber: number; scrape?: boolean }) {
+export function BlockComponentDemo(props: { blockNumber: number; scrape?: boolean }) {
     const { blockNumber, scrape } = props
     // Get block data, this will auto fetch if data not exist
-    const block = useBlockscout().blocks().get(blockNumber, { scrape })
+    const block = useBlockscout().txs().get(blockNumber, { scrape })
     if (block.isLoading) return <span>Loading...</span>
-    console.log('txs__ TxsComponentDemo', block)
-
     return (
         <div>
             <Link href={`/block/${blockNumber}`} prefetch={false}>
@@ -18,11 +15,24 @@ export function TxsComponentDemo(props: { blockNumber: number; scrape?: boolean 
     )
 }
 
-export function TxsPageListTxsComponent(props: { count: number }) {
-    const { currentPageBlockNumber } = useBlockscout().blocks().meta()
+export function BlocksListComponentDemo(props: { count: number }) {
+    // Look for current block number
+    const { currentBlockNumber } = useBlockscout().txs().meta({ initialFetch: true })
+    return (
+        <div>
+            {currentBlockNumber &&
+                Array.from(Array(props.count)).map((val, index) => (
+                    <div key={index}>
+                        <BlockComponentDemo blockNumber={currentBlockNumber - index} scrape />
+                    </div>
+                ))}
+        </div>
+    )
+}
 
-    console.log('txs__ currentPageBlockNumber', currentPageBlockNumber)
-
+export function BlocksPageListComponent(props: { count: number }) {
+    const { currentPageBlockNumber } = useBlockscout().txs().meta()
+    console.log('currentPageBlockNumber', currentPageBlockNumber)
     return (
         <div>
             {(currentPageBlockNumber || currentPageBlockNumber === 0) &&
@@ -32,7 +42,7 @@ export function TxsPageListTxsComponent(props: { count: number }) {
                     if (calculatedBlockNumber >= 0) {
                         return (
                             <div key={index}>
-                                <TxsComponentDemo blockNumber={calculatedBlockNumber} scrape />
+                                <BlockComponentDemo blockNumber={calculatedBlockNumber} scrape />
                             </div>
                         )
                     }

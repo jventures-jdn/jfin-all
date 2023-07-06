@@ -1,5 +1,6 @@
 import { useBlockscoutBlocks } from '../store/blocks'
 import { useBlockscoutTransactions } from '../store/transactions'
+import { useBlockscoutTxs } from '../store/txs'
 import { useBlockscoutWebSocket } from '../websocket/use-blockscout-websocket'
 
 export function useBlockscout() {
@@ -8,5 +9,6 @@ export function useBlockscout() {
             useBlockscoutWebSocket(options),
         blocks: () => useBlockscoutBlocks(),
         transactions: () => useBlockscoutTransactions(),
+        txs: () => useBlockscoutTxs(),
     }
 }

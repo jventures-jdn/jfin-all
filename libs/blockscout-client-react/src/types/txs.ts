@@ -1,4 +1,4 @@
-export type Block = {
+export type Txs = {
     block_number: number
     nonce: string
     hash: string

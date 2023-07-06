@@ -1,7 +1,7 @@
 'use client'
 
 import { useBlockscout } from '@libs/blockscout-client-react'
-import { TxsPageListTxsComponent } from '../../components/txs'
+import { BlocksPageListComponent } from '../../components/txs'
 import { Button } from '@chakra-ui/react'
 
 export default function ValidatedTransactionsPage() {
@@ -16,10 +16,7 @@ export default function ValidatedTransactionsPage() {
         isValidBlock,
         nextPage,
         previousPage,
-    } = useBlockscout().blocks().list()
-
-    const testData = useBlockscout().blocks().getTxs(9995467)
-    // console.log('txs_ testData', testData)
+    } = useBlockscout().txs().list()
 
     return (
         <div id="blocks-page">
@@ -54,7 +51,7 @@ export default function ValidatedTransactionsPage() {
             {!list?.isLoading && isValidBlock && (
                 <div>
                     Blocks :
-                    <TxsPageListTxsComponent count={itemCount} />
+                    <BlocksPageListComponent count={itemCount} />
                 </div>
             )}
             <br />

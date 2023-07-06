@@ -1,7 +1,7 @@
 import { mutate } from 'swr'
 import useSWR from 'swr/immutable'
 import { RESTFetcher } from '../fetcher/rest-fetcher'
-import { Block } from '../types'
+import { Txs, Block } from '../types'
 import { GlobalApis } from '../apis/global-apis'
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
@@ -9,11 +9,11 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 const key = (blockNumber: number) => `blocks/${blockNumber}`
 
 // Root hook
-export function useBlockscoutBlocks() {
+export function useBlockscoutTxs() {
     return {
         get: _blockStoreGet,
         meta: (options?: { initialFetch?: boolean }) => _blockStoreMeta(options),
-        list: _blockStoreList,
+        list: _txsStoreList,
     }
 }
 
@@ -93,6 +93,7 @@ export function blockStoreInitialClear() {
 
 // Global blocks state
 function _blockStoreMeta(options?: { initialFetch?: boolean }) {
+    console.log('txs__ initialFetch', options?.initialFetch)
     // Auto fetch initial blocks
     options?.initialFetch ? _blockStoreInitial() : null
     return useSWR('blocks-meta', null).data || {}
@@ -131,8 +132,8 @@ function _formatFullData(item: any, from: Block['data_source']) {
     } as Block
 }
 
-// List blocks
-function _blockStoreList() {
+// List txs
+function _txsStoreList() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const pathname = usePathname()
@@ -195,30 +196,36 @@ function _blockStoreList() {
     useEffect(() => {
         if (existing.data && isValidBlock) {
             // set the current page block number
-            _updateBlockMeta({ currentPageBlockNumber: existing.data.items[0].height })
+            console.log('txs__ existing', existing)
+            _updateBlockMeta({ currentPageBlockNumber: existing.data.items[0].block })
         }
     }, [existing.data])
 
     // fetch block list when mounted
     const list = useSWR(
         blockListKey,
-        () => (isValidBlock ? GlobalApis.blocks(blockNumber) : null),
+        // () => (isValidBlock ? GlobalApis.blocks(blockNumber) : null),
+        () => (isValidBlock ? GlobalApis.blocksTxs(blockNumber) : null),
         {
             onSuccess: response => {
                 const items = response
+                // console.log('txs__ response', delete items.next_page_params.index)
+
                 items.items.forEach((item: any, index: number) => {
-                    const parsed = _formatFullData(item, 'fetch')
+                    // convert txs data to our format
+                    const parsed = _formatFullData1(item, 'txs')
 
                     // write individual block data to cache
-                    mutate(key(item.height), parsed, { revalidate: true })
+                    mutate(key(item.block), parsed, { revalidate: true })
                 })
-                _updateBlockMeta({ currentPageBlockNumber: items.items[0].height })
-                // avoid keeping cache on the latest block
+
+                _updateBlockMeta({ currentPageBlockNumber: items.items[0].block })
+                // // avoid keeping cache on the latest block
                 mutate('blocks-list-latest', undefined)
             },
         },
     )
-
+    console.log('txs__ list', list)
     // update page index
     const nextPage = () => setPageIndex(pageIndex - 1)
     const previousPage = () => setPageIndex(pageIndex + 1)
@@ -235,4 +242,18 @@ function _blockStoreList() {
         itemCount,
         pageIndex,
     }
+}
+function _formatFullData1(item: any, from: Block['data_source']) {
+    console.log('item', item)
+    return {
+        data_source: from,
+        block_number: item.block,
+        // hash: item.hash,
+        // miner: item.miner.hash,
+        // difficulty: item.difficulty,
+        gas_used: item.gas_used,
+        gas_limit: item.gas_limit,
+        // TODO: more fields
+        is_full_data: true,
+    } as Txs
 }
