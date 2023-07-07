@@ -1,7 +1,7 @@
 import { blockStoreInitialClear, blockWebSocketRecord } from './blocks'
 import { transactionStoreInitialClear, transactionWebSocketRecord } from './transactions'
 import {
-    HelpeWebSocketBlack,
+    HelperWebSocketBlock,
     Helper,
     HelperWebSocketTransaction,
     HelperWebSocketCount,
@@ -17,17 +17,17 @@ export function blockScoutWebSocketRecord([, , eventNewType, newDataWebSocket, d
     Helper['HelpedWebSocket'],
 ]) {
     if (eventNewType === 'blocks:new_block' && newDataWebSocket === 'new_block') {
-        blockWebSocketRecord(dataObject as HelpeWebSocketBlack)
-        statsWebSocketRecord(dataObject as HelpeWebSocketBlack)
+        blockWebSocketRecord(dataObject as HelperWebSocketBlock)
+        statsWebSocketRecord(dataObject)
     } else if (
         eventNewType === 'transactions:new_transaction' &&
         newDataWebSocket === 'transaction'
     ) {
         transactionWebSocketRecord(dataObject as HelperWebSocketTransaction)
 
-        statsWebSocketRecord(dataObject as HelperWebSocketTransaction)
+        statsWebSocketRecord(dataObject)
     } else if (eventNewType === 'addresses:new_address' && newDataWebSocket === 'count') {
-        statsWebSocketRecord(dataObject as HelperWebSocketCount)
+        statsWebSocketRecord(dataObject)
     }
 }
 // Handle when websocket just closed

@@ -1,7 +1,13 @@
 import { mutate } from 'swr'
 import useSWR from 'swr/immutable'
 import { GlobalApis } from '../apis/global-apis'
-import { HelperStats, Stats } from '../types'
+import {
+    Helper,
+    HelperWebSocketBlock,
+    HelperWebSocketCount,
+    HelperWebSocketTransaction,
+    Stats,
+} from '../types'
 import { useEffect } from 'react'
 
 const key = () => `stats`
@@ -39,14 +45,15 @@ export function statsStoreInitialClear() {
     mutate('initial-stats', undefined)
 }
 
-export async function statsWebSocketRecord(data: HelperStats[]) {
-    if (data[4].block_number) {
+export async function statsWebSocketRecord(data: Helper['HelpedWebSocket']) {
+    const result = Object(data)
+    if (result.block_number) {
         mutate(
             key(),
             {
                 data_source: 'ws',
-                average_block_time: Number(data[4]?.average_block_time.split(' ')[0]) * 1000, //from ws type string
-                total_blocks: data[4]?.block_number,
+                average_block_time: Number(result.average_block_time.split(' ')[0]) * 1000, //from ws type string
+                total_blocks: result.block_number,
             },
             {
                 // merge with existing data if exist
@@ -54,18 +61,18 @@ export async function statsWebSocketRecord(data: HelperStats[]) {
                 revalidate: false,
             },
         )
-    } else if (data[4].count) {
+    } else if (result.count) {
         mutate(
             key(),
             {
-                total_addresses: Number(String(data[4]?.count).replace(/,/g, '')),
+                total_addresses: Number(String(result.count).replace(/,/g, '')),
             },
             {
                 populateCache: (data, current) => ({ ...current, ...data }),
                 revalidate: false,
             },
         )
-    } else if (data[4].transaction_hash) {
+    } else if (result.transaction_hash) {
         const { total_transactions } = await mutate('stats')
         mutate(
             key(),
