@@ -20,7 +20,7 @@ const Assets = observer(() => {
   /*                                   States                                   */
   /* -------------------------------------------------------------------------- */
   const { chain } = useNetwork()
-  const { address } = useAccount()
+  const { isConnected } = useAccount()
   const [loading, setLoading] = useState(false)
   const chainStaking = useChainStaking()
   const isLoading =
@@ -37,9 +37,9 @@ const Assets = observer(() => {
   /* --------------------------------- Watches -------------------------------- */
 
   useEffect(() => {
-    if (!chainStaking.isReady || !address) return
+    if (!chainStaking.isReady) return
     initial()
-  }, [address, chain?.id, chainStaking.isReady])
+  }, [isConnected, chain?.id, chainStaking.isReady])
 
   const myValidators = useMemo(() => {
     if (!chainStaking.isReady) return []

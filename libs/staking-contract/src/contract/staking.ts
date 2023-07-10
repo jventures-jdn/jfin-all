@@ -139,15 +139,12 @@ export class Staking {
      * @returns staking history logs
      */
     public async getMyStakingHistoryLogs() {
-        const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
-        if (!walletClient?.account)
-            throw new Error(
-                '[getMyStakingHistoryLogs] No wallet client found, Ensure you have conneted your wallet',
-            )
-
         runInAction(() => {
             this.myStakingHistoryLogs = [] // clear events
         })
+
+        const walletClient = await getWalletClient({ chainId: EXPECT_CHAIN.chainId })
+        if (!walletClient) return
 
         const [stake, unstake, claim] = await Promise.all([
             this.getStakeLogs(walletClient.account.address),
