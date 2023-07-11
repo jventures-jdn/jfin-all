@@ -21,8 +21,9 @@ export function useBlockscoutTxs() {
 const _fullBlockFetcher = (blockNumber: number) => {
     return RESTFetcher.apiv2Get(
         `/blocks/${blockNumber}`,
+        // `/transactions${String(blockNumber)}`,
         // convert blcok data to our format
-        item => _formatFullData(item, 'fetch'),
+        item => _formatFullData1(item, 'ggg'),
     )
 }
 
@@ -34,6 +35,7 @@ function _blockStoreGet(
     },
 ) {
     const existing = useSWR(key(blockNumber), () => _fullBlockFetcher(blockNumber))
+    console.log('existing', existing)
 
     // force fetch if full data is required and not yet presented
     if (
@@ -243,11 +245,18 @@ function _txsStoreList() {
         pageIndex,
     }
 }
-function _formatFullData1(item: any, from: Block['data_source']) {
+function _formatFullData1(item: any, from: Txs['data_source']) {
     console.log('item', item)
     return {
         data_source: from,
         block_number: item.block,
+        raw_input: item.raw_input,
+        to_hash: item.to.hash,
+        from_hash: item.from.hash,
+        value: item.value,
+        fee: item.fee.value,
+        timestamp: item.timestamp,
+        transaction_success: item.result,
         // hash: item.hash,
         // miner: item.miner.hash,
         // difficulty: item.difficulty,

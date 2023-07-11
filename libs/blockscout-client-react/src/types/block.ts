@@ -10,6 +10,6 @@ export type Block = {
     // TODO: more fields
 
     // internal use
-    data_source: 'init' | 'ws' | 'fetch' | 'txs'
+    data_source: 'init' | 'ws' | 'fetch'
     is_full_data: boolean
 }

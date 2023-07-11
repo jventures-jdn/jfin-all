@@ -7,9 +7,17 @@ export type Txs = {
     difficulty: string
     gas_used: string
     gas_limit: string
+    raw_input: string
+    to_hash: string
+    from_hash: string
+    value: string
+    fee: string
+    timestamp: string
+    transaction_success: string
     // TODO: more fields
 
     // internal use
-    data_source: 'init' | 'ws' | 'fetch' | 'txs'
+    //txs txs1 :test
+    data_source: 'ggg' | 'init' | 'ws' | 'fetch' | 'txs'
     is_full_data: boolean
 }
