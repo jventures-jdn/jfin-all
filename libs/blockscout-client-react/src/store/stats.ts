@@ -1,13 +1,7 @@
 import { mutate } from 'swr'
 import useSWR from 'swr/immutable'
 import { GlobalApis } from '../apis/global-apis'
-import {
-    Helper,
-    HelperWebSocketBlock,
-    HelperWebSocketCount,
-    HelperWebSocketTransaction,
-    Stats,
-} from '../types'
+import { HelperWebSocket, Stats } from '../types'
 import { useEffect } from 'react'
 
 const key = () => `stats`
@@ -45,7 +39,7 @@ export function statsStoreInitialClear() {
     mutate('initial-stats', undefined)
 }
 
-export async function statsWebSocketRecord(data: Helper['HelpedWebSocket']) {
+export async function statsWebSocketRecord(data: HelperWebSocket['HelpedWebSocket']) {
     const result = Object(data)
     if (result.block_number) {
         mutate(

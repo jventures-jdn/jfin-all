@@ -1,11 +1,11 @@
-export type Helper = {
+export type HelperWebSocket = {
     eventNewType: 'blocks:new_block' | 'transactions:new_transaction' | 'addresses:new_address'
     eventType: 'new_block' | 'transaction' | 'count'
     HelpedWebSocket: HelperWebSocketBlock | HelperWebSocketTransaction | HelperWebSocketCount
 }
 
 export interface HelperWebSocketBlock {
-    //ws black
+    //ws block
     average_block_time: string
     block_html: string
     block_miner_hash: string

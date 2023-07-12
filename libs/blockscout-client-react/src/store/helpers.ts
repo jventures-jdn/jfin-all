@@ -1,20 +1,15 @@
 import { blockStoreInitialClear, blockWebSocketRecord } from './blocks'
 import { transactionStoreInitialClear, transactionWebSocketRecord } from './transactions'
-import {
-    HelperWebSocketBlock,
-    Helper,
-    HelperWebSocketTransaction,
-    HelperWebSocketCount,
-} from '../types'
+import { HelperWebSocketBlock, HelperWebSocket, HelperWebSocketTransaction } from '../types'
 import { statsStoreInitialClear, statsWebSocketRecord } from './stats'
 
 // Handle new data from web socket
 export function blockScoutWebSocketRecord([, , eventNewType, newDataWebSocket, dataObject]: [
     string | null,
     string | null,
-    Helper['eventNewType'],
-    Helper['eventType'],
-    Helper['HelpedWebSocket'],
+    HelperWebSocket['eventNewType'],
+    HelperWebSocket['eventType'],
+    HelperWebSocket['HelpedWebSocket'],
 ]) {
     if (eventNewType === 'blocks:new_block' && newDataWebSocket === 'new_block') {
         blockWebSocketRecord(dataObject as HelperWebSocketBlock)
