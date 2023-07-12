@@ -9,7 +9,7 @@ export function blockScoutWebSocketRecord([, , eventNewType, newDataWebSocket, d
     string | null,
     WebSocket['eventNewType'],
     WebSocket['eventType'],
-    WebSocket['helpedWebSocket'],
+    WebSocket['webSocketAllObjectType'],
 ]) {
     if (eventNewType === 'blocks:new_block' && newDataWebSocket === 'new_block') {
         blockWebSocketRecord(dataObject as WebSocketBlock)

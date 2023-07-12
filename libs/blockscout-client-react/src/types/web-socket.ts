@@ -1,7 +1,7 @@
 export type WebSocket = {
     eventNewType: 'blocks:new_block' | 'transactions:new_transaction' | 'addresses:new_address'
     eventType: 'new_block' | 'transaction' | 'count'
-    helpedWebSocket: WebSocketBlock | WebSocketTransaction | WebSocketCount
+    webSocketAllObjectType: WebSocketBlock | WebSocketTransaction | WebSocketCount
 }
 
 export interface WebSocketBlock {
