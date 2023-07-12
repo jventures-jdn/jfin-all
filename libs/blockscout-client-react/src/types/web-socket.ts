@@ -1,10 +1,10 @@
-export type HelperWebSocket = {
+export type WebSocket = {
     eventNewType: 'blocks:new_block' | 'transactions:new_transaction' | 'addresses:new_address'
     eventType: 'new_block' | 'transaction' | 'count'
-    HelpedWebSocket: HelperWebSocketBlock | HelperWebSocketTransaction | HelperWebSocketCount
+    helpedWebSocket: WebSocketBlock | WebSocketTransaction | WebSocketCount
 }
 
-export interface HelperWebSocketBlock {
+export interface WebSocketBlock {
     //ws block
     average_block_time: string
     block_html: string
@@ -12,11 +12,11 @@ export interface HelperWebSocketBlock {
     block_number: number
     chain_block_html: string
 }
-export interface HelperWebSocketTransaction {
+export interface WebSocketTransaction {
     //ws Transaction
     transaction_hash: string
 }
-export interface HelperWebSocketCount {
+export interface WebSocketCount {
     //ws count
     count: string
 }
