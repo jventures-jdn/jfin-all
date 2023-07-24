@@ -22,6 +22,8 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
       if (log.eventName === 'Undelegated') {
         const currentBlock = Number(chainConfig.blockNumber)
         const triggerBlock = Number(log.blockNumber)
+        const endBlock = Number(chainConfig.endBlock)
+        const startBlock = endBlock - chainConfig.epochBlockInterval
         const expectBlock = triggerBlock + chainConfig.epochBlockInterval
         const isUndelegated = currentBlock > expectBlock
         const nanosec = 10e8
@@ -33,7 +35,8 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
             </>
           )
 
-        const blockRemain = expectBlock - currentBlock
+        const blockRemain =
+          triggerBlock - startBlock + chainConfig.epochBlockInterval
         const blockRemainNs = blockRemain * chainConfig.blockSec * nanosec
 
         return (
@@ -42,6 +45,8 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
             <span style={{ color: 'orange' }}>
               (Ready in{' '}
               {prettyTime(blockRemainNs >= 0 ? blockRemainNs : 0, 's')})
+              currentBlock: {endBlock} - {triggerBlock} +{' '}
+              {chainConfig.epochBlockInterval}
             </span>
           </>
         )
