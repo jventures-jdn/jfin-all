@@ -33,9 +33,6 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
             </>
           )
 
-        console.log('currentBlock', currentBlock)
-        console.log('triggerBlock', triggerBlock)
-
         const blockRemain = expectBlock - currentBlock
         const blockRemainNs = blockRemain * chainConfig.blockSec * nanosec
 
