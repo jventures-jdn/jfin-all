@@ -5,7 +5,6 @@ import { observer } from 'mobx-react'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { getCurrentEnv } from '../../../stores'
 import { chainConfig, chainStaking } from '@utils/staking-contract'
-import { Event } from 'ethers'
 import CountUpMemo from '../../Countup'
 import prettyTime from 'pretty-time'
 import { VALIDATOR_WALLETS } from '@/utils/const'
@@ -24,40 +23,28 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
       key: 'type',
       render: (log: StakingHistoryLog) => {
         if (log.eventName === 'Undelegated') {
-          const undelegatedBlock =
-            Number(log.blockNumber) + chainConfig.epochBlockInterval
+          const currentBlock = Number(chainConfig.blockNumber)
+          const triggerBlock = Number(log.blockNumber)
+          const expectBlock = triggerBlock + chainConfig.epochBlockInterval
+          const isUndelegated = currentBlock > expectBlock
+          const nanosec = 10e8
 
-          if (undelegatedBlock < chainConfig.blockNumber)
+          if (isUndelegated)
             return (
               <>
                 {log.eventName} <span style={{ color: 'green' }}>(Done)</span>
               </>
             )
 
-          const undelegatedBlockRemain =
-            (chainConfig.endBlock -
-              Number(log.blockNumber) +
-              chainConfig.epochBlockInterval) *
-            2 // multiple 2 cause something contract delay
-
-          const undelegatedBlockRemainNs =
-            undelegatedBlockRemain * chainConfig.blockSec * 10e8
-
-          console.log('chainConfig.blockNumber', chainConfig.blockNumber)
-          console.log(
-            'chainConfig.epochBlockInterval',
-            chainConfig.epochBlockInterval,
-          )
-          console.log('log.blockNumber', Number(log.blockNumber))
-          console.log('chainConfig.endBlock', chainConfig.endBlock)
-          console.log('undelegatedBlockRemain', undelegatedBlockRemain)
-          console.log('undelegatedBlockRemainNs', undelegatedBlockRemainNs)
+          const blockRemain = expectBlock - currentBlock
+          const blockRemainNs = blockRemain * chainConfig.blockSec * nanosec
 
           return (
             <>
               {log.eventName}{' '}
               <span style={{ color: 'orange' }}>
-                (Ready in {prettyTime(undelegatedBlockRemainNs || 0, 's')})
+                (Ready in{' '}
+                {prettyTime(blockRemainNs >= 0 ? blockRemainNs : 0, 's')})
               </span>
             </>
           )
@@ -140,18 +127,18 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
     {
       key: 'hash',
       title: 'Hash',
-      render: (validator: Event) => {
+      render: (log: StakingHistoryLog) => {
         return (
           <a
             href={`https://exp.${
               getCurrentEnv() === 'jfin' ? '' : 'testnet.'
-            }jfinchain.com/tx/${validator.transactionHash}`}
+            }jfinchain.com/tx/${log.transactionHash}`}
             target="_blank"
             rel="noreferrer"
           >
             {[
-              validator.transactionHash.slice(0, 5),
-              validator.transactionHash.slice(-5),
+              log.transactionHash.slice(0, 5),
+              log.transactionHash.slice(-5),
             ].join('....')}
           </a>
         )
