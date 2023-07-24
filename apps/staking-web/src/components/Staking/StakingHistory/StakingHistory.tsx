@@ -45,8 +45,6 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
             <span style={{ color: 'orange' }}>
               (Ready in{' '}
               {prettyTime(blockRemainNs >= 0 ? blockRemainNs : 0, 's')})
-              currentBlock: {endBlock} - {triggerBlock} +{' '}
-              {chainConfig.epochBlockInterval}
             </span>
           </>
         )
