@@ -20,12 +20,13 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
     key: 'type',
     render: (log: StakingHistoryLog) => {
       if (log.eventName === 'Undelegated') {
+        const currentBlock = Number(chainConfig.blockNumber)
         const triggerBlock = Number(log.blockNumber)
         const endBlock = Number(chainConfig.endBlock)
         const startBlock = endBlock - chainConfig.epochBlockInterval
         const nanosec = 10e8
         const blockRemain =
-          triggerBlock - startBlock + chainConfig.epochBlockInterval
+          triggerBlock - currentBlock + chainConfig.epochBlockInterval
 
         if (blockRemain <= 0)
           return (
