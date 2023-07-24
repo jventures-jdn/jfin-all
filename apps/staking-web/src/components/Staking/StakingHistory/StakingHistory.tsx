@@ -43,6 +43,9 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
           const undelegatedBlockRemainNs =
             undelegatedBlockRemain * chainConfig.blockSec * 10e8
 
+          console.log('undelegatedBlockRemain', undelegatedBlockRemain)
+          console.log('undelegatedBlockRemainNs', undelegatedBlockRemainNs)
+
           return (
             <>
               {log.eventName}{' '}
