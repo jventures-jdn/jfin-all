@@ -14,140 +14,141 @@ import { getNetwork } from 'wagmi/actions'
 import { EXPECT_CHAIN } from '@utils/chain-config'
 type StakingHistoryLog = (typeof chainStaking.myStakingHistoryLogs)[0]
 
+const columns: ColumnProps<StakingHistoryLog>[] = [
+  {
+    title: 'Type',
+    key: 'type',
+    render: (log: StakingHistoryLog) => {
+      if (log.eventName === 'Undelegated') {
+        const currentBlock = Number(chainConfig.blockNumber)
+        const triggerBlock = Number(log.blockNumber)
+        const expectBlock = triggerBlock + chainConfig.epochBlockInterval
+        const isUndelegated = currentBlock > expectBlock
+        const nanosec = 10e8
+
+        if (isUndelegated)
+          return (
+            <>
+              {log.eventName} <span style={{ color: 'green' }}>(Done)</span>
+            </>
+          )
+
+        console.log('currentBlock', currentBlock)
+        console.log('triggerBlock', triggerBlock)
+
+        const blockRemain = expectBlock - currentBlock
+        const blockRemainNs = blockRemain * chainConfig.blockSec * nanosec
+
+        return (
+          <>
+            {log.eventName}{' '}
+            <span style={{ color: 'orange' }}>
+              (Ready in{' '}
+              {prettyTime(blockRemainNs >= 0 ? blockRemainNs : 0, 's')})
+            </span>
+          </>
+        )
+      }
+
+      return <>{log.eventName}</>
+    },
+  },
+  {
+    title: 'Amount',
+    key: 'amount',
+    render: (log: StakingHistoryLog) => {
+      return (
+        <CountUpMemo
+          end={Number(formatEther(log.args.amount as bigint))}
+          duration={1}
+          decimals={5}
+          enableScrollSpy
+          scrollSpyOnce
+        />
+      )
+    },
+  },
+  {
+    key: 'validator',
+    title: 'Validator',
+    render: (log: StakingHistoryLog) => {
+      return (
+        <div className="items-center column-validator">
+          <img
+            src={
+              VALIDATOR_WALLETS[log.args.validator as string]?.image ||
+              defaultImage
+            }
+            alt={
+              VALIDATOR_WALLETS[log.args.validator as string]?.name ||
+              log.args.validator
+            }
+            style={{
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              border: '1px solid red',
+              marginRight: '0.5rem',
+            }}
+          />
+          <div>
+            <span>
+              {VALIDATOR_WALLETS[log.args.validator as string]?.name ||
+                log.args.validator}
+            </span>
+            <CopyToClipboard text={log.args.validator as string}>
+              <CopyOutlined
+                className="copy-clipboard"
+                style={{ paddingLeft: '5px' }}
+              />
+            </CopyToClipboard>
+          </div>
+        </div>
+      )
+    },
+  },
+  {
+    key: 'block',
+    title: 'Block',
+    render: (log: StakingHistoryLog) => {
+      return (
+        <a
+          href={`https://exp.${
+            getCurrentEnv() === 'jfin' ? '' : 'testnet.'
+          }jfinchain.com/block/${Number(log.blockNumber)}/transactions`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {Number(log.blockNumber)}
+        </a>
+      )
+    },
+  },
+  {
+    key: 'hash',
+    title: 'Hash',
+    render: (log: StakingHistoryLog) => {
+      return (
+        <a
+          href={`https://exp.${
+            getCurrentEnv() === 'jfin' ? '' : 'testnet.'
+          }jfinchain.com/tx/${log.transactionHash}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {[
+            log.transactionHash.slice(0, 5),
+            log.transactionHash.slice(-5),
+          ].join('....')}
+        </a>
+      )
+    },
+  },
+]
+
 const StakingHistory = observer(({ loading }: { loading: boolean }) => {
   /* --------------------------------- States --------------------------------- */
   const { chain } = getNetwork()
-  const columns: ColumnProps<StakingHistoryLog>[] = [
-    {
-      title: 'Type',
-      key: 'type',
-      render: (log: StakingHistoryLog) => {
-        if (log.eventName === 'Undelegated') {
-          const currentBlock = Number(chainConfig.blockNumber)
-          const triggerBlock = Number(log.blockNumber)
-          const expectBlock = triggerBlock + chainConfig.epochBlockInterval
-          const isUndelegated = currentBlock > expectBlock
-          const nanosec = 10e8
-
-          console.log('currentBlock', currentBlock)
-          console.log('triggerBlock', triggerBlock)
-
-          if (isUndelegated)
-            return (
-              <>
-                {log.eventName} <span style={{ color: 'green' }}>(Done)</span>
-              </>
-            )
-
-          const blockRemain = expectBlock - currentBlock
-          const blockRemainNs = blockRemain * chainConfig.blockSec * nanosec
-
-          return (
-            <>
-              {log.eventName}{' '}
-              <span style={{ color: 'orange' }}>
-                (Ready in{' '}
-                {prettyTime(blockRemainNs >= 0 ? blockRemainNs : 0, 's')})
-              </span>
-            </>
-          )
-        }
-
-        return <>{log.eventName}</>
-      },
-    },
-    {
-      title: 'Amount',
-      key: 'amount',
-      render: (log: StakingHistoryLog) => {
-        return (
-          <CountUpMemo
-            end={Number(formatEther(log.args.amount as bigint))}
-            duration={1}
-            decimals={5}
-            enableScrollSpy
-            scrollSpyOnce
-          />
-        )
-      },
-    },
-    {
-      key: 'validator',
-      title: 'Validator',
-      render: (log: StakingHistoryLog) => {
-        return (
-          <div className="items-center column-validator">
-            <img
-              src={
-                VALIDATOR_WALLETS[log.args.validator as string]?.image ||
-                defaultImage
-              }
-              alt={
-                VALIDATOR_WALLETS[log.args.validator as string]?.name ||
-                log.args.validator
-              }
-              style={{
-                width: '30px',
-                height: '30px',
-                borderRadius: '50%',
-                border: '1px solid red',
-                marginRight: '0.5rem',
-              }}
-            />
-            <div>
-              <span>
-                {VALIDATOR_WALLETS[log.args.validator as string]?.name ||
-                  log.args.validator}
-              </span>
-              <CopyToClipboard text={log.args.validator as string}>
-                <CopyOutlined
-                  className="copy-clipboard"
-                  style={{ paddingLeft: '5px' }}
-                />
-              </CopyToClipboard>
-            </div>
-          </div>
-        )
-      },
-    },
-    {
-      key: 'block',
-      title: 'Block',
-      render: (log: StakingHistoryLog) => {
-        return (
-          <a
-            href={`https://exp.${
-              getCurrentEnv() === 'jfin' ? '' : 'testnet.'
-            }jfinchain.com/block/${Number(log.blockNumber)}/transactions`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {Number(log.blockNumber)}
-          </a>
-        )
-      },
-    },
-    {
-      key: 'hash',
-      title: 'Hash',
-      render: (log: StakingHistoryLog) => {
-        return (
-          <a
-            href={`https://exp.${
-              getCurrentEnv() === 'jfin' ? '' : 'testnet.'
-            }jfinchain.com/tx/${log.transactionHash}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {[
-              log.transactionHash.slice(0, 5),
-              log.transactionHash.slice(-5),
-            ].join('....')}
-          </a>
-        )
-      },
-    },
-  ]
 
   /* ---------------------------------- Doms ---------------------------------- */
   return (
