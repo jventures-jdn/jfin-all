@@ -29,6 +29,9 @@ const StakingHistory = observer(({ loading }: { loading: boolean }) => {
           const isUndelegated = currentBlock > expectBlock
           const nanosec = 10e8
 
+          console.log('currentBlock', currentBlock)
+          console.log('triggerBlock', triggerBlock)
+
           if (isUndelegated)
             return (
               <>
