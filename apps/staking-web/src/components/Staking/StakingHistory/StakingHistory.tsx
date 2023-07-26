@@ -21,10 +21,19 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
     render: (log: StakingHistoryLog) => {
       if (log.eventName === 'Undelegated') {
         const currentBlock = Number(chainConfig.blockNumber)
-        const triggerBlock = Number(log.blockNumber)
+        const triggerEpoch = Number(log.args.epoch)
+        const endBlock = Number(chainConfig.endBlock)
         const nanosec = 10e8
+        const diffEpoch = chainConfig.epoch - triggerEpoch
+
+        // ([block สุดท้ายของ epoch] - [จำนวน block ต่อ 1 epoch หรือ 0 ถ้าผ่าน epoch ของ undelegate มาแล้ว 1]) - ([block ปัจจุบัน] + [จำนวน block ต่อ 1 epoch หรือ 0 ถ้าผ่าน epoch ของ undelegate])
         const blockRemain =
-          triggerBlock + chainConfig.epochBlockInterval - currentBlock
+          endBlock -
+          (diffEpoch >= 1 ? chainConfig.epochBlockInterval : 0) -
+          currentBlock +
+          (diffEpoch >= 0 ? 0 : chainConfig.epochBlockInterval)
+
+        console.log(chainConfig.epoch - triggerEpoch)
 
         if (blockRemain <= 0)
           return (
