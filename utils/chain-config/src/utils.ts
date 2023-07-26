@@ -81,3 +81,6 @@ export const getValidatorStatus = (status: VALIDATOR_STATUS_ENUM) => {
 
 export const EXPECT_CHAIN =
     process.env.NETWORK === 'jfintest' ? getChain('JFINT') : getChain('JFIN')
+
+export const REVERSE_EXPECT_CHAIN =
+    process.env.NETWORK === 'jfintest' ? getChain('JFIN') : getChain('JFINT')

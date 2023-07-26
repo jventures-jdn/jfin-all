@@ -1,21 +1,32 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { WagmiConfig } from 'wagmi'
 import { useWalletConnectModule } from '../core'
 import { Web3Modal } from '@web3modal/react'
-import { EXPECT_CHAIN, getChainConfig } from '@utils/chain-config'
+import { EXPECT_CHAIN, REVERSE_EXPECT_CHAIN, getChainConfig } from '@utils/chain-config'
 
 export function WalletConnectProvider({ children }: { children: ReactNode }) {
     const isProd = process.env.PROD
     const { wagmiConfig, projectId, ethereumClient } = useWalletConnectModule()
+    const [isReady, setIsReady] = useState(false)
+    const location = useLocation()
+    const isAuto = !!location.search.includes('auto')
+
+    useEffect(() => setIsReady(true), [])
+
     return (
         <>
-            <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
+            {isReady ? <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig> : undefined}
             <Web3Modal
                 explorerRecommendedWalletIds={[
                     'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
                     'join',
                 ]}
-                defaultChain={getChainConfig(EXPECT_CHAIN.chainNetwork)}
+                defaultChain={getChainConfig(
+                    // if `isAuto` --> join need correct chain to login wallet connect
+                    // otherwise --> metamask mobile need incorrect chain to add & change chain in the first time
+                    isAuto ? EXPECT_CHAIN.chainNetwork : REVERSE_EXPECT_CHAIN.chainNetwork,
+                )}
                 projectId={projectId}
                 ethereumClient={ethereumClient}
                 themeVariables={{
