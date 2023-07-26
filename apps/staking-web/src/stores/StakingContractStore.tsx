@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useChainConfig, useChainStaking } from '@utils/staking-contract'
 import { useEffect } from 'react'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
-import * as Sentry from '@sentry/react'
 
 const chainStaking = useChainStaking()
 const chainConfig = useChainConfig()
@@ -10,11 +8,6 @@ let configTimer: NodeJS.Timer
 
 export const initialStakingContract = async () => {
   /* --------------------------------- States --------------------------------- */
-  const { chain } = useNetwork()
-  const { address } = useAccount()
-  const { data } = useBalance({
-    address: address,
-  })
 
   /* --------------------------------- Methods -------------------------------- */
 
@@ -24,10 +17,10 @@ export const initialStakingContract = async () => {
 
   const fetchConfig = async () => {
     await chainConfig.fetchChainConfig()
-    if (configTimer) return clearInterval(configTimer)
+    if (configTimer) clearInterval(configTimer)
     configTimer = setInterval(() => {
       chainConfig.updateChainConfig()
-    }, 5000)
+    }, 3000)
   }
 
   /* --------------------------------- Watches -------------------------------- */
@@ -43,20 +36,4 @@ export const initialStakingContract = async () => {
       ignore = true
     }
   }, [])
-
-  // on connected or disconnected update validators & account
-  useEffect(() => {
-    // update sentry.io profile
-    Sentry.setUser({ id: address })
-    if (address) {
-      Sentry.setContext('account', {
-        address,
-        chain_id: chain?.id,
-        balance: data,
-      })
-    }
-
-    // update validator
-    if (chainStaking.validators?.length) chainStaking.updateValidators()
-  }, [address, chain?.id])
 }

@@ -190,9 +190,8 @@ export class Config {
      * Get the latest block number and update the relevant propperty
      */
     public async updateChainConfig() {
-        const _blockNumber = await fetchBlockNumber({ chainId: EXPECT_CHAIN.chainId })
         runInAction(() => {
-            this.blockNumber = _blockNumber
+            this.blockNumber = this.blockNumber + BigInt(1)
             this.startBlock = this.calcStartBlock()
             this.endBlock = this.calcEndBlock()
             this.epoch = this.calcEpoch()

@@ -12,6 +12,7 @@ import StakingRecovery from './pages/StakingRecovery/StakingRecovery'
 import { initialStakingContract } from './stores/StakingContractStore'
 import * as Sentry from '@sentry/react'
 import { isProd } from '.'
+import SentryStore from './stores/SentryStore'
 
 const App = observer(() => {
   /* --------------------------------- States --------------------------------- */
@@ -32,6 +33,7 @@ const App = observer(() => {
         </Routes>
       </div>
       <Footer />
+      <SentryStore />
 
       {isProd && (
         <CookieConsent
