@@ -33,8 +33,6 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
           currentBlock +
           (diffEpoch >= 0 ? 0 : chainConfig.epochBlockInterval)
 
-        console.log(chainConfig.epoch - triggerEpoch)
-
         if (blockRemain <= 0)
           return (
             <>

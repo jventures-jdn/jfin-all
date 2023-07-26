@@ -16,6 +16,7 @@ import './assets/css/pagination.css'
 import './assets/css/modal.css'
 
 export const isProd = process.env.PROD
+window.global ||= window
 
 Sentry.init({
   dsn: isProd
