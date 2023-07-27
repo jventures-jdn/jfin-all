@@ -14,6 +14,7 @@ import './assets/css/helper.css'
 import './assets/css/input.css'
 import './assets/css/pagination.css'
 import './assets/css/modal.css'
+import Navbar from './components/Layout/Navbar/Navbar'
 
 export const isProd = process.env.PROD
 window.global ||= window
@@ -48,6 +49,7 @@ const Main = () => {
           <WalletConnectProvider>
             <Provider>
               <GlobalModal />
+              <Navbar />
               <App />
             </Provider>
           </WalletConnectProvider>

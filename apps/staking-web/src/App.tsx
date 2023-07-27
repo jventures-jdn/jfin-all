@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react'
 import Conditions from './components/Conditions'
-import Navbar from './components/Layout/Navbar/Navbar'
 import { Route, Routes } from 'react-router-dom'
 import CookieConsent from 'react-cookie-consent'
 import Footer from './components/Layout/Footer/Footer'
@@ -20,7 +19,6 @@ const App = observer(() => {
   /* ---------------------------------- Doms ---------------------------------- */
   return (
     <div className="app-container">
-      <Navbar />
       <div className="body">
         <BlockInfo />
         <Routes>

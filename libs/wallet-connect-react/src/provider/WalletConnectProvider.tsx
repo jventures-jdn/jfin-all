@@ -8,9 +8,10 @@ import { EXPECT_CHAIN, REVERSE_EXPECT_CHAIN, getChainConfig } from '@utils/chain
 export function WalletConnectProvider({ children }: { children: ReactNode }) {
     const isProd = process.env.PROD
     const { wagmiConfig, projectId, ethereumClient } = useWalletConnectModule()
+
+    // useLocation some how cause wallet connect disconnect not working when change route
+    const isAuto = !!window.location?.search?.includes('auto')
     const [isReady, setIsReady] = useState(false)
-    const location = useLocation()
-    const isAuto = !!location.search.includes('auto')
     const isMetamask = (window as any).ethereum
 
     useEffect(() => setIsReady(true), [])
@@ -26,7 +27,9 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
                 defaultChain={getChainConfig(
                     // if `isAuto` or `isMetamask` --> join need correct chain to login wallet connect
                     // otherwise --> metamask mobile need incorrect chain to add & change chain in the first time
-                    isAuto || isMetamask ? EXPECT_CHAIN.chainNetwork : REVERSE_EXPECT_CHAIN.chainNetwork,
+                    isAuto || isMetamask
+                        ? EXPECT_CHAIN.chainNetwork
+                        : REVERSE_EXPECT_CHAIN.chainNetwork,
                 )}
                 projectId={projectId}
                 ethereumClient={ethereumClient}
