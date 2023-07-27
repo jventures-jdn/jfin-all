@@ -11,6 +11,7 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
     const [isReady, setIsReady] = useState(false)
     const location = useLocation()
     const isAuto = !!location.search.includes('auto')
+    const isMetamask = (window as any).ethereum
 
     useEffect(() => setIsReady(true), [])
 
@@ -23,9 +24,9 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
                     'join',
                 ]}
                 defaultChain={getChainConfig(
-                    // if `isAuto` --> join need correct chain to login wallet connect
+                    // if `isAuto` or `isMetamask` --> join need correct chain to login wallet connect
                     // otherwise --> metamask mobile need incorrect chain to add & change chain in the first time
-                    isAuto ? EXPECT_CHAIN.chainNetwork : REVERSE_EXPECT_CHAIN.chainNetwork,
+                    isAuto || isMetamask ? EXPECT_CHAIN.chainNetwork : REVERSE_EXPECT_CHAIN.chainNetwork,
                 )}
                 projectId={projectId}
                 ethereumClient={ethereumClient}
