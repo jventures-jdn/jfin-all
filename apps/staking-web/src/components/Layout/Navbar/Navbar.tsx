@@ -240,7 +240,6 @@ const Navbar = observer(() => {
                     </span>
                   </div>
                 )}
-                <Web3NetworkSwitch />
                 <Web3Button />
               </div>
             </div>
