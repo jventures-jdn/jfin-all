@@ -163,6 +163,9 @@ importers:
       '@babel/preset-env':
         specifier: ^7.22.5
         version: 7.22.5(@babel/core@7.22.5)
+      '@config/eslint-next':
+        specifier: workspace:*
+        version: link:../../config/eslint-next
       '@config/eslint-react':
         specifier: workspace:*
         version: link:../../config/eslint-react
@@ -6524,15 +6527,13 @@ packages:
   /@wagmi/connectors@2.6.6(@wagmi/chains@1.6.0)(react@18.2.0)(typescript@5.0.4)(viem@1.4.1):
     resolution: {integrity: sha512-/o1c/TCivQs8DOAUOcQvY2UIt3p2mWOAHi39D0LC74+ncpXzLC5/gyaWU38qnTxPM8s/PmTmaWDgz+VhICXrag==}
     peerDependencies:
-      '@wagmi/chains': '*'
-      typescript: '*'
-      viem: '*'
+      '@wagmi/chains': '>=1.3.0'
+      typescript: '>=5.0.4 || 5.0.4'
+      viem: '>=0.3.35 || 1.4.1'
     peerDependenciesMeta:
       '@wagmi/chains':
         optional: true
       typescript:
-        optional: true
-      viem:
         optional: true
     dependencies:
       '@coinbase/wallet-sdk': 3.7.1
@@ -6562,15 +6563,13 @@ packages:
   /@wagmi/connectors@2.6.6(@wagmi/chains@1.6.0)(react@18.2.0)(typescript@5.1.3)(viem@1.4.1):
     resolution: {integrity: sha512-/o1c/TCivQs8DOAUOcQvY2UIt3p2mWOAHi39D0LC74+ncpXzLC5/gyaWU38qnTxPM8s/PmTmaWDgz+VhICXrag==}
     peerDependencies:
-      '@wagmi/chains': '*'
-      typescript: '*'
-      viem: '*'
+      '@wagmi/chains': '>=1.3.0'
+      typescript: '>=5.0.4 || 5.0.4'
+      viem: '>=0.3.35 || 1.4.1'
     peerDependenciesMeta:
       '@wagmi/chains':
         optional: true
       typescript:
-        optional: true
-      viem:
         optional: true
     dependencies:
       '@coinbase/wallet-sdk': 3.7.1
@@ -6738,7 +6737,7 @@ packages:
   /@walletconnect/ethereum-provider@2.9.0(@walletconnect/modal@2.5.9):
     resolution: {integrity: sha512-rSXkC0SXMigJRdIi/M2RMuEuATY1AwtlTWQBnqyxoht7xbO2bQNPCXn0XL4s/GRNrSUtoKSY4aPMHXV4W4yLBA==}
     peerDependencies:
-      '@walletconnect/modal': '*'
+      '@walletconnect/modal': '>=2'
     peerDependenciesMeta:
       '@walletconnect/modal':
         optional: true

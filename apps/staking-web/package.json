@@ -27,6 +27,7 @@
     "wagmi": "1.3.9"
   },
   "devDependencies": {
+    "@config/eslint-next": "workspace:*",
     "@babel/core": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
     "@config/eslint-react": "workspace:*",
