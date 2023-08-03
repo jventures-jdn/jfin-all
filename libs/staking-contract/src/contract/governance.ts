@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { action, makeObservable, observable, runInAction } from 'mobx'
 import { governanceObject } from '.'
 import { getPublicClient } from 'wagmi/actions'
