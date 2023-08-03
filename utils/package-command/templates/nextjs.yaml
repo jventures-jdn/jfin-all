@@ -17,3 +17,5 @@ start*:
     PORT: '{{port}}'
 lint*:
   command: 'next lint --dir .'
+format*:
+  command: 'prettier -c -w --config ../../.prettierrc.json ./src'

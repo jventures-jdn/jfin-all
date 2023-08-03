@@ -31,3 +31,5 @@ test*:
     LOG_LEVEL: 'debug'
 lint*:
   command: 'eslint .'
+format*:
+  command: 'prettier -c -w --config ../../.prettierrc.json ./src'

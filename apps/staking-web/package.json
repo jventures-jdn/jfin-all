@@ -55,7 +55,7 @@
   },
   "scripts": {
     "lint": "run",
-    "format": "prettier -c -w --config ../../.prettierrc.json ./src",
+    "format": "run",
     "start": "vite preview --port 3000",
     "dev": "pnpm dev:jfin",
     "dev:jfin": "NETWORK=jfin vite --mode=development --port 3000",
