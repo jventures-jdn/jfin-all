@@ -383,6 +383,9 @@ importers:
       '@utils/chain-config':
         specifier: workspace:*
         version: link:../../utils/chain-config
+      '@utils/package-command':
+        specifier: workspace:*
+        version: link:../../utils/package-command
       abitype:
         specifier: ^0.8.4
         version: 0.8.4(typescript@5.0.4)
