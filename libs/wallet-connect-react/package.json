@@ -12,6 +12,7 @@
     "react-router-dom": "^6.12.1"
   },
   "devDependencies": {
+    "@config/eslint-react": "workspace:*",
     "@config/typescript": "workspace:*",
     "@types/node": "20.2.5",
     "@types/react": "18.2.0",
@@ -20,5 +21,9 @@
     "@utils/package-command": "workspace:*",
     "typescript": "5.0.4",
     "@tanstack/query-core": "^4.29.11"
+  },
+  "scripts": {
+    "format": "run",
+    "lint": "run"
   }
 }

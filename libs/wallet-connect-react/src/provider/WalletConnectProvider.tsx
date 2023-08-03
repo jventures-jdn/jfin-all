@@ -1,5 +1,4 @@
 import { ReactNode, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { WagmiConfig } from 'wagmi'
 import { useWalletConnectModule } from '../core'
 import { Web3Modal } from '@web3modal/react'

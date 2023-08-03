@@ -13,5 +13,6 @@ module.exports = {
     plugins: ['react'],
     rules: {
         'turbo/no-undeclared-env-vars': 'off',
+        'react/react-in-jsx-scope': 'off',
     },
 }

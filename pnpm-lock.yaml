@@ -411,6 +411,9 @@ importers:
         specifier: 4.3.8
         version: 4.3.8(react@18.2.0)
     devDependencies:
+      '@config/eslint-react':
+        specifier: workspace:*
+        version: link:../../config/eslint-react
       '@config/typescript':
         specifier: workspace:*
         version: link:../../config/typescript
