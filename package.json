@@ -8,8 +8,8 @@
   "scripts": {},
   "devDependencies": {
     "cross-env": "7.0.3",
-    "prettier": "2.8.8",
-    "turbo": "1.6.1"
+    "prettier": "3.0.1",
+    "turbo": "1.10.12"
   },
   "pnpm": {
     "peerDependencyRules": {
