@@ -1,4 +1,5 @@
 'use client'
+export const runtime = 'edge'
 
 import { IBM_Plex_Sans_Thai } from 'next/font/google'
 import '../src/styles/global.css'

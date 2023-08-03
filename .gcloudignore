@@ -25,6 +25,8 @@
 .mongo-volume
 # turbo prune
 out
+# vercel
+.vercel
 
 ### gcloudignore specifics ###
 .config.yaml

@@ -7,10 +7,10 @@ module.exports = (phase, config, customWebpack) => {
         reactStrictMode: false,
         swcMinify: true,
         transpilePackages: ['@libs/*', '@utils/*'],
-        experimental: {
-            // this includes files from the monorepo base two directories up
-            outputFileTracingRoot: path.join(process.cwd(), '../../'),
-        },
+        // experimental: {
+        //     // this includes files from the monorepo base two directories up
+        //     outputFileTracingRoot: path.join(process.cwd(), '../../'),
+        // },
         webpack(config, { webpack }) {
             config.resolve.fallback = {
                 ...config.resolve.fallback, // if you miss it, all the other options in fallback, specified

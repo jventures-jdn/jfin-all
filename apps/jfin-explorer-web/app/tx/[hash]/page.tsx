@@ -8,7 +8,9 @@ export default function TransactionPage() {
     const { hash } = useParams()
 
     // Get full transaction data
-    const get = useBlockscout().transactions().get(hash)
+    const get = useBlockscout()
+        .transactions()
+        .get(hash as string)
 
     return (
         <div>

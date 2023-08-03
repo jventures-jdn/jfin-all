@@ -29,6 +29,8 @@ out
 **/typechain-types
 # firebase
 .firebase
+# vercel
+.vercel
 
 ### gitignore specifics ###
 .config**.yaml

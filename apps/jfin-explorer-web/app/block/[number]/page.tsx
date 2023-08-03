@@ -11,7 +11,7 @@ export default function BlockPage() {
     const { number } = useParams()
     let blockNumber
     try {
-        blockNumber = parseInt(number!)
+        blockNumber = parseInt(number as string)
     } catch {}
     if (!blockNumber) return <div>Invalid block number</div>
 
