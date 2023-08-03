@@ -7,30 +7,25 @@ let sharedPage: Page
 test.describe.configure({ mode: 'serial' })
 
 test.beforeAll(async ({ page }) => {
-  sharedPage = page
-  await sharedPage.goto('http://localhost:3000')
+    sharedPage = page
+    await sharedPage.goto('http://localhost:3000')
 })
 
 test.afterAll(async ({ context }) => {
-  await context.close()
+    await context.close()
 })
 
 test('connect wallet using default metamask account', async () => {
-  await metamask.allowToAddNetwork()
-  await metamask.allowToSwitchNetwork()
-  await sharedPage.waitForTimeout(1000)
-  await sharedPage.waitForLoadState() // This resolves after 'networkidle'
-  await sharedPage
-    .getByRole('button', { name: 'Connect Wallet' })
-    .first()
-    .click()
-  await sharedPage.getByRole('button', { name: 'Metamask' }).click()
-  await metamask.acceptAccess()
+    await metamask.allowToAddNetwork()
+    await metamask.allowToSwitchNetwork()
+    await sharedPage.waitForTimeout(1000)
+    await sharedPage.waitForLoadState() // This resolves after 'networkidle'
+    await sharedPage.getByRole('button', { name: 'Connect Wallet' }).first().click()
+    await sharedPage.getByRole('button', { name: 'Metamask' }).click()
+    await metamask.acceptAccess()
 
-  await sharedPage.click('w3m-button-big')
-  await expect(
-    sharedPage.locator('w3m-address-text[variant="modal"]'),
-  ).toHaveText('0xf3...2266')
+    await sharedPage.click('w3m-button-big')
+    await expect(sharedPage.locator('w3m-address-text[variant="modal"]')).toHaveText('0xf3...2266')
 })
 
 // test('import private key and connect wallet using imported metamask account', async () => {
