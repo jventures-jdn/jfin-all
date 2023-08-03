@@ -7,33 +7,33 @@ const chainConfig = useChainConfig()
 let configTimer: NodeJS.Timer
 
 export const initialStakingContract = async () => {
-  /* --------------------------------- States --------------------------------- */
+    /* --------------------------------- States --------------------------------- */
 
-  /* --------------------------------- Methods -------------------------------- */
+    /* --------------------------------- Methods -------------------------------- */
 
-  const fetchValidator = async () => {
-    chainStaking.fetchValidators()
-  }
-
-  const fetchConfig = async () => {
-    await chainConfig.fetchChainConfig()
-    if (configTimer) clearInterval(configTimer)
-    configTimer = setInterval(() => {
-      chainConfig.updateChainConfig()
-    }, 3000)
-  }
-
-  /* --------------------------------- Watches -------------------------------- */
-  useEffect(() => {
-    // prevent strict mode call useEffect twice
-    let ignore = false
-    fetchConfig().then(() => {
-      if (ignore) return
-      fetchValidator()
-    })
-
-    return () => {
-      ignore = true
+    const fetchValidator = async () => {
+        chainStaking.fetchValidators()
     }
-  }, [])
+
+    const fetchConfig = async () => {
+        await chainConfig.fetchChainConfig()
+        if (configTimer) clearInterval(configTimer)
+        configTimer = setInterval(() => {
+            chainConfig.updateChainConfig()
+        }, 3000)
+    }
+
+    /* --------------------------------- Watches -------------------------------- */
+    useEffect(() => {
+        // prevent strict mode call useEffect twice
+        let ignore = false
+        fetchConfig().then(() => {
+            if (ignore) return
+            fetchValidator()
+        })
+
+        return () => {
+            ignore = true
+        }
+    }, [])
 }

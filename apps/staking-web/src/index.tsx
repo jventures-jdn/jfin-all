@@ -20,43 +20,41 @@ export const isProd = process.env.PROD
 window.global ||= window
 
 Sentry.init({
-  dsn: isProd
-    ? process.env.VITE_SENTRY_DNS // need to change to env
-    : '',
-  integrations: [
-    new Sentry.Integrations.GlobalHandlers({
-      onerror: false,
-      onunhandledrejection: false,
-    }),
-  ],
-  tracesSampleRate: isProd ? 0.1 : 0.0,
-  replaysOnErrorSampleRate: isProd ? 1 : 0.0,
-  environment: `${process.env.NETWORK}_${
-    isProd ? 'production' : 'development'
-  }`,
-  attachStacktrace: true,
+    dsn: isProd
+        ? process.env.VITE_SENTRY_DNS // need to change to env
+        : '',
+    integrations: [
+        new Sentry.Integrations.GlobalHandlers({
+            onerror: false,
+            onunhandledrejection: false,
+        }),
+    ],
+    tracesSampleRate: isProd ? 0.1 : 0.0,
+    replaysOnErrorSampleRate: isProd ? 1 : 0.0,
+    environment: `${process.env.NETWORK}_${isProd ? 'production' : 'development'}`,
+    attachStacktrace: true,
 })
 
 const Main = () => {
-  return (
-    <StrictMode>
-      <ConfigProvider
-        theme={{
-          algorithm: theme.darkAlgorithm,
-        }}
-      >
-        <BrowserRouter>
-          <WalletConnectProvider>
-            <Provider>
-              <GlobalModal />
-              <Navbar />
-              <App />
-            </Provider>
-          </WalletConnectProvider>
-        </BrowserRouter>
-      </ConfigProvider>
-    </StrictMode>
-  )
+    return (
+        <StrictMode>
+            <ConfigProvider
+                theme={{
+                    algorithm: theme.darkAlgorithm,
+                }}
+            >
+                <BrowserRouter>
+                    <WalletConnectProvider>
+                        <Provider>
+                            <GlobalModal />
+                            <Navbar />
+                            <App />
+                        </Provider>
+                    </WalletConnectProvider>
+                </BrowserRouter>
+            </ConfigProvider>
+        </StrictMode>
+    )
 }
 
 const root = createRoot(document.getElementById('root') as HTMLElement)

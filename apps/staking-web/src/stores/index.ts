@@ -4,6 +4,6 @@ const currentEnvironment = process.env.NETWORK
 const modalStore = new ModalStore()
 
 export const getCurrentEnv = () => {
-  return currentEnvironment
+    return currentEnvironment
 }
 export const useModalStore = () => modalStore

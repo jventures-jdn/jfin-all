@@ -1,1 +1,1 @@
-export * from './ProposalExplainer';
+export * from './ProposalExplainer'
