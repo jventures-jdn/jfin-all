@@ -12,7 +12,7 @@
     "@ethersproject/abstract-provider": "^5.7.0",
     "@types/node": "^18.16.0",
     "abitype": "^0.8.4",
-    "typescript": "^5.0.4",
+    "typescript": "^5.1.6",
     "@utils/package-command": "workspace:*"
   },
   "scripts": {
