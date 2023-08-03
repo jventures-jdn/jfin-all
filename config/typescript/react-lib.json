@@ -3,9 +3,16 @@
   "display": "React Lib",
   "extends": "./base.json",
   "compilerOptions": {
-    "lib": ["ES2015", "dom"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "target": "ES6",
-    "jsx": "react-jsx"
+    "target": "ES2020",
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "allowJs": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false
   }
 }
