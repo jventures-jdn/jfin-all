@@ -7,7 +7,7 @@ module.exports = toProcessEnv => {
     const globalConfigPath = path.join(process.cwd(), `../../.config.yaml`)
     const exists = fs.existsSync(globalConfigPath)
     let result
-    if (exists) {
+    if (!exists) {
         console.log('🔎 Global config file not found')
         result = {}
     } else {
