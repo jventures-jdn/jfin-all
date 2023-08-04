@@ -3,24 +3,13 @@
 const { buildConfig } = require('@utils/app-nextjs/_index')
 
 module.exports = phase =>
-    buildConfig(
-        phase,
-        {
-            images: {
-                remotePatterns: [
-                    {
-                        protocol: 'https',
-                        hostname: '**',
-                    },
-                ],
-            },
-            experimental: {
-                appDir: true,
-            },
-            env: {},
+    buildConfig(phase, {
+        experimental: {
+            appDir: true,
         },
-        config => {
-            // TODO: remove this hack
-            config.resolve.alias['handlebars'] = 'handlebars/dist/handlebars.js'
+        env: {},
+        experimental: {
+            // Need to remove this setting to get @cloudflare/next-on-pages working
+            outputFileTracingRoot: null,
         },
-    )
+    })

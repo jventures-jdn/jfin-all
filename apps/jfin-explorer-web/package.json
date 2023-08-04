@@ -13,10 +13,10 @@
     "deploy:mainnet": "pnpm build:mainnet && pnpm predeploy && firebase functions:config:set deployment.network=mainnet && firebase deploy --only functions:nextjs-server-explorer-mainnet,hosting:explorer-mainnet && pnpm postdeploy",
     "deploy:testnet": "pnpm build:testnet && pnpm predeploy && firebase functions:config:set deployment.network=testnet && firebase deploy --only functions:nextjs-server-explorer-testnet,hosting:explorer-testnet && pnpm postdeploy",
     "lint": "run",
-    "pages:build:mainnet:dev": "cross-env TARGET=dev_mainnet pnpm next-on-pages && ncp .vercel ../../dist",
-    "pages:build:testnet:dev": "cross-env TARGET=dev_testnet pnpm next-on-pages && ncp .vercel ../../dist",
-    "pages:build:mainnet:prod": "cross-env TARGET=prod_mainnet pnpm next-on-pages && ncp .vercel ../../dist",
-    "pages:build:testnet:prod": "cross-env TARGET=prod_testnet pnpm next-on-pages && ncp .vercel ../../dist"
+    "pages:build:mainnet:dev": "cross-env NAME=explorer TARGET=dev_mainnet pnpm next-on-pages && ncp .vercel ../../dist",
+    "pages:build:testnet:dev": "cross-env NAME=explorer TARGET=dev_testnet pnpm next-on-pages && ncp .vercel ../../dist",
+    "pages:build:mainnet:prod": "cross-env NAME=explorer TARGET=prod_mainnet pnpm next-on-pages && ncp .vercel ../../dist",
+    "pages:build:testnet:prod": "cross-env NAME=explorer TARGET=prod_testnet pnpm next-on-pages && ncp .vercel ../../dist"
   },
   "dependencies": {
     "@chakra-ui/react": "2.8.0",
