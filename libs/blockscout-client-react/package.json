@@ -5,17 +5,17 @@
   },
   "dependencies": {
     "@config/jfin-explorer": "workspace:*",
-    "next": "13.4.4",
+    "next": "13.4.12",
     "react-use-websocket": "^4.3.1",
-    "swr": "2.1.5",
-    "zustand": "4.3.8"
+    "swr": "2.2.0",
+    "zustand": "4.4.0"
   },
   "devDependencies": {
     "@config/eslint-react": "workspace:*",
     "@config/typescript": "workspace:*",
-    "@types/node": "20.2.5",
-    "@types/react": "18.2.8",
+    "@types/node": "20.4.7",
+    "@types/react": "18.2.18",
     "@utils/package-command": "workspace:*",
-    "typescript": "5.1.3"
+    "typescript": "5.1.6"
   }
 }
