@@ -1,4 +1,4 @@
-import { GlobalConfig } from '@utils/global-config'
+import { JFINExplorerConfig } from '@config/jfin-explorer'
 
 export function MenuDemo() {
     return (
@@ -22,8 +22,8 @@ export function MenuDemo() {
                     borderRadius: 5,
                 }}
             >
-                <div>mode : {GlobalConfig.target().mode}</div>
-                <div>network : {GlobalConfig.target().network}</div>
+                <div>mode : {JFINExplorerConfig.get().mode}</div>
+                <div>network : {JFINExplorerConfig.get().network}</div>
             </div>
         </div>
     )

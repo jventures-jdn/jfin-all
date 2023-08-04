@@ -1,9 +1,9 @@
-import { GlobalConfig } from '@utils/global-config'
+import { JFINExplorerConfig } from '@config/jfin-explorer'
 
 export class GraphQLFetcher {
     static async query<T>(query: any, parse: (response: any) => T) {
         console.log('🌏', 'query ===>', query)
-        const _fetch = await fetch(GlobalConfig.endpoint('graphql'), {
+        const _fetch = await fetch(JFINExplorerConfig.endpoint('graphql'), {
             method: 'POST',
             headers: {
                 ['Content-type']: `application/json`,

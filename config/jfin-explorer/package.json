@@ -1,0 +1,8 @@
+{
+  "name": "@config/jfin-explorer",
+  "devDependencies": {
+    "@config/typescript": "workspace:*",
+    "@types/node": "20.2.5",
+    "typescript": "5.1.3"
+  }
+}
