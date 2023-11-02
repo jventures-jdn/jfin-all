@@ -148,7 +148,7 @@ const Navbar = observer(() => {
                             }}
                             type="circle"
                             percent={progress}
-                            strokeColor={{ '0%': '#c60000', '100%': '#2e3338' }}
+                            strokeColor={{ '0%': '#3c32bb', '100%': '#2e3338' }}
                         />
                         <div style={{ textAlign: 'center', paddingTop: '10px' }}>{loadingText}</div>
                     </div>
@@ -316,7 +316,7 @@ const Navbar = observer(() => {
                     {isConnected && isAuto ? (
                         <div>
                             Balance:{' '}
-                            <b style={{ color: '#c60000' }}>
+                            <b style={{ color: '#3c32bb' }}>
                                 {balance.data?.formatted.slice(0, 6) || 0}
                             </b>{' '}
                             {balance.data?.symbol}
