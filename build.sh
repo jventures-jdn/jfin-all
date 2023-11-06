@@ -24,6 +24,9 @@ if [[ $CF_PAGES_BRANCH =~ "staking" ]]; then
         fi
     fi
 else
-    echo Error : project not support
-    exit 1
+    if [[ $CF_PAGES_BRANCH =~ "staking" ]]; then
+         pnpm -C apps/staking-web build:jfin --outDir=../../dist/output/static
+    else 
+        echo Error : project not support
+        exit 1
 fi
