@@ -38,7 +38,7 @@ const App = observer(() => {
                     overlay
                     buttonStyle={{
                         color: '#fff',
-                        backgroundColor: '#c60000',
+                        backgroundColor: '#3c32bb',
                         fontSize: '13px',
                         borderRadius: '30px',
                         padding: '4px 16px',

@@ -33,7 +33,7 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
                 projectId={projectId}
                 ethereumClient={ethereumClient}
                 themeVariables={{
-                    '--w3m-accent-color': '#ed0000',
+                    '--w3m-accent-color': '#473ae8',
                     '--w3m-accent-fill-color': '#fff',
                     '--w3m-background-color': ' #0b0d0f',
                 }}
