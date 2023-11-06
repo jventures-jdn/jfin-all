@@ -86,7 +86,7 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
                             width: '30px',
                             height: '30px',
                             borderRadius: '50%',
-                            border: '1px solid red',
+                            border: '1px solid var(--S100)',
                             marginRight: '0.5rem',
                         }}
                     />
