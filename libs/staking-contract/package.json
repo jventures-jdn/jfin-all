@@ -1,0 +1,22 @@
+{
+  "name": "@utils/staking-contract",
+  "dependencies": {
+    "mobx": "^6.10.0",
+    "viem": "1.5.2",
+    "wagmi": "1.3.9"
+  },
+  "devDependencies": {
+    "@config/eslint-react": "workspace:*",
+    "@config/typescript": "workspace:*",
+    "@ethersproject/abstract-provider": "^5.7.0",
+    "@types/node": "^20.4.6",
+    "@utils/chain-config": "workspace:*",
+    "@utils/package-command": "workspace:*",
+    "abitype": "^0.9.6",
+    "typescript": "^5.1.6"
+  },
+  "scripts": {
+    "format": "run",
+    "lint": "run"
+  }
+}
