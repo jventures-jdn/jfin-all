@@ -29,4 +29,5 @@ else
     else 
         echo Error : project not support
         exit 1
+    fi
 fi
