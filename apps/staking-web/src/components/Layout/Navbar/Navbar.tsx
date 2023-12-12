@@ -1,10 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
-import logo from '../../../assets/images/logo.svg'
+import logo from '../../../assets/images/logo-full.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { CloseOutlined, MenuOutlined, WarningOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { NavHashLink } from 'react-router-hash-link'
-import { Web3Button, Web3NetworkSwitch, useWeb3Modal } from '@web3modal/react'
+import { Web3Button, useWeb3Modal } from '@web3modal/react'
 import { getCurrentEnv } from '../../../stores'
 import { useAccount, useBalance, useNetwork, useSwitchNetwork } from 'wagmi'
 import { Progress, message } from 'antd'
@@ -158,7 +158,7 @@ const Navbar = observer(() => {
             <div className="navbar-container">
                 <div className="navbar-wrapper">
                     <div className="navbar-brand">
-                        <a href="https://www.jfincoin.io/">
+                        <a href="https://jfinchain.com/">
                             <img alt="jfinchain logo" src={logo} />
                         </a>
                     </div>
