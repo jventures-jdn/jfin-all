@@ -1,6 +1,7 @@
 import './Footer.css'
 import packageJson from '../../../../package.json'
 import { isProd } from '@/index'
+import { Link } from 'react-router-dom'
 
 const Footer = () => {
     const hash = process.env.CF_PAGES_COMMIT_SHA || 'Local'
@@ -31,6 +32,13 @@ const Footer = () => {
             <span>
                 <span>| Copyright ©2023 </span>
                 <a href="https://www.jventures.co.th/">{packageJson.author}</a>
+            </span>
+            <span>
+                {' '}
+                |{' '}
+                <Link to="/staking-recovery" className="underline">
+                    Recovery
+                </Link>
             </span>
         </div>
     )
