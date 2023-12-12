@@ -42,7 +42,7 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
                     JFIN: '/jfin-light.png',
                     'JFIN Testnet': 'jfin-light.png',
                 }}
-                walletImages={{ join: '/jfin-light.png' }}
+                walletImages={{ join: '/joinwallet.png' }}
                 mobileWallets={[
                     {
                         id: 'join',
