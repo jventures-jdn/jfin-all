@@ -96,9 +96,9 @@ const Navbar = observer(() => {
     /* --------------------------------- Watches -------------------------------- */
     // watch auto authen
     useEffect(() => {
-        if (!isAuto || isConnected) return
-        handleAutoAuthen()
-        setProgressStep(100)
+        // if (!isAuto || isConnected) return
+        // handleAutoAuthen()
+        // setProgressStep(100)
     }, [isAuto])
 
     useEffect(() => {
