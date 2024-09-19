@@ -616,18 +616,18 @@ export class Staking {
         if (isInMyTotalReward) return isInMyTotalReward.amount
 
         const contract = getContract({ ...stakingObject, publicClient: client })
-        const reward = await contract.read.getDelegatorFee([validatorAddress, staker]).catch(e => {
-            console.error('get staking reward', e)
-            return e
-        })
+        const reward = await contract.read
+            .getDelegatorFee([validatorAddress, staker])
+            .catch(() => BigInt(-1))
+        const isReverted = reward === BigInt(-1)
 
-        if (reward > zero && !isInMyTotalReward) {
+        if (reward > zero && !isInMyTotalReward && !isReverted) {
             runInAction(() => {
                 this.myTotalReward.push({ validator: validatorAddress, amount: reward })
             })
         }
 
-        if (reward > zero && !isInMyValidator) {
+        if (reward > zero && !isInMyValidator && !isReverted) {
             runInAction(() => {
                 this.myValidators.push(validatorAddress)
             })
