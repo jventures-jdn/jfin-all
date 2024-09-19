@@ -616,9 +616,10 @@ export class Staking {
         if (isInMyTotalReward) return isInMyTotalReward.amount
 
         const contract = getContract({ ...stakingObject, publicClient: client })
-        const reward = await contract.read
-            .getDelegatorFee([validatorAddress, staker])
-            .catch(() => zero)
+        const reward = await contract.read.getDelegatorFee([validatorAddress, staker]).catch(e => {
+            console.error('get staking reward', e)
+            return e
+        })
 
         if (reward > zero && !isInMyTotalReward) {
             runInAction(() => {
