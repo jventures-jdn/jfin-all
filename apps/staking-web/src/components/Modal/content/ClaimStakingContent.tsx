@@ -1,4 +1,4 @@
-import { LoadingOutlined, WarningOutlined } from '@ant-design/icons'
+import { AlertOutlined, LoadingOutlined, WarningOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { FormEvent, useEffect, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
@@ -11,7 +11,7 @@ import * as Sentry from '@sentry/react'
 
 interface IClaimStakingContent {
     validator: Validator
-    amount: number
+    amount: number | null
 }
 const ClaimStakingContent = observer((props: IClaimStakingContent) => {
     /* -------------------------------------------------------------------------- */
@@ -19,6 +19,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
     /* -------------------------------------------------------------------------- */
     const modalStore = useModalStore()
     const [error, setError] = useState<string>()
+    const isReverted = props.amount === null
 
     /* -------------------------------------------------------------------------- */
     /*                                   Methods                                  */
@@ -64,7 +65,7 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
                         disabled
                         style={{ marginTop: '15px' }}
                         type="text"
-                        value={props.amount?.toFixed(5)}
+                        value={isReverted ? 'Claim Reward' : props.amount?.toFixed(5)}
                     />
                     <div className="staking-sub-input justify-between ">
                         <span className="wallet-warning">{error}</span>
