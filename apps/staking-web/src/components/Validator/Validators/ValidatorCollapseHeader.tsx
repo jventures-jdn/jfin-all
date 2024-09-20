@@ -26,7 +26,7 @@ const ValidatorCollapseHeader = observer(({ validator }: IValidatorCollapseHeade
     /* -------------------------------------------------------------------------- */
     const [loading, setLoading] = useState(true)
     const [apr, setApr] = useState<number>(0)
-    const [myStakingReward, setMyStakingReward] = useState<number>(0)
+    const [myStakingReward, setMyStakingReward] = useState<number | null>(0)
     const [myStakingAmount, setMyStakingAmount] = useState<number>(0)
 
     /* -------------------------------------------------------------------------- */
@@ -39,8 +39,9 @@ const ValidatorCollapseHeader = observer(({ validator }: IValidatorCollapseHeade
             const _myStakingReward = await chainStaking.getMyStakingRewards(validator.address)
             const _myStakingAmount = await chainStaking.getMyStakingAmount(validator.address)
             const _apr = await chainStaking.calcValidatorApr(validator.owner)
+            const isReverted = _myStakingReward === BigInt(-1)
 
-            setMyStakingReward(Number(formatEther(_myStakingReward)))
+            setMyStakingReward(isReverted ? null : Number(formatEther(_myStakingReward)))
             setMyStakingAmount(Number(formatEther(_myStakingAmount)))
             setApr(_apr)
         } finally {
@@ -150,6 +151,8 @@ const ValidatorCollapseHeader = observer(({ validator }: IValidatorCollapseHeade
                     <div>
                         {loading ? (
                             <LoadingOutlined spin />
+                        ) : myStakingReward === null ? (
+                            'Claim Reward'
                         ) : myStakingReward <= 0 ? (
                             '-'
                         ) : (

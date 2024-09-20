@@ -27,11 +27,16 @@ const ValidatorCollapseContent = observer(
         const { isConnected } = useAccount()
         const modalStore = useModalStore()
         const [apr, setApr] = useState<number>(0)
-        const [myStakingReward, setMyStakingReward] = useState(0)
+        const [myStakingReward, setMyStakingReward] = useState<number | null>(0)
         const [myStakingAmount, setMyStakingAmount] = useState(0)
+        const [loading, setLoading] = useState(true)
+        const [isReverted, setIsReverted] = useState(false)
         const slashesCount = Number(formatEther(validator.slashesCount))
         const commissionRate = Number(formatEther(validator.commissionRate))
         const totalDelegated = Number(formatEther(validator.totalDelegated))
+
+        const isDisabled =
+            !isConnected || !!myStakingReward || isReverted || forceActionButtonsEnabled || loading
 
         /* -------------------------------------------------------------------------- */
         /*                                   Methods                                  */
@@ -41,10 +46,13 @@ const ValidatorCollapseContent = observer(
             const _myStakingReward = await chainStaking.getMyStakingRewards(validator.address)
             const _myStakingAmount = await chainStaking.getMyStakingAmount(validator.address)
             const _apr = await chainStaking.calcValidatorApr(validator.owner)
+            const _isReverted = _myStakingReward === BigInt(-1)
 
-            setMyStakingReward(Number(formatEther(_myStakingReward)))
+            setIsReverted(_isReverted)
+            setMyStakingReward(_isReverted ? null : Number(formatEther(_myStakingReward)))
             setMyStakingAmount(Number(formatEther(_myStakingAmount)))
             setApr(_apr)
+            setLoading(false)
         }
 
         const handleClaim = async () => {
@@ -166,11 +174,16 @@ const ValidatorCollapseContent = observer(
                             <div>
                                 {!forceActionButtonsEnabled ? (
                                     <div className="value">
-                                        <CountUpMemo
-                                            end={myStakingReward}
-                                            decimals={5}
-                                            duration={1}
-                                        />
+                                        {myStakingReward === null ? (
+                                            <div>Claim Reward</div>
+                                        ) : (
+                                            <CountUpMemo
+                                                end={myStakingReward}
+                                                decimals={5}
+                                                duration={1}
+                                            />
+                                        )}
+
                                         <JfinCoin />
                                     </div>
                                 ) : (
@@ -180,7 +193,7 @@ const ValidatorCollapseContent = observer(
                                 <button
                                     className="button secondary lg"
                                     disabled={
-                                        (!isConnected || !myStakingReward) &&
+                                        (!isConnected || (!myStakingReward && !isReverted)) &&
                                         !forceActionButtonsEnabled
                                     }
                                     onClick={() =>
@@ -207,11 +220,7 @@ const ValidatorCollapseContent = observer(
                                     <div style={{ textAlign: 'right' }}>
                                         <button
                                             className="button secondary lg"
-                                            disabled={
-                                                !isConnected ||
-                                                !!myStakingReward ||
-                                                forceActionButtonsEnabled
-                                            }
+                                            disabled={isDisabled}
                                             onClick={handleAdd}
                                             type="button"
                                         >
@@ -220,11 +229,7 @@ const ValidatorCollapseContent = observer(
 
                                         <button
                                             className="button secondary lg"
-                                            disabled={
-                                                !isConnected ||
-                                                !!myStakingReward ||
-                                                forceActionButtonsEnabled
-                                            }
+                                            disabled={isDisabled}
                                             onClick={handleUnStaking}
                                             style={{ marginLeft: '10px' }}
                                             type="button"
@@ -232,7 +237,7 @@ const ValidatorCollapseContent = observer(
                                             <MinusOutlined />
                                         </button>
                                     </div>
-                                    {myStakingReward ? (
+                                    {myStakingReward || isReverted ? (
                                         <div
                                             style={{
                                                 marginTop: '5px',
@@ -244,7 +249,8 @@ const ValidatorCollapseContent = observer(
                                             }}
                                         >
                                             <span>
-                                                Please claim all pending reward before staking.
+                                                Please claim all pending reward before stake or
+                                                un-stake.
                                             </span>
                                         </div>
                                     ) : (
