@@ -7,7 +7,6 @@ import BlockInfo from './components/Layout/BlockInfo/BlockInfo'
 import Staking from './pages/Staking/Staking'
 import Governance from './pages/Governance/Governance'
 import Assets from './pages/Assets/Assets'
-import StakingRecovery from './pages/StakingRecovery/StakingRecovery'
 import { initialStakingContract } from './stores/StakingContractStore'
 import * as Sentry from '@sentry/react'
 import { isProd } from '.'
@@ -27,7 +26,6 @@ const App = observer(() => {
                     </Route>
                     <Route path="/governance" element={<Governance />} />
                     <Route path="/assets" element={<Assets />} />
-                    <Route path="/staking-recovery" element={<StakingRecovery />} />
                 </Routes>
             </div>
             <Footer />
