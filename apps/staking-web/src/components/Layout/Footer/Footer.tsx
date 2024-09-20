@@ -33,6 +33,13 @@ const Footer = () => {
                 <span>| Copyright ©2023 </span>
                 <a href="https://www.jventures.co.th/">{packageJson.author}</a>
             </span>
+            <span>
+                {' '}
+                |{' '}
+                <Link to="/staking-recovery" className="underline">
+                    Recovery
+                </Link>
+            </span>
         </div>
     )
 }
