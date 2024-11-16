@@ -41,7 +41,8 @@ export const CHAIN_GAS_LIMIT: { [key in InternalChain]: bigint } = {
     JFINT: BigInt(7000000),
 }
 
-export const CHAIN_GAS_LIMIT_CUSTOM: { [key in InternalChain]: { claim: bigint } } = {
-    JFIN: { claim: BigInt(25000000) },
-    JFINT: { claim: BigInt(7000000) },
-}
+export const CHAIN_GAS_LIMIT_CUSTOM: { [key in InternalChain]: { claim: bigint; stake: bigint } } =
+    {
+        JFIN: { claim: BigInt(25000000), stake: BigInt(127000) },
+        JFINT: { claim: BigInt(7000000), stake: BigInt(127000) },
+    }
