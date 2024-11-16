@@ -460,6 +460,7 @@ export class Staking {
             const execute: Promise<Address> = new Promise((resolve, reject) => {
                 return contract.write
                     .delegate([validatorAddress], {
+                        gas: CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork].stake,
                         gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
                         value: parseEther(`${amount}`),
                     })
@@ -526,6 +527,7 @@ export class Staking {
             const execute: Promise<Address> = new Promise((resolve, reject) => {
                 return contract.write
                     .undelegate([validatorAddress, parseEther(`${amount}`)], {
+                        gas: CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork].stake,
                         value: BigInt(0),
                     })
                     .then(hash => resolve(hash))
