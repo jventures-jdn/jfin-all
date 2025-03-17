@@ -301,6 +301,8 @@ export class Staking {
         // parallel fetch validator
         const epoch = chainConfig.epoch
         const validatorLogs = await this.getValidatorLogs()
+
+        console.log('validatorLogs', validatorLogs)
         const validators = await Promise.all(
             validatorLogs.map(validatorLog => this.fetchValidator(validatorLog, epoch)),
         )
@@ -315,6 +317,8 @@ export class Staking {
             this.isFetchingValidators = false
             this.isReady = true
         })
+
+        console.log('sortValidators', sortValidators)
 
         return sortValidators
     }
@@ -682,7 +686,9 @@ export class Staking {
         if (!this.validators) return []
 
         return this.validators.filter(validator => {
-            return validator.status === VALIDATOR_STATUS_ENUM.ACTIVE
+            return [VALIDATOR_STATUS_ENUM.ACTIVE, VALIDATOR_STATUS_ENUM.PENDING].includes(
+                validator.status,
+            )
         })
     }
 
