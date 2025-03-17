@@ -7,7 +7,7 @@ echo $CF_PAGES_BRANCH
 if [[ $CF_PAGES_BRANCH =~ "staking" ]]; then
     # STAKING 
     if [[ $CF_PAGES_BRANCH =~ "release" ]]; then
-        if [[ $CF_PAGES_BRANCH =~ "testnet" ]]; then
+        if [[ $CF_PAGES_BRANCH =~ "devnet" ]]; then
             # testnet
             pnpm -C apps/staking-web build:jfintest --outDir=../../dist/output/static
         else
@@ -15,7 +15,7 @@ if [[ $CF_PAGES_BRANCH =~ "staking" ]]; then
             pnpm -C apps/staking-web build:jfin --outDir=../../dist/output/static
         fi
     else
-        if [[ $CF_PAGES_BRANCH =~ "testnet" ]]; then
+        if [[ $CF_PAGES_BRANCH =~ "devnet" ]]; then
             # testnet
             pnpm -C apps/staking-web build:jfintest:preview  --outDir=../../dist/output/static
         else
