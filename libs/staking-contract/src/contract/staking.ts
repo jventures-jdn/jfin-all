@@ -318,8 +318,6 @@ export class Staking {
             this.isReady = true
         })
 
-        console.log('sortValidators', sortValidators)
-
         return sortValidators
     }
 
