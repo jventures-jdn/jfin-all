@@ -226,7 +226,7 @@ export class Staking {
         ])
 
         const availableValidators = addedValidators.filter(
-            i => !removedValidators.find(r => r.args.validator === r.args.validator),
+            i => !removedValidators.find(r => i.args.validator === r.args.validator),
         )
 
         this.validatorLogs = availableValidators
