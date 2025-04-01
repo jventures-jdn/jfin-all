@@ -31,6 +31,8 @@
 -   In order to deploy website, we split into 2 stage, once is `preview` and `release`
 -   deploy preview by merge your feature branch into preview branch `staking-preview-[devnet,mainnet]`
 -   deploy release by merge `staking-preview-[devnet,mainnet]` into release branch `staking-release-[devnet,mainnet]`
+-   Example `staking-preview-devnet.feature1` --> `staking-preview-devnet` --> `staking-preview-mainnet`
+-   Example `staking-preview-devnet` --> `staking-release-devnet`
 
 ## Team
 
