@@ -302,7 +302,6 @@ export class Staking {
         const epoch = chainConfig.epoch
         const validatorLogs = await this.getValidatorLogs()
 
-        console.log('validatorLogs', validatorLogs)
         const validators = await Promise.all(
             validatorLogs.map(validatorLog => this.fetchValidator(validatorLog, epoch)),
         )
