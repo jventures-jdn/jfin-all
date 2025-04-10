@@ -33,7 +33,7 @@
 -   deploy preview by merge your feature branch into preview branch `staking-preview-[devnet,testnet,mainnet]`
 -   deploy release by merge `staking-preview-[devnet,testnet,mainnet]` into release branch `staking-release-[devnet,testnet,mainnet]`
 -   Example `staking-preview-devnet.feature1` --> (deploy to preview devnet) `staking-preview-devnet` --> (deploy to release devnet) `staking-release-devnet`
--   Example `staking-release-devnet` --> `staking-preview-mainnet`
+-   Example `staking-release-devnet` --> `staking-preview-mainnet` --> `staking-release-mainnet`
 
 ## Team
 
