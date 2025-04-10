@@ -1,4 +1,4 @@
-import { action, computed, has, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { Validator, stakingObject } from '.'
 import { Address } from 'abitype'
 import {

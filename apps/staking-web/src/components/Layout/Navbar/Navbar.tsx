@@ -194,7 +194,7 @@ const Navbar = observer(() => {
                         >
                             Explorer
                         </a>
-                        {getCurrentEnv() === 'jfintest' && (
+                        {['jfintest', 'jfindev'].includes(getCurrentEnv() || '') && (
                             <a
                                 href={`https://faucet.${
                                     getCurrentEnv() === 'jfin' ? '' : 'testnet.'
@@ -295,7 +295,7 @@ const Navbar = observer(() => {
                     Explorer
                 </a>
 
-                {getCurrentEnv() === 'jfintest' && (
+                {['jfintest', 'jfindev'].includes(getCurrentEnv() || '') && (
                     <a
                         href={`https://faucet.${
                             getCurrentEnv() === 'jfin' ? '' : 'testnet.'
