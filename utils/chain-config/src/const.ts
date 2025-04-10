@@ -9,7 +9,7 @@ export const CHAIN_EXPLORER: {
 } = {
     JFIN: { name: 'blockscout', home: 'https://exp.jfinchain.com/' },
     JFINT: { name: 'blockscout', home: 'https://exp.testnet.jfinchain.com' },
-    JFIND: { name: 'blockscout', home: 'https://65.21.195.240:8080/' },
+    JFIND: { name: 'blockscout', home: 'http://65.21.195.240:8080/' },
 }
 
 export const CHAIN_RPC: { [key in InternalChain]: string } = {
