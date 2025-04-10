@@ -39,8 +39,8 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
                 }}
                 chainImages={{
                     3501: '/jfin-light.png',
-                    3501111: 'jfin-light.png',
-                    3502: 'jfin-light.png',
+                    3501111: '/jfin-light.png',
+                    3502: '/jfin-light.png',
                 }}
                 tokenImages={{
                     JFIN: '/jfin-light.png',
