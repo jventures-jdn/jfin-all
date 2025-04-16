@@ -1,4 +1,4 @@
-import { action, computed, has, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { Validator, stakingObject } from '.'
 import { Address } from 'abitype'
 import {
@@ -226,7 +226,7 @@ export class Staking {
         ])
 
         const availableValidators = addedValidators.filter(
-            i => !removedValidators.find(r => r.args.validator === r.args.validator),
+            i => !removedValidators.find(r => i.args.validator === r.args.validator),
         )
 
         this.validatorLogs = availableValidators
@@ -301,6 +301,7 @@ export class Staking {
         // parallel fetch validator
         const epoch = chainConfig.epoch
         const validatorLogs = await this.getValidatorLogs()
+
         const validators = await Promise.all(
             validatorLogs.map(validatorLog => this.fetchValidator(validatorLog, epoch)),
         )
@@ -460,6 +461,7 @@ export class Staking {
             const execute: Promise<Address> = new Promise((resolve, reject) => {
                 return contract.write
                     .delegate([validatorAddress], {
+                        gas: CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork].stake,
                         gasPrice: CHAIN_GAS_PRICE[EXPECT_CHAIN.chainNetwork],
                         value: parseEther(`${amount}`),
                     })
@@ -526,6 +528,7 @@ export class Staking {
             const execute: Promise<Address> = new Promise((resolve, reject) => {
                 return contract.write
                     .undelegate([validatorAddress, parseEther(`${amount}`)], {
+                        gas: CHAIN_GAS_LIMIT_CUSTOM[EXPECT_CHAIN.chainNetwork].stake,
                         value: BigInt(0),
                     })
                     .then(hash => resolve(hash))
@@ -680,7 +683,9 @@ export class Staking {
         if (!this.validators) return []
 
         return this.validators.filter(validator => {
-            return validator.status === VALIDATOR_STATUS_ENUM.ACTIVE
+            return [VALIDATOR_STATUS_ENUM.ACTIVE, VALIDATOR_STATUS_ENUM.PENDING].includes(
+                validator.status,
+            )
         })
     }
 
