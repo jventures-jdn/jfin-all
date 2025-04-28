@@ -122,7 +122,7 @@ export const CHAIN_GAS_PRICE = {
 }
 ```
 
-`CHAIN_GAS_LIMIT`specifies the default gas limit for transactions. This is used as a fallback when no specific gas limit is provided.
+`CHAIN_GAS_LIMIT` specifies the default gas limit for transactions. This is used as a fallback when no specific gas limit is provided.
 
 ```typescript
 // Example
