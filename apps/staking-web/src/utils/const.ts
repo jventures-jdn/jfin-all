@@ -19,13 +19,25 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         name: 'JDN',
         image: jdn,
     },
+    '0x88Cf3c2a965e2636155bCEf7264B805E8f57EF97': {
+        name: 'TOKENINE',
+        image: tokenine,
+    },
     '0xCd4A92A21539Fd2b50d1ecabce89cCf7294100C8': {
         name: 'Kane Digital',
         image: kanedigital,
     },
-    '0x88Cf3c2a965e2636155bCEf7264B805E8f57EF97': {
-        name: 'TOKENINE',
-        image: tokenine,
+    '0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6': {
+        name: 'KUB',
+        image: kub,
+    },
+    '0x88a2D9b0B0c357085E63C790f0551B1aAFB88378': {
+        name: 'SIX Network',
+        image: six,
+    },
+    '0x78BBA445e1C15E5206adcD671500C7Fa63384A36': {
+        name: 'Maxbit',
+        image: maxbit,
     },
     '0xe8391988483355e6a8170AC10f5726D4868e5C68': {
         name: 'I AM',
@@ -35,17 +47,9 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         name: 'JET',
         image: jet,
     },
-    '0x78BBA445e1C15E5206adcD671500C7Fa63384A36': {
-        name: 'Maxbit',
-        image: maxbit,
-    },
     '0xA46f2a9761B4FE539F50df64aD7089Ad446E96d6': {
         name: 'B&B',
         image: bnb,
-    },
-    '0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6': {
-        name: 'KUB',
-        image: kub,
     },
     '0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a': {
         name: 'AVANTIS',
@@ -55,8 +59,6 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         name: 'MetaWarden',
         image: warden,
     },
-    '0x88a2D9b0B0c357085E63C790f0551B1aAFB88378': {
-        name: 'SIX Network',
-        image: six,
-    },
 }
+
+export const VALIDATOR_ORDER = Object.keys(VALIDATOR_WALLETS)
