@@ -683,9 +683,10 @@ export class Staking {
         if (!this.validators) return []
 
         return this.validators.filter(validator => {
-            return [VALIDATOR_STATUS_ENUM.ACTIVE, VALIDATOR_STATUS_ENUM.PENDING].includes(
-                validator.status,
-            )
+            return [VALIDATOR_STATUS_ENUM.ACTIVE].includes(validator.status)
+            // return [VALIDATOR_STATUS_ENUM.ACTIVE, VALIDATOR_STATUS_ENUM.PENDING].includes(
+            //     validator.status,
+            // )
         })
     }
 

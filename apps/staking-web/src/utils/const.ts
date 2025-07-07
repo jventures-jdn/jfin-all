@@ -9,6 +9,10 @@ import fox from '../assets/images/partners/fox.png'
 import ava from '../assets/images/partners/ava.png'
 import warden from '../assets/images/partners/warden.png'
 import kmrs from '../assets/images/partners/kmars.png'
+import kanedigital from '../assets/images/partners/kanedigital.jpg'
+import maxbit from '../assets/images/partners/maxbit.jpg'
+import kub from '../assets/images/partners/kub.png'
+import six from '../assets/images/partners/six.png'
 
 export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> = {
     '0xa22fD0F35d2416eC293E2D00A8eB0c3Bc633Aa91': {
@@ -16,8 +20,8 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         image: jdn,
     },
     '0xCd4A92A21539Fd2b50d1ecabce89cCf7294100C8': {
-        name: 'TBWG',
-        image: tbwg,
+        name: 'Kane Digital',
+        image: kanedigital,
     },
     '0x88Cf3c2a965e2636155bCEf7264B805E8f57EF97': {
         name: 'TOKENINE',
@@ -32,16 +36,16 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         image: jet,
     },
     '0x78BBA445e1C15E5206adcD671500C7Fa63384A36': {
-        name: 'JMB',
-        image: jmb,
+        name: 'Maxbit',
+        image: maxbit,
     },
     '0xA46f2a9761B4FE539F50df64aD7089Ad446E96d6': {
         name: 'B&B',
         image: bnb,
     },
     '0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6': {
-        name: 'MR.FOX',
-        image: fox,
+        name: 'KUB',
+        image: kub,
     },
     '0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a': {
         name: 'AVANTIS',
@@ -52,7 +56,7 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         image: warden,
     },
     '0x88a2D9b0B0c357085E63C790f0551B1aAFB88378': {
-        name: 'KMARS Studio',
-        image: kmrs,
+        name: 'SIX Network',
+        image: six,
     },
 }
