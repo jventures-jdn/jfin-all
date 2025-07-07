@@ -6,6 +6,7 @@ import ValidatorCollapseHeader from './ValidatorCollapseHeader'
 import { getCurrentEnv } from '../../../stores'
 import { Validator, useChainStaking } from '@utils/staking-contract'
 import ValidatorCollapseContent from './ValidatorCollapseContent'
+import { VALIDATOR_ORDER } from '@/utils/const'
 
 interface IValidatorsProps {
     forceActionButtonsEnabled?: boolean
@@ -17,7 +18,9 @@ const Validators = observer((props: IValidatorsProps) => {
     /*                                   States                                   */
     /* -------------------------------------------------------------------------- */
     const chainStaking = useChainStaking()
-    const validators = props.validators || chainStaking.activeValidator
+    const validators = (props.validators || chainStaking.activeValidator).sort((a, b) => {
+        return VALIDATOR_ORDER.indexOf(a.address) - VALIDATOR_ORDER.indexOf(b.address)
+    })
     const loading = chainStaking.isFetchingValidators
 
     const ValidatorCollapseHeaderLoading = () => {
