@@ -30,6 +30,7 @@ body {
     --S050: #6054f0;
     --S025: #8279f2;
     --WARN: #fa8c16;
+    --INFO: #1680fa;
     --SECONDARY: #3c32bb;
     --MUTE_TEXT: #777f88;
     --MUTE_BG: #2e3338;
@@ -336,6 +337,20 @@ h1.ant-typography {
 .warning-message span {
     font-size: 1rem;
     color: var(--WARN);
+    margin-right: 10px;
+}
+
+.info-message {
+    margin-top: 1rem;
+    border-radius: 15px;
+    border: 1px solid var(--INFO);
+    padding: 1rem;
+    background: rgba(52, 113, 235, 0.2);
+}
+
+.info-message span {
+    font-size: 1rem;
+    color: var(--INFO);
     margin-right: 10px;
 }
 

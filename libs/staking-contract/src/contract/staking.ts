@@ -36,7 +36,7 @@ export class Staking {
         })
     }
     /* ------------------------------- Properties ------------------------------- */
-    public walletTimeout = 15000
+    public walletTimeout = 30000
     public isFetchingValidators = true
     public isReady = false
     public validators: Validator[] = []

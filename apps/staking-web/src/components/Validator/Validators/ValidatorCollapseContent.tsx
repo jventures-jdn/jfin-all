@@ -59,7 +59,7 @@ const ValidatorCollapseContent = observer(
             if (!validator) return
             modalStore.setVisible(true)
             modalStore.setIsLoading(true)
-            modalStore.setTitle('Claim Reward')
+            modalStore.setTitle(isReverted ? 'Continue' : 'Claim Reward')
             modalStore.setContent(
                 <ClaimStakingContent amount={myStakingReward} validator={validator} />,
             )
@@ -93,7 +93,7 @@ const ValidatorCollapseContent = observer(
 
             modalStore.setVisible(true)
             modalStore.setIsLoading(true)
-            modalStore.setTitle('Un-Staking')
+            modalStore.setTitle('Unstaking')
             modalStore.setContent(
                 <UnStakingContent
                     forceActionButtonsEnabled={forceActionButtonsEnabled}
@@ -170,12 +170,14 @@ const ValidatorCollapseContent = observer(
                     </Col>
                     <Col className="reward" lg={9} sm={24} xs={24}>
                         <div className="validator-collapse-content-card">
-                            <span className="col-title">Staking Reward</span>
+                            <span className="col-title">
+                                {myStakingReward === null ? 'Pay gas to' : 'Staking Reward'}
+                            </span>
                             <div>
                                 {!forceActionButtonsEnabled ? (
                                     <div className="value">
                                         {myStakingReward === null ? (
-                                            <div>Claim Reward</div>
+                                            <div>Continue</div>
                                         ) : (
                                             <CountUpMemo
                                                 end={myStakingReward}
@@ -203,7 +205,7 @@ const ValidatorCollapseContent = observer(
                                     }
                                     type="button"
                                 >
-                                    Claim
+                                    {myStakingReward === null ? 'Pay' : 'Claim'}
                                 </button>
                             </div>
                         </div>
@@ -249,8 +251,11 @@ const ValidatorCollapseContent = observer(
                                             }}
                                         >
                                             <span>
-                                                Please claim all pending reward before stake or
-                                                un-stake.
+                                                Please{' '}
+                                                {myStakingReward === null
+                                                    ? 'pay gas to continue'
+                                                    : 'claim all pending reward before'}{' '}
+                                                stake or unstake.
                                             </span>
                                         </div>
                                     ) : (

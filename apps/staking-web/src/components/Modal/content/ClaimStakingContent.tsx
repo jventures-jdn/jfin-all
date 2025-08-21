@@ -1,4 +1,9 @@
-import { AlertOutlined, LoadingOutlined, WarningOutlined } from '@ant-design/icons'
+import {
+    AlertOutlined,
+    LoadingOutlined,
+    WarningOutlined,
+    InfoCircleOutlined,
+} from '@ant-design/icons'
 import { observer } from 'mobx-react'
 import { FormEvent, useEffect, useState } from 'react'
 import JfinCoin from '../../../components/JfinCoin/JfinCoin'
@@ -55,37 +60,48 @@ const ClaimStakingContent = observer((props: IClaimStakingContent) => {
     return (
         <div className="claim-staking-content">
             <form onSubmit={handleSubmit}>
-                <div className="items-center">
-                    <b>Claim</b> <JfinCoin />
-                </div>
+                {!isReverted && (
+                    <>
+                        <div className="items-center">
+                            <b>Amount</b> <JfinCoin />
+                        </div>
 
-                <div className="">
-                    <input
-                        className="staking-input"
-                        disabled
-                        style={{ marginTop: '15px' }}
-                        type="text"
-                        value={isReverted ? 'Claim Reward' : props.amount?.toFixed(5)}
-                    />
-                    <div className="staking-sub-input justify-between ">
-                        <span className="wallet-warning">{error}</span>
-                    </div>
-                </div>
+                        <div className="">
+                            <input
+                                className="staking-input"
+                                disabled
+                                style={{ marginTop: '15px' }}
+                                type="text"
+                                value={isReverted ? 'Claim Reward' : props.amount?.toFixed(5)}
+                            />
+                            <div className="staking-sub-input justify-between ">
+                                <span className="wallet-warning">{error}</span>
+                            </div>
+                        </div>
+                    </>
+                )}
 
-                <div className="warning-message">
-                    <WarningOutlined />
-                    When you have a large number of rewards claim rewards will requires a lot of
-                    gas. This may result in you not receiving the full amount of rewards, If you
-                    encounter any of these events, please try several times until you have received
-                    all the rewards.
+                <div className={isReverted ? 'warning-message' : 'info-message'}>
+                    {isReverted ? <WarningOutlined /> : <InfoCircleOutlined />}
+                    {isReverted
+                        ? `You are about to pay a significant amount of gas to continue staking with this validator. The required gas depends on the duration of inactivity and is non-refundable. The process may take several transactions to complete.`
+                        : // : typeof props.amount === 'number' && props.amount < 1
+                          // ? `You are only claiming a small amount of rewards. (< 1 JFIN). Be sure to check whether the gas fee is worth doing this.`
+                          `Claiming a large number of rewards (or from a long duration of inactivity) may require a lot of gas, and you might not be able to claim all rewards in a single transaction. If this happens, please try multiple times until all rewards are claimed.`}
                 </div>
 
                 <button
-                    className="button lg w-100 m-0 ghost mt-2"
+                    className="button lg w-100 m-0 mt-2"
                     disabled={modalStore.isLoading}
                     type="submit"
                 >
-                    {modalStore.isLoading ? <LoadingOutlined spin /> : 'Claim Reward'}
+                    {modalStore.isLoading ? (
+                        <LoadingOutlined spin />
+                    ) : isReverted ? (
+                        'Pay gas'
+                    ) : (
+                        'Claim'
+                    )}
                 </button>
             </form>
         </div>

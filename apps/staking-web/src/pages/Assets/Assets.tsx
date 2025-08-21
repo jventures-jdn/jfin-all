@@ -38,8 +38,8 @@ const Assets = observer(() => {
 
     const myValidators = useMemo(() => {
         if (!chainStaking.isReady) return []
-        return chainStaking.validators?.filter(v =>
-            chainStaking.myValidators?.find(i => i === v.owner),
+        return chainStaking.validators?.filter(
+            v => chainStaking.myValidators?.find(i => i === v.owner),
         )
     }, [chainStaking.isReady, chainStaking.myValidators, chainStaking.validators])
 
@@ -57,7 +57,7 @@ const Assets = observer(() => {
                 <div className="content-card">
                     <div className="card-title">
                         <b>
-                            <span>Your total staking</span>
+                            <span>Your Total Staking</span>
                         </b>
                     </div>
                     <div className="card-body">
@@ -98,7 +98,7 @@ const Assets = observer(() => {
                 <div className="content-card">
                     <div className="card-title">
                         <b>
-                            <span>Your total reward</span>
+                            <span>Your Total Reward</span>
                         </b>
                     </div>
                     <div className="card-body">
