@@ -255,7 +255,7 @@ const ValidatorCollapseContent = observer(
                                                 {myStakingReward === null
                                                     ? 'pay gas to continue'
                                                     : 'claim all pending reward before'}{' '}
-                                                stake or un-stake.
+                                                stake or unstake.
                                             </span>
                                         </div>
                                     ) : (

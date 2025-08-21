@@ -33,9 +33,9 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
         setError(undefined)
 
         if (!props.forceActionButtonsEnabled) {
-            if (unStakingAmount < 1) return setError('Un-Stake amount must be more 1')
+            if (unStakingAmount < 1) return setError('Unstaking amount must be more than 1')
             if (unStakingAmount > Number(stakedAmount))
-                return setError(`Un-Stake amount must be lower or equal to ${stakedAmount}`)
+                return setError(`You don't have enough staked amount`)
         }
 
         try {
@@ -45,7 +45,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
                 unStakingAmount,
             )
             modalStore.setVisible(false)
-            message.success(`Un-Stake was done!`)
+            message.success(`Unstaking is done!`)
         } catch (e: any) {
             const error: BaseError = e
             message.error(`${error?.cause || error?.message || 'Unknown'}`)
