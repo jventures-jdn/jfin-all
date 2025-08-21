@@ -64,7 +64,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
         <div className="add-staking-content">
             <form onSubmit={handleSubmit}>
                 <div className="items-center">
-                    <b>Staking</b> <JfinCoin />
+                    <b>Amount</b> <JfinCoin />
                 </div>
 
                 <div className="">
@@ -85,11 +85,11 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
                 </div>
 
                 <button
-                    className="button lg w-100 m-0 ghost mt-2"
+                    className="button lg w-100 m-0 mt-2"
                     disabled={modalStore.isLoading}
                     type="submit"
                 >
-                    {modalStore.isLoading ? <LoadingOutlined spin /> : 'Confirm'}
+                    {modalStore.isLoading ? <LoadingOutlined spin /> : 'Confirm Add Staking'}
                 </button>
             </form>
         </div>
