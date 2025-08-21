@@ -14,10 +14,10 @@ import { getNetwork } from 'wagmi/actions'
 import { EXPECT_CHAIN } from '@utils/chain-config'
 type StakingHistoryLog = (typeof chainStaking.myStakingHistoryLogs)[0]
 
-const rename = (name: string, inProgress = false) => {
+const rename = (name: string, amount?: number, inProgress = false) => {
     if (name === 'Undelegated') return inProgress ? 'Unstaking...' : 'Unstaked'
     if (name === 'Delegated') return inProgress ? 'Staking...' : 'Staked'
-    if (name === 'Claimed') return 'Claimed'
+    if (name === 'Claimed') return amount === 0 ? 'Paid' : 'Claimed'
     return name
 }
 
@@ -26,6 +26,7 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
         title: 'Type',
         key: 'type',
         render: (log: StakingHistoryLog) => {
+            const amount = Number(formatEther(log.args.amount as bigint))
             if (log.eventName === 'Undelegated') {
                 const currentBlock = Number(chainConfig.blockNumber)
                 const triggerEpoch = Number(log.args.epoch)
@@ -41,17 +42,20 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
                     (diffEpoch >= 0 ? 0 : chainConfig.epochBlockInterval)
 
                 if (blockRemain <= 0)
+                    // Unstake is done
                     return (
                         <>
-                            {rename(log.eventName)} <span style={{ color: 'green' }}>(Done)</span>
+                            {rename(log.eventName, amount)}{' '}
+                            {/* <span style={{ color: 'green' }}>(Done)</span> */}
                         </>
                     )
 
                 const blockRemainNs = blockRemain * chainConfig.blockSec * nanosec
 
                 return (
+                    // Unstaking is in progress
                     <>
-                        {rename(log.eventName, true)}{' '}
+                        {rename(log.eventName, amount, true)}{' '}
                         <span style={{ color: 'orange' }}>
                             (Ready in {prettyTime(blockRemainNs >= 0 ? blockRemainNs : 0, 's')})
                         </span>
@@ -59,21 +63,17 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
                 )
             }
 
-            return <>{rename(log.eventName)}</>
+            return <>{rename(log.eventName, amount)}</>
         },
     },
     {
         title: 'Amount',
         key: 'amount',
         render: (log: StakingHistoryLog) => {
+            const amount = Number(formatEther(log.args.amount as bigint))
+            if (amount === 0) return
             return (
-                <CountUpMemo
-                    end={Number(formatEther(log.args.amount as bigint))}
-                    duration={1}
-                    decimals={5}
-                    enableScrollSpy
-                    scrollSpyOnce
-                />
+                <CountUpMemo end={amount} duration={1} decimals={5} enableScrollSpy scrollSpyOnce />
             )
         },
     },
