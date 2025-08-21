@@ -14,6 +14,13 @@ import { getNetwork } from 'wagmi/actions'
 import { EXPECT_CHAIN } from '@utils/chain-config'
 type StakingHistoryLog = (typeof chainStaking.myStakingHistoryLogs)[0]
 
+const rename = (name: string, inProgress = false) => {
+    if (name === 'Undelegated') return inProgress ? 'Unstaking...' : 'Unstaked'
+    if (name === 'Delegated') return inProgress ? 'Staking...' : 'Staked'
+    if (name === 'Claimed') return 'Claimed'
+    return name
+}
+
 const columns: ColumnProps<StakingHistoryLog>[] = [
     {
         title: 'Type',
@@ -36,7 +43,7 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
                 if (blockRemain <= 0)
                     return (
                         <>
-                            {log.eventName} <span style={{ color: 'green' }}>(Done)</span>
+                            {rename(log.eventName)} <span style={{ color: 'green' }}>(Done)</span>
                         </>
                     )
 
@@ -44,7 +51,7 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
 
                 return (
                     <>
-                        {log.eventName}{' '}
+                        {rename(log.eventName, true)}{' '}
                         <span style={{ color: 'orange' }}>
                             (Ready in {prettyTime(blockRemainNs >= 0 ? blockRemainNs : 0, 's')})
                         </span>
@@ -52,7 +59,7 @@ const columns: ColumnProps<StakingHistoryLog>[] = [
                 )
             }
 
-            return <>{log.eventName}</>
+            return <>{rename(log.eventName)}</>
         },
     },
     {
