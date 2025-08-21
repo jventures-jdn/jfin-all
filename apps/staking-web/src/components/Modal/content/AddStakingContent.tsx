@@ -36,7 +36,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
         e.preventDefault()
         setError(undefined)
 
-        if (stakingAmount < 1) return setError('Stake amount must be more 1')
+        if (stakingAmount < 1) return setError('Staking amount must be more than 1')
         if (stakingAmount > balance) return setError(`Insufficient Balance`)
 
         try {
