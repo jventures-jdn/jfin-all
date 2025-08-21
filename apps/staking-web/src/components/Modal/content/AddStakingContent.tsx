@@ -36,7 +36,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
         e.preventDefault()
         setError(undefined)
 
-        if (stakingAmount < 1) return setError('Stake amount must be more 1')
+        if (stakingAmount < 1) return setError('Staking amount must be more than 1')
         if (stakingAmount > balance) return setError(`Insufficient Balance`)
 
         try {
@@ -64,7 +64,7 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
         <div className="add-staking-content">
             <form onSubmit={handleSubmit}>
                 <div className="items-center">
-                    <b>Staking</b> <JfinCoin />
+                    <b>Amount</b> <JfinCoin />
                 </div>
 
                 <div className="">
@@ -85,11 +85,11 @@ const AddStakingContent = observer((props: IAddStakingContent) => {
                 </div>
 
                 <button
-                    className="button lg w-100 m-0 ghost mt-2"
+                    className="button lg w-100 m-0 mt-2"
                     disabled={modalStore.isLoading}
                     type="submit"
                 >
-                    {modalStore.isLoading ? <LoadingOutlined spin /> : 'Confirm'}
+                    {modalStore.isLoading ? <LoadingOutlined spin /> : 'Confirm Add Staking'}
                 </button>
             </form>
         </div>

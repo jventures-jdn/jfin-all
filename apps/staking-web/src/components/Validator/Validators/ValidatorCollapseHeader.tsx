@@ -147,12 +147,14 @@ const ValidatorCollapseHeader = observer(({ validator }: IValidatorCollapseHeade
             {/* my reward */}
             <Col className="item-staking" lg={3} sm={4}>
                 <div>
-                    <span className="col-title">Reward</span>
+                    <span className="col-title">
+                        {myStakingReward === null ? 'Pay gas to' : 'Reward'}
+                    </span>
                     <div>
                         {loading ? (
                             <LoadingOutlined spin />
                         ) : myStakingReward === null ? (
-                            'Claim Reward'
+                            'Continue'
                         ) : myStakingReward <= 0 ? (
                             '-'
                         ) : (
