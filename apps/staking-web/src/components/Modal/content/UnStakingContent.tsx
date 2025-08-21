@@ -33,9 +33,9 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
         setError(undefined)
 
         if (!props.forceActionButtonsEnabled) {
-            if (unStakingAmount < 1) return setError('Un-Stake amount must be more 1')
+            if (unStakingAmount < 1) return setError('Unstaking amount must be more than 1')
             if (unStakingAmount > Number(stakedAmount))
-                return setError(`Un-Stake amount must be lower or equal to ${stakedAmount}`)
+                return setError(`You don't have enough staked amount`)
         }
 
         try {
@@ -45,7 +45,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
                 unStakingAmount,
             )
             modalStore.setVisible(false)
-            message.success(`Un-Stake was done!`)
+            message.success(`Unstaking is done!`)
         } catch (e: any) {
             const error: BaseError = e
             message.error(`${error?.cause || error?.message || 'Unknown'}`)
@@ -77,7 +77,7 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
         <div className="un-staking-content">
             <form onSubmit={handleSubmit}>
                 <div className="items-center">
-                    <b>Un-Staking</b> <JfinCoin />
+                    <b>Amount</b> <JfinCoin />
                 </div>
 
                 <div className="">
@@ -97,22 +97,21 @@ const UnStakingContent = observer((props: IUnStakingContent) => {
 
                 <div className="warning-message">
                     <WarningOutlined />
-                    After you unstake, jfin will be sent to you in the form of rewards. which you
-                    will have to wait for 1 Epoch (
-                    {EXPECT_CHAIN.chainNetwork == 'JFIN' ? '1hr' : '10min'}), <br />
-                    Please see the{' '}
+                    After you unstake, JFIN will be returned to you as rewards, which will be
+                    available after 1 epoch. (
+                    {EXPECT_CHAIN.chainNetwork == 'JFIN' ? '1-2hr' : '10-20min'}), Please see the{' '}
                     <a href="/assets" target="_blank">
-                        Assets
+                        History
                     </a>{' '}
-                    page for more details.
+                    for more details.
                 </div>
 
                 <button
-                    className="button lg w-100 m-0 ghost mt-2"
+                    className="button lg w-100 m-0 mt-2"
                     disabled={modalStore.isLoading}
                     type="submit"
                 >
-                    {modalStore.isLoading ? <LoadingOutlined spin /> : 'Confirm'}
+                    {modalStore.isLoading ? <LoadingOutlined spin /> : 'Confirm Unstaking'}
                 </button>
             </form>
         </div>
