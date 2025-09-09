@@ -13,7 +13,7 @@ export const CHAIN_EXPLORER: {
 }
 
 export const CHAIN_RPC: { [key in InternalChain]: string } = {
-    JFIN: 'https://rpc.jfinchain.com',
+    JFIN: 'https://rpc2.jfinchain.com',
     JFINT: 'https://rpc.testnet.jfinchain.com',
     JFIND: 'https://rpc-devnet.jfinchain.com',
 }
