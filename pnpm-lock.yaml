@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@web3modal/ui@2.7.1':
+    hash: 2hti6i5u6v37mrhpcxw5jbcj44
+    path: patches/@web3modal__ui@2.7.1.patch
+
 importers:
 
   .:
@@ -6246,12 +6251,12 @@ packages:
       react-dom: '>=17 || 18.2.0'
     dependencies:
       '@web3modal/core': 2.7.1(react@18.2.0)
-      '@web3modal/ui': 2.7.1(react@18.2.0)
+      '@web3modal/ui': 2.7.1(patch_hash=2hti6i5u6v37mrhpcxw5jbcj44)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@web3modal/ui@2.7.1(react@18.2.0):
+  /@web3modal/ui@2.7.1(patch_hash=2hti6i5u6v37mrhpcxw5jbcj44)(react@18.2.0):
     resolution: {integrity: sha512-JpGJbLAl/Wmuyyn+JwuwtlPD8mUW2HV/gsSxKWZoElgjbfDY4vjHo9PH2G++2HhugISfzjawp43r8lP/hWgWOQ==}
     dependencies:
       '@web3modal/core': 2.7.1(react@18.2.0)
@@ -6261,6 +6266,7 @@ packages:
     transitivePeerDependencies:
       - react
     dev: false
+    patched: true
 
   /@webassemblyjs/ast@1.11.6:
     resolution: {integrity: sha512-IN1xI7PwOvLPgjcf180gC1bqn3q/QaOCwYUahIOhbYUu8KA/3tw2RT/T0Gidi1l7Hhj5D/INhJxiICObqpMu4Q==}
