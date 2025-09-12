@@ -22,6 +22,9 @@
         "react": "18.2.0",
         "react-dom": "18.2.0"
       }
+    },
+    "patchedDependencies": {
+      "@web3modal/ui@2.7.1": "patches/@web3modal__ui@2.7.1.patch"
     }
   }
 }

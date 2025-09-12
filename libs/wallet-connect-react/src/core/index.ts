@@ -12,8 +12,14 @@ import { FallbackTransport } from 'viem'
 import { QueryClient } from '@tanstack/query-core'
 import { getChains } from '@utils/chain-config'
 
+const projectIds = {
+    jfin: 'be78c10c0027674faa03596d35516470',
+    jfintest: 'c9715a92e8ac1cbb748bc0d2c1f9a148',
+    jfindev: 'c9715a92e8ac1cbb748bc0d2c1f9a148',
+} as Record<string, string>
+
 class WalletConnectModule {
-    projectId = process.env.WALLET_CONNECT_PROJECT_ID || '2dc0abd48b692cc1375af974f7533524'
+    projectId = projectIds[process.env.NETWORK || ''] || ''
     chains: Chain[] = [...getChains()]
     configureChains = configureChains(this.chains, [w3mProvider({ projectId: this.projectId })])
     wagmiConfig: Config<PublicClient<FallbackTransport>, WebSocketPublicClient> & {
