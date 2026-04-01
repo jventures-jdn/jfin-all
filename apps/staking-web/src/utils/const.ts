@@ -1,18 +1,14 @@
-import jdn from '../assets/images/partners/jdn.png'
-import tbwg from '../assets/images/partners/tbwg.png'
-import tokenine from '../assets/images/partners/tokenine.png'
-import iam from '../assets/images/partners/iam.png'
-import jet from '../assets/images/partners/jet.png'
-import jmb from '../assets/images/partners/jmb.png'
 import bnb from '../assets/images/partners/bnb.png'
-import fox from '../assets/images/partners/fox.png'
-import ava from '../assets/images/partners/ava.png'
-import warden from '../assets/images/partners/warden.png'
-import kmrs from '../assets/images/partners/kmars.png'
-import kanedigital from '../assets/images/partners/kanedigital.jpg'
-import maxbit from '../assets/images/partners/maxbit.jpg'
+import iam from '../assets/images/partners/iam.png'
+import jdn from '../assets/images/partners/jdn.png'
+import jet from '../assets/images/partners/jet.png'
 import kub from '../assets/images/partners/kub.png'
+import maxbit from '../assets/images/partners/maxbit.jpg'
+import seitee from '../assets/images/partners/seitee.png'
 import six from '../assets/images/partners/six.png'
+import tokenine from '../assets/images/partners/tokenine.png'
+import tpcx from '../assets/images/partners/tpcx.png'
+import warden from '../assets/images/partners/warden.png'
 
 export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> = {
     '0xa22fD0F35d2416eC293E2D00A8eB0c3Bc633Aa91': {
@@ -24,8 +20,8 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         image: tokenine,
     },
     '0xCd4A92A21539Fd2b50d1ecabce89cCf7294100C8': {
-        name: 'Kane Digital',
-        image: kanedigital,
+        name: 'TPCX',
+        image: tpcx,
     },
     '0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6': {
         name: 'KUB',
@@ -52,8 +48,8 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         image: bnb,
     },
     '0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a': {
-        name: 'AVANTIS',
-        image: ava,
+        name: 'Seitee',
+        image: seitee,
     },
     '0xd0004509B34A3ec8A1489CCBA9FA892A09945d1f': {
         name: 'MetaWarden',
