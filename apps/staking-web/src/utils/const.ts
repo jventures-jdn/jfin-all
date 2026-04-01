@@ -13,6 +13,8 @@ import kanedigital from '../assets/images/partners/kanedigital.jpg'
 import maxbit from '../assets/images/partners/maxbit.jpg'
 import kub from '../assets/images/partners/kub.png'
 import six from '../assets/images/partners/six.png'
+import tpcx from '../assets/images/partners/tpcx.png'
+import seitee from '../assets/images/partners/seitee.png'
 
 export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> = {
     '0xa22fD0F35d2416eC293E2D00A8eB0c3Bc633Aa91': {
@@ -24,8 +26,8 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         image: tokenine,
     },
     '0xCd4A92A21539Fd2b50d1ecabce89cCf7294100C8': {
-        name: 'Kane Digital',
-        image: kanedigital,
+        name: 'TPCX',
+        image: tpcx,
     },
     '0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6': {
         name: 'KUB',
@@ -52,8 +54,8 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         image: bnb,
     },
     '0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a': {
-        name: 'AVANTIS',
-        image: ava,
+        name: 'Seitee',
+        image: seitee,
     },
     '0xd0004509B34A3ec8A1489CCBA9FA892A09945d1f': {
         name: 'MetaWarden',
