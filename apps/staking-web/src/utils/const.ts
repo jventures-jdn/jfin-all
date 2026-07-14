@@ -1,5 +1,4 @@
 import bnb from '../assets/images/partners/bnb.png'
-import iam from '../assets/images/partners/iam.png'
 import jdn from '../assets/images/partners/jdn.png'
 import jet from '../assets/images/partners/jet.png'
 import kub from '../assets/images/partners/kub.png'
@@ -36,8 +35,8 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         image: maxbit,
     },
     '0xe8391988483355e6a8170AC10f5726D4868e5C68': {
-        name: 'I AM',
-        image: iam,
+        name: 'JDN',
+        image: jdn,
     },
     '0x6DE767908d0d792385200E30d66A5696B24f709c': {
         name: 'JET',
