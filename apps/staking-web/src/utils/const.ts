@@ -3,10 +3,8 @@ import jdn from '../assets/images/partners/jdn.png'
 import jet from '../assets/images/partners/jet.png'
 import kub from '../assets/images/partners/kub.png'
 import maxbit from '../assets/images/partners/maxbit.jpg'
-import seitee from '../assets/images/partners/seitee.png'
 import six from '../assets/images/partners/six.png'
 import tokenine from '../assets/images/partners/tokenine.png'
-import tpcx from '../assets/images/partners/tpcx.png'
 import warden from '../assets/images/partners/warden.png'
 
 export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> = {
@@ -18,9 +16,9 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         name: 'TOKENINE',
         image: tokenine,
     },
-    '0xCd4A92A21539Fd2b50d1ecabce89cCf7294100C8': {
-        name: 'TPCX',
-        image: tpcx,
+    '0x7d7D4B9950bD53562DFDB41de47Ac717Fac25F54': {
+        name: 'JDN',
+        image: jdn,
     },
     '0x4280e5b57b4d75d6A1aE563f8A09dA8fe05a67d6': {
         name: 'KUB',
@@ -46,9 +44,9 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
         name: 'B&B',
         image: bnb,
     },
-    '0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a': {
-        name: 'Seitee',
-        image: seitee,
+    '0x0D13bCA30eEb238BF17E1573C83311700Ee3F7a1': {
+        name: 'JDN',
+        image: jdn,
     },
     '0xd0004509B34A3ec8A1489CCBA9FA892A09945d1f': {
         name: 'MetaWarden',
