@@ -7,7 +7,10 @@ import six from '../assets/images/partners/six.png'
 import tokenine from '../assets/images/partners/tokenine.png'
 import warden from '../assets/images/partners/warden.png'
 
-export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> = {
+export const VALIDATOR_WALLETS: Record<
+    string,
+    { name: string; image: string; wallet?: string }
+> = {
     '0xa22fD0F35d2416eC293E2D00A8eB0c3Bc633Aa91': {
         name: 'JDN',
         image: jdn,
@@ -47,6 +50,16 @@ export const VALIDATOR_WALLETS: Record<string, { name: string; image: string }> 
     '0x0D13bCA30eEb238BF17E1573C83311700Ee3F7a1': {
         name: 'JDN',
         image: jdn,
+    },
+    '0xCd4A92A21539Fd2b50d1ecabce89cCf7294100C8': {
+        name: 'JDN',
+        image: jdn,
+        wallet: '0x0D13bCA30eEb238BF17E1573C83311700Ee3F7a1',
+    },
+    '0x1b74cb1878d107d1bf44ADa5472587f4B7799c3a': {
+        name: 'JDN',
+        image: jdn,
+        wallet: '0x7d7D4B9950bD53562DFDB41de47Ac717Fac25F54',
     },
     '0xd0004509B34A3ec8A1489CCBA9FA892A09945d1f': {
         name: 'MetaWarden',
