@@ -13,6 +13,7 @@ import CountUpMemo from '../../Countup'
 import { Address, useAccount } from 'wagmi'
 import { BaseError, formatEther } from 'viem'
 import * as Sentry from '@sentry/react'
+import { VALIDATOR_WALLETS } from '../../../utils/const'
 
 interface IValidatorCollapseContentProps {
     validator: Validator
@@ -34,6 +35,8 @@ const ValidatorCollapseContent = observer(
         const slashesCount = Number(formatEther(validator.slashesCount))
         const commissionRate = Number(formatEther(validator.commissionRate))
         const totalDelegated = Number(formatEther(validator.totalDelegated))
+        const displayWallet =
+            VALIDATOR_WALLETS[validator.owner as string]?.wallet || validator.owner
 
         const isDisabled =
             !isConnected || !!myStakingReward || isReverted || forceActionButtonsEnabled || loading
@@ -154,7 +157,7 @@ const ValidatorCollapseContent = observer(
                                             validator
                                                 ? `https://exp.${
                                                       getCurrentEnv() === 'jfin' ? '' : 'testnet.'
-                                                  }jfinchain.com/address/${validator.owner}`
+                                                  }jfinchain.com/address/${displayWallet}`
                                                 : '#'
                                         }
                                         rel="noreferrer"
